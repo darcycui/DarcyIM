@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>简易聊天框</title>
+    <style type="text/css">
+    </style>
+    <script type="application/javascript" src="javascript/websocket.js"></script>
+</head>
+<body>
+<div style="flex-direction: column">
+    <div>
+        <label>
+            <textarea rows="3" id="chatMsg" style="height: 500px;width: 500px;resize: none;"></textarea>
+        </label>
+    </div>
+    <div>
+        <label>
+            <input type="text" style="width: 400px" name="inputMsg" id="inputMsg" onkeyup="inputChange(this.value)">
+            <button type="button" onclick="sendMsg()">发送</button>
+        </label>
+    </div>
+</div>
+</body>
+<script type="application/javascript">
+    window.onload = function () {
+        if (!'WebSocket' in window) return;
+        webSocketInit("three-to-harmony", "Android");
+    };
+</script>
+</html>
