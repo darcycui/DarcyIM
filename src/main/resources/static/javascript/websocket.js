@@ -5,6 +5,11 @@ let self = "";
 let other = "";
 const message = {attr: ""};
 
+// const URL = "ws://127.0.0.1:7777/person/"
+const URL = "wss://127.0.0.1:7443/person/"
+// const URL = "wss://10.0.0.137:7443/person/"
+// const URL = "wss://darcycui.com.cn:7443/person/"
+
 let websocket = {
     send: function (str) {
     }
@@ -14,10 +19,14 @@ function webSocketInit(self1, other1) {
     // self赋值给全局变量self
     self = self1;
     other = other1;
-    // websocket = new WebSocket("ws://127.0.0.1:7777/person/" + self);
-    // websocket = new WebSocket("wss://127.0.0.1:7443/person/" + self);
-    // websocket = new WebSocket("wss://10.0.0.137:7443/person/" + self);
-    websocket = new WebSocket("wss://darcycui.com.cn:7443/person/" + self);
+    if (websocket.readyState === WebSocket.OPEN) {
+        return;
+    }
+    if (websocket) {
+        websocket.close();
+        websocket = null;
+    }
+    websocket = new WebSocket(URL + self);
 
     // 添加详细错误监听
     websocket.addEventListener("error", (event) => {
