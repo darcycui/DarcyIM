@@ -1,6 +1,7 @@
 package com.darcy.kotlin.server.demowebsocket.websocket.server
 
 import com.alibaba.fastjson.JSONObject
+import com.darcy.kotlin.server.demowebsocket.websocket.config.WsConfigurator
 import com.darcy.kotlin.server.demowebsocket.websocket.domain.ChatEntityStr
 import com.darcy.kotlin.server.demowebsocket.websocket.helper.SendHelper
 import jakarta.websocket.OnClose
@@ -16,7 +17,10 @@ import java.util.concurrent.ConcurrentHashMap
 /**
  * 每一个连接对应一个WebSocketServer对象
  */
-@ServerEndpoint("/person/{userId}")
+@ServerEndpoint(
+    "/person/{userId}",
+    configurator = WsConfigurator::class // 添加心跳配置器
+)
 @Component
 class WebSocketServer {
     companion object {
@@ -48,20 +52,38 @@ class WebSocketServer {
 
     @OnMessage
     fun onMessage(message: String, session: Session) {
-        println("收到用户${session.id}的消息:$message")
-        // fastjson 解析 message 为 ChatEntityStr
-        val chatEntity = JSONObject.parseObject(message, ChatEntityStr::class.java)
-        val socketServer = SOCKET_MAP[chatEntity.to]
-        if (socketServer == null) {
-            println("用户${chatEntity.to}不在线")
-            return
+        try {
+            println("收到用户${session.id}的消息:$message")
+            if (message == "ping") {
+                SendHelper.sendPong(session)
+                return
+            }
+            // fastjson 解析 message 为 ChatEntityStr
+            val chatEntity = JSONObject.parseObject(message, ChatEntityStr::class.java)
+            val socketServer = SOCKET_MAP[chatEntity.to]
+            if (socketServer == null) {
+                println("用户${chatEntity.to}不在线")
+                return
+            }
+            SendHelper.sendToPersonStr(message, socketServer.session)
+        } catch (e: Exception) {
+            println("用户${session.id}发送的消息格式有误")
+            e.printStackTrace()
+            disconnectUser(session.id)
         }
-        SendHelper.sendToPersonStr(message, socketServer.session)
     }
 
     @OnError
     fun onError(session: Session, error: Throwable) {
         println("用户${session.id}发生错误")
         error.printStackTrace()
+    }
+    // 添加主动断开方法
+    fun disconnectUser(userId: String) {
+        SOCKET_MAP[userId]?.let {
+            it.session?.close()
+            SOCKET_MAP.remove(userId)
+            println("已主动断开用户 $userId")
+        }
     }
 }
