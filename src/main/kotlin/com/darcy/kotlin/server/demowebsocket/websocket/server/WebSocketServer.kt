@@ -3,6 +3,7 @@ package com.darcy.kotlin.server.demowebsocket.websocket.server
 import com.alibaba.fastjson.JSONObject
 import com.darcy.kotlin.server.demowebsocket.websocket.config.WsConfigurator
 import com.darcy.kotlin.server.demowebsocket.websocket.domain.ChatEntityStr
+import com.darcy.kotlin.server.demowebsocket.websocket.helper.ActiveCheckHelper
 import com.darcy.kotlin.server.demowebsocket.websocket.helper.SendHelper
 import jakarta.websocket.OnClose
 import jakarta.websocket.OnError
@@ -29,9 +30,15 @@ class WebSocketServer {
          */
         @JvmStatic
         private val SOCKET_MAP: MutableMap<String, WebSocketServer> = ConcurrentHashMap<String, WebSocketServer>()
+        fun getSocketMap(): Map<String, WebSocketServer> {
+            return SOCKET_MAP
+        }
+
+        private val activeCheckHelper = ActiveCheckHelper
     }
 
     private var session: Session? = null
+    private var userId: String? = null
 
     fun getSession(): Session? {
         return session
@@ -41,19 +48,23 @@ class WebSocketServer {
     fun open(session: Session, @PathParam("userId") userId: String) {
         this.session = session
         SOCKET_MAP[userId] = this
-        println("用户${userId}连接成功,当前连接总人数为${SOCKET_MAP.size}")
+        this.userId = userId
+        activeCheckHelper.updateLastActiveTime(userId)
+        println("用户${session.id} $userId 连接成功, 当前连接总人数为${SOCKET_MAP.size}")
     }
 
     @OnClose
     fun close(session: Session, @PathParam("userId") userId: String) {
         SOCKET_MAP.remove(userId)
-        println("用户${userId}断开连接,当前连接总人数为${SOCKET_MAP.size}")
+        activeCheckHelper.removeLastActiveTime(userId)
+        println("用户${session.id} $userId 断开连接, 当前连接总人数为${SOCKET_MAP.size}")
     }
 
     @OnMessage
     fun onMessage(message: String, session: Session) {
         try {
-            println("收到用户${session.id}的消息:$message")
+            println("收到用户${session.id} $userId 的消息:$message")
+            activeCheckHelper.updateLastActiveTime(userId ?: "")
             if (message == "ping") {
                 SendHelper.sendPong(session)
                 return
@@ -67,7 +78,7 @@ class WebSocketServer {
             }
             SendHelper.sendToPersonStr(message, socketServer.session)
         } catch (e: Exception) {
-            println("用户${session.id}发送的消息格式有误")
+            println("用户${session.id} $userId 发送的消息格式有误")
             e.printStackTrace()
             disconnectUser(session.id)
         }
@@ -75,15 +86,17 @@ class WebSocketServer {
 
     @OnError
     fun onError(session: Session, error: Throwable) {
-        println("用户${session.id}发生错误")
+        println("用户${session.id} $userId 发生错误")
         error.printStackTrace()
     }
+
     // 添加主动断开方法
     fun disconnectUser(userId: String) {
         SOCKET_MAP[userId]?.let {
+            println("主动断开用户 $userId ${session?.id} 当前连接总人数为${SOCKET_MAP.size}")
             it.session?.close()
             SOCKET_MAP.remove(userId)
-            println("已主动断开用户 $userId")
+            activeCheckHelper.removeLastActiveTime(userId)
         }
     }
 }
