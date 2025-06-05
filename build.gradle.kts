@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "com.darcy.kotlin.server"
-version = "0.0.3-SNAPSHOT"
+version = "0.0.4-SNAPSHOT"
 
 java {
     toolchain {
