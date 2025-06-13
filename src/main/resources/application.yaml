@@ -7,9 +7,9 @@ server:
   address: 0.0.0.0
   port: 7443
   ssl:
-#    key-store: classpath:test2IPSelf241.p12
+    key-store: classpath:test2IPSelf241.p12
 #    key-store: classpath:test2IPSelf137.p12
-    key-store: classpath:test2ServerSelf.p12
+#    key-store: classpath:test2ServerSelf.p12
     key-store-password: 1234
     key-password: 1234
     key-store-type: PKCS12
@@ -26,6 +26,14 @@ spring:
     active: dev
   main:
     allow-bean-definition-overriding: true
+  datasource:
+    url: jdbc:mysql://localhost:3306/mydatabase?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false&allowPublicKeyRetrieval=true
+    password: 123456
+    username: root
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    show-sql: true  #控制台显示SQL
+    hibernate.ddl-auto: update #更新或者创建数据表结构
 
 logging:
   file:
@@ -33,6 +41,9 @@ logging:
   level:
     root: INFO
     org.apache.tomcat: DEBUG  # 输出 Tomcat 详细日志
+
+upload:
+  path: D:/uploads/image
 
 
 

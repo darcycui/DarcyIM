@@ -1,0 +1,57 @@
+package com.darcy.kotlin.server.demowebsocket.http.controller
+
+import com.darcy.kotlin.server.demowebsocket.api.IUploadFileApi
+import com.darcy.kotlin.server.demowebsocket.exception.BaseException
+import com.darcy.kotlin.server.demowebsocket.exception.FileException
+import com.darcy.kotlin.server.demowebsocket.exception.toJsonString
+import com.darcy.kotlin.server.demowebsocket.domain.ResultEntity
+import com.darcy.kotlin.server.demowebsocket.exception.DBException
+import com.darcy.kotlin.server.demowebsocket.http.service.UploadFileService
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.web.bind.annotation.CrossOrigin
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MultipartFile
+
+
+@RestController
+@CrossOrigin //跨域注解
+class UploadFileController @Autowired constructor(
+    val uploadFileService: UploadFileService
+) : IUploadFileApi {
+
+    override fun uploadImage(
+        @RequestParam("userId") userId: Long,
+        @RequestParam("file") file: MultipartFile
+    ): String {
+        try {
+            val savedFile = try {
+                uploadFileService.saveFile(file)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                return FileException.FILE_SAVE_FAILED.toJsonString()
+            }
+            if (savedFile == null) {
+                return FileException.FILE_SAVE_FAILED.toJsonString()
+            }
+            val fileHash = uploadFileService.calculateFileHash(savedFile)
+            val fileEntity = try {
+                uploadFileService.createItem(
+                    userId,
+                    savedFile.name,
+                    savedFile.absolutePath,
+                    savedFile.length(),
+                    file.contentType?: "unknown mime",
+                    fileHash
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+                return DBException.DB_SAVE_FAILURE.toJsonString()
+            }
+            return ResultEntity.success(fileEntity).toJsonString()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return BaseException.COMMON_EXCEPTION.toJsonString()
+        }
+    }
+}

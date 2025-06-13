@@ -2,7 +2,7 @@ package com.darcy.kotlin.server.demowebsocket.websocket.server
 
 import com.alibaba.fastjson.JSONObject
 import com.darcy.kotlin.server.demowebsocket.websocket.config.WsConfigurator
-import com.darcy.kotlin.server.demowebsocket.websocket.domain.ChatEntityStr
+import com.darcy.kotlin.server.demowebsocket.websocket.domain.StrChatEntity
 import com.darcy.kotlin.server.demowebsocket.websocket.helper.ActiveCheckHelper
 import com.darcy.kotlin.server.demowebsocket.websocket.helper.SendHelper
 import jakarta.websocket.OnClose
@@ -70,7 +70,7 @@ class WebSocketServer {
                 return
             }
             // fastjson 解析 message 为 ChatEntityStr
-            val chatEntity = JSONObject.parseObject(message, ChatEntityStr::class.java)
+            val chatEntity = JSONObject.parseObject(message, StrChatEntity::class.java)
             val socketServer = SOCKET_MAP[chatEntity.to]
             if (socketServer == null) {
                 println("用户${chatEntity.to}不在线")

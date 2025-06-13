@@ -1,5 +1,5 @@
 package com.darcy.kotlin.server.demowebsocket.websocket.domain
 
-class ChatEntityStr() : ChatEntityBase() {
+class StrChatEntity() : BaseChatEntity() {
     private var message: String = ""
 }

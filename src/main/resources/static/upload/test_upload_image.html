@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>图片上传与展示</title>
+</head>
+<body>
+<h2>上传图片</h2>
+<input type="file" id="imageInput">
+<button onclick="uploadImage()">上传图片</button>
+
+<h2>展示图片</h2>
+<div id="imageContainer"></div>
+
+<script>
+    function uploadImage() {
+        const fileInput = document.getElementById('imageInput');
+        const file = fileInput.files[0];
+        console.log(`filePath: ${file.name}`)
+
+        const formData = new FormData();
+        formData.append('userId', 6);
+        formData.append('file', file);
+
+        fetch('https://10.0.0.241:7443/upload/image', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.text())
+            .then(result => {
+                if (result === '上传成功') {
+                    alert('上传成功')
+                    showImage(file.name);
+                } else {
+                    alert('上传失败')
+                    console.log('上传失败');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function showImage(fileName) {
+        const imageContainer = document.getElementById('imageContainer');
+        const imgElement = document.createElement('img');
+        imgElement.src = 'D:\\uploads\\image\\' + fileName;
+        imageContainer.appendChild(imgElement);
+    }
+</script>
+</body>
+</html>
