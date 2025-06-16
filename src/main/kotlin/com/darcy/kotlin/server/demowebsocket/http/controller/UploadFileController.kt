@@ -8,7 +8,12 @@ import com.darcy.kotlin.server.demowebsocket.domain.ResultEntity
 import com.darcy.kotlin.server.demowebsocket.exception.DBException
 import com.darcy.kotlin.server.demowebsocket.http.service.UploadFileService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.core.io.Resource
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CrossOrigin
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
@@ -26,7 +31,7 @@ class UploadFileController @Autowired constructor(
     ): String {
         try {
             val savedFile = try {
-                uploadFileService.saveFile(file)
+                uploadFileService.saveImageFile(file)
             } catch (e: Exception) {
                 e.printStackTrace()
                 return FileException.FILE_SAVE_FAILED.toJsonString()
@@ -41,7 +46,7 @@ class UploadFileController @Autowired constructor(
                     savedFile.name,
                     savedFile.absolutePath,
                     savedFile.length(),
-                    file.contentType?: "unknown mime",
+                    file.contentType ?: "unknown mime",
                     fileHash
                 )
             } catch (e: Exception) {
@@ -53,5 +58,24 @@ class UploadFileController @Autowired constructor(
             e.printStackTrace()
             return BaseException.COMMON_EXCEPTION.toJsonString()
         }
+    }
+
+    override fun downloadImage(@PathVariable("fileName") fileName: String): ResponseEntity<Resource> {
+        // 从服务中获取文件 Resource
+        val triple =
+            uploadFileService.getFileResourceByName(fileName)
+        val resource = triple.third ?: return ResponseEntity.notFound().build()
+        // 设置响应头
+        val contentType = triple.first
+        val contentDisposition = triple.second
+
+        return ResponseEntity.ok()
+            .contentType(MediaType.parseMediaType(contentType))
+            .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
+            .body(resource)
+    }
+
+    override fun getAllImages(): String {
+        TODO("Not yet implemented")
     }
 }

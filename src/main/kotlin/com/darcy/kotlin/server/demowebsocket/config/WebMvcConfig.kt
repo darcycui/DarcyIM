@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Configuration
 class WebMvcConfig : WebMvcConfigurer {
-    @Value("\${upload.path}")
+    @Value("\${upload.path.image}")
     private val picDir: String? = null
 
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
@@ -18,7 +18,7 @@ class WebMvcConfig : WebMvcConfigurer {
 
     override fun addCorsMappings(registry: CorsRegistry) {
         registry.addMapping("/api/**") // 匹配所有以 /api 开头的路径
-            .allowedOrigins("https://localhost:7443/") // 允许的来源
+            .allowedOrigins("https://localhost:7443/", "https://10.0.0.241:7443/") // 允许的来源
             .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 允许的方法
             .allowedHeaders("*") // 允许的头信息
             .allowCredentials(true) // 是否允许携带 Cookie

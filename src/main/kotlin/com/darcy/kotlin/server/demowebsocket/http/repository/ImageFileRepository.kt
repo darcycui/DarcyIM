@@ -1,7 +1,6 @@
 package com.darcy.kotlin.server.demowebsocket.http.repository
 
 import com.darcy.kotlin.server.demowebsocket.log.LOGGER
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Repository
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
@@ -11,11 +10,8 @@ import java.security.MessageDigest
 
 @Repository
 class ImageFileRepository {
-    // @Value注解注入了文件保存路径uploadPath 配置在application.properties或application.yml文件中
-    @Value("\${upload.path}")
-    private val uploadPath: String? = null
 
-    fun saveFileToStorage(file: MultipartFile): File? {
+    fun saveImageFile(file: MultipartFile, uploadPath: String): File? {
         try {
             // 获取文件名
             val fileName = file.originalFilename

@@ -43,7 +43,8 @@ logging:
     org.apache.tomcat: DEBUG  # 输出 Tomcat 详细日志
 
 upload:
-  path: D:/uploads/image
+  path:
+    image: D:/uploads/image
 
 
 

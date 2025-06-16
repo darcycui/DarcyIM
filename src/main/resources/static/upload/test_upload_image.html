@@ -22,7 +22,7 @@
         formData.append('userId', 6);
         formData.append('file', file);
 
-        fetch('https://10.0.0.241:7443/upload/image', {
+        fetch('https://localhost:7443/api/upload/image', {
             method: 'POST',
             body: formData
         })
