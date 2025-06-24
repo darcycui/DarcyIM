@@ -4,4 +4,4 @@ import com.darcy.kotlin.server.demowebsocket.DemoWebsocketApplication
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-val LOGGER: Logger = LoggerFactory.getLogger(DemoWebsocketApplication::class.java)
+val DarcyLogger: Logger = LoggerFactory.getLogger(DemoWebsocketApplication::class.java)

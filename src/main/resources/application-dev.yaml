@@ -22,8 +22,8 @@ server:
 #      - TLS_RSA_WITH_AES_256_GCM_SHA384
 
 spring:
-  profiles:
-    active: dev  # 激活开发环境
+#  profiles:
+#    active: dev
   main:
     allow-bean-definition-overriding: true
   datasource:

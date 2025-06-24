@@ -4,7 +4,7 @@ import com.darcy.kotlin.server.demowebsocket.api.IUserApi
 import com.darcy.kotlin.server.demowebsocket.domain.ResultEntity
 import com.darcy.kotlin.server.demowebsocket.domain.table.UserEntity
 import com.darcy.kotlin.server.demowebsocket.http.service.UserService
-import com.darcy.kotlin.server.demowebsocket.log.LOGGER
+import com.darcy.kotlin.server.demowebsocket.log.DarcyLogger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.RestController
@@ -44,10 +44,10 @@ class UserController @Autowired constructor(val userService: UserService) : IUse
             userService.deleteUser(userBean)
             ResultEntity.success<String>("delete user SUCCESS").toJsonString()
         }.onFailure {
-            LOGGER.error("delete user error:", it)
+            DarcyLogger.error("delete user error:", it)
             return ResultEntity.error<String>(-1, "delete user error: $it").toJsonString()
         }.onSuccess {
-            LOGGER.info("delete user success")
+            DarcyLogger.info("delete user success")
         }.getOrElse { "default delete error" }
     }
 
