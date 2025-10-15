@@ -5,10 +5,10 @@
     <title>下载图片</title>
 </head>
 <body>
-<h2>点击按钮 从 https://localhost:7443/api/download/image/a1.png 下载图片</h2>
+<h2>点击按钮 从 http://localhost:7443/api/download/image/a1.png 下载图片</h2>
 <button onclick="downloadImage()">下载图片</button>
 <script>   function downloadImage() {
-    const url = "https://localhost:7443/api/download/image/a1.png";
+    const url = "http://localhost:7443/api/download/image/a1.png";
     const fileName = "a1.png"; // 自定义下载文件名
 
     fetch(url)

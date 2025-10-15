@@ -1,8 +1,8 @@
 package com.darcy.kotlin.server.demowebsocket.http.service
 
 import com.darcy.kotlin.server.demowebsocket.domain.table.UploadFileEntity
-import com.darcy.kotlin.server.demowebsocket.http.repository.ImageFileRepository
-import com.darcy.kotlin.server.demowebsocket.http.repository.UploadFileDatabaseRepository
+import com.darcy.kotlin.server.demowebsocket.http.repository.FileRepository
+import com.darcy.kotlin.server.demowebsocket.http.repository.UploadFileRepository
 import com.darcy.kotlin.server.demowebsocket.log.DarcyLogger
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,30 +18,30 @@ import java.nio.file.Paths
 
 @Service
 class UploadFileService @Autowired constructor(
-    val imageFileRepository: ImageFileRepository,
-    val uploadFileDatabaseRepository: UploadFileDatabaseRepository
+    val fileRepository: FileRepository,
+    val uploadFileRepository: UploadFileRepository
 ) {
     // @Value注解注入了文件保存路径uploadPath 配置在application.properties或application.yml文件中
     @Value("\${upload.path.image}")
     private val imageDir: String = ""
 
     fun saveImageFile(file: MultipartFile): File? {
-        return imageFileRepository.saveImageFile(file, imageDir)
+        return fileRepository.saveImageFile(file, imageDir)
     }
 
     fun calculateFileHash(file: File): String {
-        return imageFileRepository.calculateFileHash(file, "SHA-1")
+        return fileRepository.calculateFileHash(file, "SHA-1")
     }
 
     @Transactional
     fun createItem(userId: Long, name: String, path: String, size: Long, type: String, hash: String): UploadFileEntity {
-        val existItem = uploadFileDatabaseRepository.findByHash(hash).firstOrNull()
+        val existItem = uploadFileRepository.findByHash(hash).firstOrNull()
         if (existItem != null) {
             DarcyLogger.warn("数据库已存在:$name 无需写入数据库")
             return existItem
         }
         DarcyLogger.info("数据库不存在:$name 写入数据库.")
-        return uploadFileDatabaseRepository.save(
+        return uploadFileRepository.save(
             UploadFileEntity(
                 userId = userId, name = name, path = path, size = size, type = type, hash = hash
             )
@@ -49,7 +49,7 @@ class UploadFileService @Autowired constructor(
     }
 
     fun getItemId(id: Long): UploadFileEntity? {
-        return uploadFileDatabaseRepository.findById(id).orElse(null)
+        return uploadFileRepository.findById(id).orElse(null)
     }
 
     fun updateItem(
@@ -69,7 +69,7 @@ class UploadFileService @Autowired constructor(
             file.size = size
             file.type = type
             file.hash = hash
-            return uploadFileDatabaseRepository.save(file)
+            return uploadFileRepository.save(file)
         }
         return null
     }
@@ -77,7 +77,7 @@ class UploadFileService @Autowired constructor(
     fun deleteItem(id: Long): Boolean {
         val file = getItemId(id)
         if (file != null) {
-            uploadFileDatabaseRepository.delete(file)
+            uploadFileRepository.delete(file)
             return true
         }
         return false

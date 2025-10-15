@@ -20,7 +20,7 @@ import org.springframework.web.multipart.MultipartFile
 
 
 @RestController
-@CrossOrigin //跨域注解
+@CrossOrigin() //跨域注解
 class UploadFileController @Autowired constructor(
     val uploadFileService: UploadFileService
 ) : IUploadFileApi {

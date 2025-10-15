@@ -15,12 +15,13 @@ open class MessageEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     open var id: Long = -1L,
 
-    open val from: String = "",
+    open val fromUser: String = "",
+    open val toUser: String = "",
     open val text: String = "",
     open val recipient: String = "",
     open val time: String? = TimeUtil.getCurrentTimeStamp(),
 ) {
     override fun toString(): String {
-        return "MessageEntity(id=$id, from='$from', text='$text', recipient='$recipient', time=$time)"
+        return "MessageEntity(id=$id, from='$fromUser', text='$text', recipient='$recipient', time=$time)"
     }
 }

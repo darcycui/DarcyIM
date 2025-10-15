@@ -13,5 +13,11 @@ open class UserEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     open var id: Long = -1L,
-    open var name: String = ""
-)
+    open var username: String = "",
+    open var password: String = "",
+    open var roles: String = ""
+) {
+    fun copy(password: String): UserEntity {
+        return UserEntity(id, username, password, roles)
+    }
+}

@@ -17,10 +17,8 @@ class WebMvcConfig : WebMvcConfigurer {
     }
 
     override fun addCorsMappings(registry: CorsRegistry) {
-//        registry.addMapping("/api/**") // 匹配所有以 /api 开头的路径
         registry.addMapping("/**") // 匹配所有路径
-//            .allowedOrigins("https://localhost:7443/", "https://10.0.0.241:7443/",
-//                "http://localhost:7443/", "http://10.0.0.241:7443/", "null") // 允许的来源
+//            .allowedOrigins("*")// 生产环境应指定具体域名
             .allowedOriginPatterns("*", "null")
             .allowedMethods("*") // 允许的方法
             .allowedHeaders("*") // 允许的头信息

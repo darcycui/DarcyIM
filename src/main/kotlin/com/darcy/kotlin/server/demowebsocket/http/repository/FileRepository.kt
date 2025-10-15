@@ -9,21 +9,21 @@ import java.io.IOException
 import java.security.MessageDigest
 
 @Repository
-class ImageFileRepository {
+class FileRepository {
 
     fun saveImageFile(file: MultipartFile, uploadPath: String): File? {
+        val fileName = file.originalFilename
         try {
             // 获取文件名
-            val fileName = file.originalFilename
             // 指定保存路径
             val filePath = "$uploadPath/$fileName"
             // 保存文件到本地
             val saveFile = File(filePath)
             if (saveFile.exists()) {
-                DarcyLogger.warn("文件已存在$fileName 无需保存")
+                DarcyLogger.warn("文件已存在 无需保存！ $fileName ")
                 return saveFile
             }
-            DarcyLogger.info("保存文件到本地:$fileName")
+            DarcyLogger.info("文件保存成功: $fileName")
             if (!saveFile.parentFile.exists()) {
                 saveFile.parentFile.mkdirs()
             }
@@ -31,6 +31,7 @@ class ImageFileRepository {
             return saveFile
         } catch (e: IOException) {
             e.printStackTrace()
+            DarcyLogger.error("文件保存失败: $fileName")
         }
         return null
     }

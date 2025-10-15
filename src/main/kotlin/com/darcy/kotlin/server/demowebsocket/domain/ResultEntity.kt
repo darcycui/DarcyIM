@@ -2,6 +2,7 @@ package com.darcy.kotlin.server.demowebsocket.domain
 
 import com.alibaba.fastjson.JSONObject
 import com.darcy.kotlin.server.demowebsocket.exception.BaseException
+import com.darcy.kotlin.server.demowebsocket.log.DarcyLogger
 
 /**
  * {
@@ -49,6 +50,6 @@ class ResultEntity<T>() {
     }
 
     fun toJsonString(): String {
-        return JSONObject.toJSONString(this)
+        return JSONObject.toJSONString(this).also { DarcyLogger.warn(it) }
     }
 }

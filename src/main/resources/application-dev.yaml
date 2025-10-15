@@ -6,20 +6,8 @@ server:
 
   address: 0.0.0.0
   port: 7443
-#  ssl:
-#    key-store: classpath:test2IPSelf241.p12
-##    key-store: classpath:test2IPSelf137.p12
-##    key-store: classpath:test2ServerSelf.p12
-#    key-store-password: 1234
-#    key-password: 1234
-#    key-store-type: PKCS12
-#    key-alias: test2
-#    enabled-protocols: TLSv1.2
-#    ciphers:
-#      - TLS_AES_128_GCM_SHA256
-#      - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
-#      - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-#      - TLS_RSA_WITH_AES_256_GCM_SHA384
+  ssl:
+    enabled: false
 
 spring:
 #  profiles:
@@ -36,15 +24,27 @@ spring:
     hibernate.ddl-auto: update #更新或者创建数据表结构
   servlet:
     multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
+      max-file-size: 1024MB
+      max-request-size: 1024MB
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db.sql
+
+  security:
+    user:
+      name: admin
+      password: admin
 
 logging:
   file:
     name: ./logs/myapp.log
   level:
     root: INFO
-    org.apache.tomcat: DEBUG  # 输出 Tomcat 详细日志
+    org.apache.tomcat: WARN  # 输出 Tomcat 详细日志
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.security.config.annotation.web.builders.HttpSecurity: DEBUG
 
 upload:
   path:

@@ -1,25 +1,25 @@
 # websocket server config
 # client: html/one.html two.html
 server:
-#  address: 0.0.0.0
-#  port: 7777
+  #  address: 0.0.0.0
+  #  port: 7777
 
   address: 0.0.0.0
   port: 7443
-#  ssl:
-#    key-store: classpath:test2IPSelf241.p12
-##    key-store: classpath:test2IPSelf137.p12
-##    key-store: classpath:test2ServerSelf.p12
-#    key-store-password: 1234
-#    key-password: 1234
-#    key-store-type: PKCS12
-#    key-alias: test2
-#    enabled-protocols: TLSv1.2
-#    ciphers:
-#      - TLS_AES_128_GCM_SHA256
-#      - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
-#      - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-#      - TLS_RSA_WITH_AES_256_GCM_SHA384
+  ssl:
+    key-store: classpath:test2IPSelf241.p12
+    #    key-store: classpath:test2IPSelf137.p12
+    #    key-store: classpath:test2ServerSelf.p12
+    key-store-password: 1234
+    key-password: 1234
+    key-store-type: PKCS12
+    key-alias: test2
+    enabled-protocols: TLSv1.2
+    ciphers:
+      - TLS_AES_128_GCM_SHA256
+      - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+      - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+      - TLS_RSA_WITH_AES_256_GCM_SHA384
 
 spring:
   profiles:

@@ -22,13 +22,13 @@
         formData.append('userId', 6);
         formData.append('file', file);
 
-        fetch('https://localhost:7443/api/upload/image', {
+        fetch('http://localhost:7443/api/upload/image', {
             method: 'POST',
             body: formData
         })
-            .then(response => response.text())
+            .then(response => response.json())
             .then(result => {
-                if (result === '上传成功') {
+                if (result.resultcode === 200) {
                     alert('上传成功')
                     showImage(file.name);
                 } else {
@@ -42,7 +42,8 @@
     function showImage(fileName) {
         const imageContainer = document.getElementById('imageContainer');
         const imgElement = document.createElement('img');
-        imgElement.src = 'D:\\uploads\\image\\' + fileName;
+        imgElement.src = `http://localhost:7443/api/download/image/${fileName}`
+        console.log(`imgElement.src: ${imgElement.src}`)
         imageContainer.appendChild(imgElement);
     }
 </script>

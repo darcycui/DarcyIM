@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册页面</title>
+    <script src="../javascript/hash.js"></script>
+</head>
+<body>
+<form id="registerForm">
+    <label for="name">用户名:</label>
+    <input type="text" id="name" name="name" required/>
+    <label for="password">密码:</label>
+    <input type="password" id="password" name="password" required/>
+</form>
+<button onclick="register()">注册</button>
+
+</body>
+<script>
+    async function register() {
+        const formData = new FormData(document.getElementById('registerForm'));
+        const name = formData.get('name');
+        console.log(`name=${name}`);
+        const password = formData.get('password');
+        console.log(`password=${password}`);
+        // const passwordHash = await sha256(password);
+        const passwordHash = password;
+        console.log(`passwordHash=${passwordHash}`);
+        const newFormData = new FormData();
+        newFormData.append('name', name);
+        newFormData.append('password', passwordHash);
+        fetch('http://localhost:7443/api/users/create', {
+            method: 'POST',
+            body: newFormData
+        })
+            .then(response => response.json())
+            .then(result => {
+                if (result.resultcode === 200) {
+                    alert('注册成功')
+                } else {
+                    alert('注册失败')
+                    console.log('注册失败');
+                }
+            })
+    }
+</script>
+</html>

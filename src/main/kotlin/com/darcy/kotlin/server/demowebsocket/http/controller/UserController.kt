@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.RestController
 class UserController @Autowired constructor(val userService: UserService) : IUserApi {
 
     override fun createUser(params: Map<String, Any>): String {
-        return ResultEntity.success(userService.createUser(params["name"].toString())).toJsonString()
+        val name = params["name"]?.toString() ?: ""
+        val password = params["password"]?.toString() ?: ""
+        val userEntity = UserEntity(-1,name, password,"")
+        return ResultEntity.success(userService.createUser(userEntity)).toJsonString()
     }
 
     override fun getUserById(id: Long): String {
@@ -24,7 +27,7 @@ class UserController @Autowired constructor(val userService: UserService) : IUse
     override fun updateUser(params: Map<String, Any>): String {
         val userBean: UserEntity = UserEntity(
             id = params["id"].toString().toLong(),
-            name = params["name"].toString()
+            username = params["name"].toString()
         )
         if (contains(userBean).not()) {
             return ResultEntity.error<String>(-1, "user not exist").toJsonString()
@@ -35,7 +38,7 @@ class UserController @Autowired constructor(val userService: UserService) : IUse
     override fun deleteUser(params: Map<String, Any>): String {
         val userBean: UserEntity = UserEntity(
             id = params["id"]?.toString()?.toLong() ?: -1L,
-            name = params["name"].toString()
+            username = params["name"].toString()
         )
         return kotlin.runCatching {
             if (contains(userBean).not()) {
