@@ -1,6 +1,7 @@
 package com.darcy.kotlin.server.demowebsocket.domain
 
 import com.alibaba.fastjson.JSONObject
+import com.darcy.kotlin.server.demowebsocket.domain.error.ErrorEntiry
 import com.darcy.kotlin.server.demowebsocket.exception.BaseException
 import com.darcy.kotlin.server.demowebsocket.log.DarcyLogger
 
@@ -19,7 +20,7 @@ import com.darcy.kotlin.server.demowebsocket.log.DarcyLogger
  * }
  */
 class ResultEntity<T>() {
-    var resultcode: Int = -1
+    var resultcode: Int = 200
     var reason: String = ""
     var result: T? = null
     var error_code: Int = -1
@@ -32,20 +33,21 @@ class ResultEntity<T>() {
             }
         }
 
-        fun <T> error(code: Int, message: String): ResultEntity<T> {
-            return ResultEntity<T>().apply {
-                this.resultcode = 500
-                this.reason = message
-                this.error_code = code
+        fun error(errorEntity: ErrorEntiry): ResultEntity<ErrorEntiry> {
+            return ResultEntity<ErrorEntiry>().apply {
+                this.resultcode = errorEntity.status
+                this.reason = errorEntity.message
+                this.error_code = errorEntity.status
+                this.result = errorEntity
             }
         }
 
-        fun <T> error(e: BaseException): ResultEntity<T> {
-            return return ResultEntity<T>().apply {
-                this.resultcode = 500
-                this.reason = e.exceptionMessage
-                this.error_code = e.exceptionCode
-            }
+        fun error(e: BaseException): ResultEntity<ErrorEntiry> {
+            val errorEntity = ErrorEntiry(
+                status = e.exceptionCode,
+                message = e.exceptionMessage
+            )
+            return error(errorEntity)
         }
     }
 

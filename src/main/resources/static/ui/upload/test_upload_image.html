@@ -21,10 +21,17 @@
         const formData = new FormData();
         formData.append('userId', 6);
         formData.append('file', file);
+        let token = sessionStorage.getItem('token');
+        console.log(`sessionStorage token: ${token}`)
+        token = localStorage.getItem('token');
+        console.log(`localStorage token: ${token}`)
 
         fetch('http://localhost:7443/api/upload/image', {
             method: 'POST',
-            body: formData
+            body: formData,
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
         })
             .then(response => response.json())
             .then(result => {

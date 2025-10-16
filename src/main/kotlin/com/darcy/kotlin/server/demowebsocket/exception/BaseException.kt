@@ -12,5 +12,5 @@ open class BaseException(
 }
 
 fun BaseException.toJsonString(): String {
-    return ResultEntity.error<String>(this.exceptionCode, this.exceptionMessage).toJsonString()
+    return ResultEntity.error(this).toJsonString()
 }

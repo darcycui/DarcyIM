@@ -4,6 +4,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.Transient
 
 /**
  * 使用JPA注解创建数据库表
@@ -15,7 +16,9 @@ open class UserEntity(
     open var id: Long = -1L,
     open var username: String = "",
     open var password: String = "",
-    open var roles: String = ""
+    open var roles: String = "",
+    @Transient
+    open var token: String = ""
 ) {
     fun copy(password: String): UserEntity {
         return UserEntity(id, username, password, roles)

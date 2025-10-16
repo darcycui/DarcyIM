@@ -11,7 +11,15 @@
     const url = "http://localhost:7443/api/download/image/a1.png";
     const fileName = "a1.png"; // 自定义下载文件名
 
-    fetch(url)
+    fetch(
+        url,
+        {
+            method: "GET",
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        }
+    )
         .then(response => response.blob())
         .then(blob => {
             // 创建临时链接并触发下载

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>登录页面</title>
-    <script src="../javascript/hash.js"></script>
+    <script src="../ui/javascript/hash.js"></script>
 </head>
 <body>
 <form id="loginForm">
@@ -36,7 +36,17 @@
             .then(result => {
                 if (result.resultcode === 200) {
                     alert('登录成功')
-                    window.location.href = 'http://localhost:7443/home/home.html'
+                    // 点击alert按钮事件
+                    window.onclick = function (event) {
+
+                    }
+                    // 保存 token
+                    const token = result.result.token;
+                    sessionStorage.setItem('token', token)
+                    console.log(`token: ${token}`)
+                    localStorage.setItem('token', token)
+                    // 跳转到首页
+                    window.location.href = '../index.html'
                 } else {
                     alert(`登录失败:${result.reason}`)
                 }

@@ -19,6 +19,16 @@ class UserService @Autowired constructor(
         return userRepository.save(userEntity.copy(password = passwordEncoded))
     }
 
+    fun validateUser(name: String, password: String): UserEntity? {
+        val user = userRepository.findByName(name)
+        return if (user != null && passwordUtil.matches(password, user.password)) {
+            user
+        } else {
+            null
+        }
+    }
+
+
     fun getUserById(id: Long): UserEntity? {
         return userRepository.findById(id).orElse(null)
     }

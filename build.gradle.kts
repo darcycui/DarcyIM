@@ -52,6 +52,10 @@ dependencies {
     implementation ("com.alibaba:fastjson:2.0.51")
     // 添加 Spring Security 依赖(包含 BCryptPasswordEncoder)
     implementation("org.springframework.boot:spring-boot-starter-security")
+    // 添加 JWT 依赖
+    implementation("io.jsonwebtoken:jjwt-api:0.13.0")
+    implementation("io.jsonwebtoken:jjwt-impl:0.13.0")
+    implementation("io.jsonwebtoken:jjwt-jackson:0.13.0")
 }
 
 kotlin {

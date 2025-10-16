@@ -1,36 +1,68 @@
 package com.darcy.kotlin.server.demowebsocket.config
 
-import com.darcy.kotlin.server.demowebsocket.utils.PasswordUtil
+import com.darcy.kotlin.server.demowebsocket.config.jwt.JsonAccessDeniedHandler
+import com.darcy.kotlin.server.demowebsocket.config.jwt.JsonAuthenticationEntryPoint
+import com.darcy.kotlin.server.demowebsocket.config.jwt.JwtAuthenticationFilter
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
 @Configuration
 @EnableWebSecurity
 class SecurityConfig {
+    @Autowired
+    private lateinit var jwtAuthenticationFilter: JwtAuthenticationFilter
+
+    @Autowired
+    private lateinit var jsonAuthenticationEntryPoint: JsonAuthenticationEntryPoint
+
+    @Autowired
+    private lateinit var jsonAccessDeniedHandler: JsonAccessDeniedHandler
+
     @Bean
     fun passwordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder()
     }
+
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         return http
             .authorizeHttpRequests {
                 it.requestMatchers(
+                    "/index.html",
+                    "/user/**",
+                    "/ui/**",
                     "/api/users/create",
                     "/api/login",
                 ).permitAll()
                     .anyRequest().authenticated()
             }
-            .httpBasic {
-
-            }
+            // 使用 httpBasic 认证
+//            .httpBasic {}
             .csrf {
-                it.disable() // 通常为API禁用CSRF
+                // 通常API 禁用CSRF
+                it.disable()
+            }
+            .sessionManagement {
+                // 通常API 使用无状态Session
+                it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            }
+            // 添加 JWT 过滤器
+            .addFilterBefore(
+                jwtAuthenticationFilter,
+                UsernamePasswordAuthenticationFilter::class.java
+            )
+            // 添加异常处理配置
+            .exceptionHandling {
+                it.authenticationEntryPoint(jsonAuthenticationEntryPoint)
+                it.accessDeniedHandler(jsonAccessDeniedHandler)
             }
             .build()
     }
