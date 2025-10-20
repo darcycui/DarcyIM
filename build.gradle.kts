@@ -56,6 +56,9 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-api:0.13.0")
     implementation("io.jsonwebtoken:jjwt-impl:0.13.0")
     implementation("io.jsonwebtoken:jjwt-jackson:0.13.0")
+    // 添加 Spring AOP 依赖
+    implementation("org.springframework.boot:spring-boot-starter-aop")
+
 }
 
 kotlin {

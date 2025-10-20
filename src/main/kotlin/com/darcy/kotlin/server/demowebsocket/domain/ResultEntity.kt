@@ -1,6 +1,7 @@
 package com.darcy.kotlin.server.demowebsocket.domain
 
 import com.alibaba.fastjson.JSONObject
+import com.alibaba.fastjson2.annotation.JSONField
 import com.darcy.kotlin.server.demowebsocket.domain.error.ErrorEntiry
 import com.darcy.kotlin.server.demowebsocket.exception.BaseException
 import com.darcy.kotlin.server.demowebsocket.log.DarcyLogger
@@ -20,10 +21,15 @@ import com.darcy.kotlin.server.demowebsocket.log.DarcyLogger
  * }
  */
 class ResultEntity<T>() {
+    // 指定json序列化顺序
+    @JSONField(ordinal = 1)
     var resultcode: Int = 200
-    var reason: String = ""
+    @JSONField(ordinal = 2)
     var result: T? = null
-    var error_code: Int = -1
+    @JSONField(ordinal = 3)
+    var error_code: Int = 0
+    @JSONField(ordinal = 4)
+    var reason: String = ""
 
     companion object {
         fun <T> success(data: T?): ResultEntity<T> {

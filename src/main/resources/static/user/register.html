@@ -22,8 +22,8 @@
         console.log(`name=${name}`);
         const password = formData.get('password');
         console.log(`password=${password}`);
-        // const passwordHash = await sha256(password);
-        const passwordHash = password;
+        const passwordHash = await sha256(password);
+        // const passwordHash = password;
         console.log(`passwordHash=${passwordHash}`);
         const newFormData = new FormData();
         newFormData.append('name', name);
