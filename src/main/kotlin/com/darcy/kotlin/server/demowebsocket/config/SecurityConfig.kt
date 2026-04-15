@@ -41,6 +41,7 @@ class SecurityConfig {
                     "/ui/**",
                     "/api/users/create",
                     "/api/login",
+                    "/api/**",
                 ).permitAll()
                     .anyRequest().authenticated()
             }
