@@ -24,7 +24,7 @@ class CustomUserDetailsService @Autowired constructor(
             DarcyLogger.error("用户名不能为空")
             throw Exception(UserException.USER_NAME_PASSWORD_EMPTY)
         }
-        val user = userRepository.findByName(username)
+        val user = userRepository.findByUserName(username)
         if (user == null) {
             DarcyLogger.error("用户不存在:${username}")
             throw Exception(UserException.USER_NOT_EXIST)
@@ -33,7 +33,7 @@ class CustomUserDetailsService @Autowired constructor(
         user.roles = "USER"
         // 创建 web-security 认证用户 UserDetails
         return User.builder().username(user.username)
-            .password(user.password)
+            .password(user.passwordHash)
             .roles(user.roles)
             .disabled(false)
             .build()

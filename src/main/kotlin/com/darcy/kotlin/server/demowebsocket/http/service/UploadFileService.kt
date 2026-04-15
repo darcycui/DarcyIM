@@ -1,6 +1,6 @@
 package com.darcy.kotlin.server.demowebsocket.http.service
 
-import com.darcy.kotlin.server.demowebsocket.domain.table.UploadFileEntity
+import com.darcy.kotlin.server.demowebsocket.domain.table.media.UploadFile
 import com.darcy.kotlin.server.demowebsocket.http.repository.FileRepository
 import com.darcy.kotlin.server.demowebsocket.http.repository.UploadFileRepository
 import com.darcy.kotlin.server.demowebsocket.log.DarcyLogger
@@ -34,7 +34,7 @@ class UploadFileService @Autowired constructor(
     }
 
     @Transactional
-    fun createItem(userId: Long, name: String, path: String, size: Long, type: String, hash: String): UploadFileEntity {
+    fun createItem(userId: Long, name: String, path: String, size: Long, type: String, hash: String): UploadFile {
         val existItem = uploadFileRepository.findByHash(hash).firstOrNull()
         if (existItem != null) {
             DarcyLogger.warn("数据库已存在:$name 无需写入数据库")
@@ -42,13 +42,13 @@ class UploadFileService @Autowired constructor(
         }
         DarcyLogger.info("数据库不存在:$name 写入数据库.")
         return uploadFileRepository.save(
-            UploadFileEntity(
+            UploadFile(
                 userId = userId, name = name, path = path, size = size, type = type, hash = hash
             )
         )
     }
 
-    fun getItemId(id: Long): UploadFileEntity? {
+    fun getItemId(id: Long): UploadFile? {
         return uploadFileRepository.findById(id).orElse(null)
     }
 
@@ -60,7 +60,7 @@ class UploadFileService @Autowired constructor(
         size: Long,
         type: String,
         hash: String
-    ): UploadFileEntity? {
+    ): UploadFile? {
         val file = getItemId(id)
         if (file != null) {
             file.userId = userId

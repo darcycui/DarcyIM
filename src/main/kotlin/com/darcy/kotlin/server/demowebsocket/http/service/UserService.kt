@@ -1,6 +1,6 @@
 package com.darcy.kotlin.server.demowebsocket.http.service
 
-import com.darcy.kotlin.server.demowebsocket.domain.table.UserEntity
+import com.darcy.kotlin.server.demowebsocket.domain.table.User
 import com.darcy.kotlin.server.demowebsocket.http.repository.UserRepository
 import com.darcy.kotlin.server.demowebsocket.utils.PasswordUtil
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,14 +14,15 @@ class UserService @Autowired constructor(
 ) {
 
     @Transactional
-    fun createUser(userEntity: UserEntity): UserEntity {
-        val passwordEncoded = passwordUtil.encode(userEntity.password)
-        return userRepository.save(userEntity.copy(password = passwordEncoded))
+    fun createUser(userEntity: User): User {
+//        val passwordEncoded = passwordUtil.encode(userEntity.passwordHash)
+//        return userRepository.save(userEntity.copy(password = passwordEncoded))
+        return userRepository.save(userEntity)
     }
 
-    fun validateUser(name: String, password: String): UserEntity? {
-        val user = userRepository.findByName(name)
-        return if (user != null && passwordUtil.matches(password, user.password)) {
+    fun validateUser(name: String, password: String): User? {
+        val user = userRepository.findByUserName(name)
+        return if (user != null && passwordUtil.matches(password, user.passwordHash)) {
             user
         } else {
             null
@@ -29,12 +30,12 @@ class UserService @Autowired constructor(
     }
 
 
-    fun getUserById(id: Long): UserEntity? {
+    fun getUserById(id: Long): User? {
         return userRepository.findById(id).orElse(null)
     }
 
     @Transactional
-    fun updateUser(user: UserEntity): UserEntity? {
+    fun updateUser(user: User): User? {
         val oldUser = getUserById(user.id)
         if (oldUser != null) {
             return userRepository.save(user)
@@ -42,11 +43,11 @@ class UserService @Autowired constructor(
         return null
     }
 
-    fun deleteUser(user: UserEntity) {
+    fun deleteUser(user: User) {
         userRepository.delete(user)
     }
 
-    fun getAllUsers(): List<UserEntity> {
+    fun getAllUsers(): List<User> {
         return userRepository.findAll()
     }
 }

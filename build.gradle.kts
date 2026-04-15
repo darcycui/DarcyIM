@@ -2,9 +2,13 @@ plugins {
     val kotlinVersion = "1.9.25"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
-    id("org.springframework.boot") version "3.1.0"
+    id("org.springframework.boot") version "3.5.12"
     id("io.spring.dependency-management") version "1.1.7"
 //    kotlin("plugin.allopen") version kotlinVersion
+    // 添加 Kotlin JPA 插件
+    kotlin("plugin.jpa") version "1.9.0"
+    // 或者使用 no-arg 插件
+//    kotlin("plugin.noarg") version "1.9.0"
 }
 
 //allOpen {
@@ -44,7 +48,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("javax.websocket:javax.websocket-api:1.1")
     // database
-    // java persistence api ORM框架
+    // java persistence api ORM框架-JPA(Hibernate实现)
     implementation ("org.springframework.boot:spring-boot-starter-data-jpa")
     // mysql
     implementation ("com.mysql:mysql-connector-j:9.4.0")

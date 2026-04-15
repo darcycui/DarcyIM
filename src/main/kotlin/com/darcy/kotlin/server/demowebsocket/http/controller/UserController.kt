@@ -2,7 +2,7 @@ package com.darcy.kotlin.server.demowebsocket.http.controller
 
 import com.darcy.kotlin.server.demowebsocket.api.IUserApi
 import com.darcy.kotlin.server.demowebsocket.domain.ResultEntity
-import com.darcy.kotlin.server.demowebsocket.domain.table.UserEntity
+import com.darcy.kotlin.server.demowebsocket.domain.table.User
 import com.darcy.kotlin.server.demowebsocket.exception.user.UserException
 import com.darcy.kotlin.server.demowebsocket.http.service.UserService
 import com.darcy.kotlin.server.demowebsocket.log.DarcyLogger
@@ -15,7 +15,23 @@ class UserController @Autowired constructor(val userService: UserService) : IUse
     override fun createUser(params: Map<String, Any>): String {
         val name = params["name"]?.toString() ?: ""
         val password = params["password"]?.toString() ?: ""
-        val userEntity = UserEntity(-1, name, password, "")
+        val userEntity = User(
+            username = name,
+            passwordHash = password,
+            nickname = "",
+            avatar = null,
+            phone = null,
+            email = null,
+            gender = null,
+            signature = null,
+            status = User.UserStatus.NORMAL,
+            onlineStatus = User.OnlineStatus.ONLINE,
+            lastActiveTime = null,
+            deletedAt = null,
+            settings = emptyMap(),
+            roles = "",
+            token = ""
+        )
         return ResultEntity.success(userService.createUser(userEntity)).toJsonString()
     }
 
@@ -24,8 +40,7 @@ class UserController @Autowired constructor(val userService: UserService) : IUse
     }
 
     override fun updateUser(params: Map<String, Any>): String {
-        val userBean: UserEntity = UserEntity(
-            id = params["id"].toString().toLong(),
+        val userBean: User = User(
             username = params["name"].toString()
         )
         return kotlin.runCatching {
@@ -42,8 +57,7 @@ class UserController @Autowired constructor(val userService: UserService) : IUse
     }
 
     override fun deleteUser(params: Map<String, Any>): String {
-        val userBean: UserEntity = UserEntity(
-            id = params["id"]?.toString()?.toLong() ?: -1L,
+        val userBean: User = User(
             username = params["name"].toString()
         )
         return kotlin.runCatching {
@@ -60,7 +74,7 @@ class UserController @Autowired constructor(val userService: UserService) : IUse
         }.getOrElse { "default delete error" }
     }
 
-    private fun contains(userBean: UserEntity): Boolean {
+    private fun contains(userBean: User): Boolean {
         val users = userService.getAllUsers()
         return users.isNotEmpty() && users.contains(userBean)
     }
