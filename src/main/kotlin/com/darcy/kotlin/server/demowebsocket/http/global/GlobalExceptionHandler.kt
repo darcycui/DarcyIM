@@ -19,6 +19,6 @@ class GlobalExceptionHandler {
     // 处理其他异常 Exception
     @ExceptionHandler(Exception::class)
     fun handleException(ex: Exception): String {
-        return ResultEntity.error(BaseException.COMMON_EXCEPTION).toJsonString()
+        return ResultEntity.error(BaseException.UNKNOWN_EXCEPTION).toJsonString()
     }
 }

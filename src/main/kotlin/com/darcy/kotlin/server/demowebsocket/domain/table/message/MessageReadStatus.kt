@@ -46,13 +46,13 @@ open class MessageReadStatus(
     open var readTime: LocalDateTime? = null,
 
     @Column(name = "client_type", length = 20)
-    open var clientType: String? = null,
+    open var clientType: String = "",
 
     @Column(name = "device_id", length = 64)
-    open var deviceId: String? = null
+    open var deviceId: String = ""
 ) : BaseEntity() {
 
-    fun markAsRead(time: LocalDateTime = LocalDateTime.now(), clientInfo: String? = null, device: String? = null) {
+    fun markAsRead(time: LocalDateTime = LocalDateTime.now(), clientInfo: String = "", device: String = "") {
         isRead = true
         readTime = time
         clientInfo?.let { clientType = it }

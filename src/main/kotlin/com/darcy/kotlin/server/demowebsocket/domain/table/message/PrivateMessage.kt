@@ -46,7 +46,7 @@ open class PrivateMessage(
 
     @Lob
     @Column(name = "content")
-    open var content: String? = null,
+    open var content: String = "",
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "extra_data", columnDefinition = "json")
@@ -77,16 +77,16 @@ open class PrivateMessage(
     open var recallTime: LocalDateTime? = null,
 
     @Column(name = "reply_to_msg_id", length = 64)
-    open var replyToMsgId: String? = null,
+    open var replyToMsgId: String = "",
 
     @Column(name = "client_msg_id", length = 64)
-    open var clientMsgId: String? = null,
+    open var clientMsgId: String = "",
 
     @Column(name = "client_type", length = 20)
-    open var clientType: String? = null,
+    open var clientType: String = "",
 
     @Column(name = "client_version", length = 20)
-    open var clientVersion: String? = null
+    open var clientVersion: String = ""
 ) : BaseEntity() {
 
     enum class MessageType {

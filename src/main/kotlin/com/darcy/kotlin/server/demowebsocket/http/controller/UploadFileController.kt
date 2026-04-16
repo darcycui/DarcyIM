@@ -54,7 +54,7 @@ class UploadFileController @Autowired constructor(
             return ResultEntity.success(fileEntity).toJsonString()
         } catch (e: Exception) {
             e.printStackTrace()
-            return BaseException.COMMON_EXCEPTION.toJsonString()
+            return BaseException.UNKNOWN_EXCEPTION.toJsonString()
         }
     }
 

@@ -33,7 +33,7 @@ open class GroupMember(
     open var user: User,
 
     @Column(name = "alias", length = 64)
-    open var alias: String? = null,
+    open var alias: String = "",
 
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "role", nullable = false)
@@ -61,7 +61,7 @@ open class GroupMember(
     open var isShowNickname: Boolean = true,
 
     @Column(name = "inviter_id")
-    open var inviterId: Long? = null,
+    open var inviterId: Long = 0L,
 
     @Column(name = "invite_time")
     open var inviteTime: LocalDateTime? = null

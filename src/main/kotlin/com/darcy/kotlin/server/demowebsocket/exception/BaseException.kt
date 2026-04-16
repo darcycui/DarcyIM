@@ -7,7 +7,7 @@ open class BaseException(
     val exceptionMessage: String
 ) : IllegalStateException("exceptionCode=$exceptionCode exceptionMessage=$exceptionMessage") {
     companion object {
-        val COMMON_EXCEPTION = BaseException(101, "未知异常")
+        val UNKNOWN_EXCEPTION = BaseException(101, "未知异常")
     }
 }
 

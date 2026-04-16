@@ -42,7 +42,7 @@ open class GroupMessage(
 
     @Lob
     @Column(name = "content")
-    open var content: String? = null,
+    open var content: String = "",
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "extra_data", columnDefinition = "json")
@@ -68,7 +68,7 @@ open class GroupMessage(
     open var atUsers: List<Long> = emptyList(),
 
     @Column(name = "reply_to_msg_id", length = 64)
-    open var replyToMsgId: String? = null,
+    open var replyToMsgId: String = "",
 
     @Column(name = "read_count", nullable = false)
     open var readCount: Int = 0,

@@ -8,31 +8,71 @@ import com.darcy.kotlin.server.demowebsocket.http.service.UserService
 import com.darcy.kotlin.server.demowebsocket.log.DarcyLogger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.RestController
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @RestController
 class UserController @Autowired constructor(val userService: UserService) : IUserApi {
 
     override fun createUser(params: Map<String, Any>): String {
-        val name = params["name"]?.toString() ?: ""
-        val password = params["password"]?.toString() ?: ""
+        val settings = if (params.containsKey("settings")) {
+            @Suppress("UNCHECKED_CAST")
+            params["settings"] as? Map<String, Any> ?: emptyMap()
+        } else {
+            emptyMap()
+        }
+
+        val createdAt = parseCreatedAt(params["createdAt"])
+        val updatedAt = parseCreatedAt(params["updatedAt"])
+
         val userEntity = User(
-            username = name,
-            passwordHash = password,
-            nickname = "",
-            avatar = null,
-            phone = null,
-            email = null,
-            gender = null,
-            signature = null,
+            username = params["name"]?.toString() ?: "",
+            passwordHash = params["password"]?.toString() ?: "",
+            nickname = params["nickname"]?.toString() ?: "",
+            avatar = params["avatar"]?.toString() ?: "",
+            phone = params["phone"]?.toString() ?: "",
+            email = params["email"]?.toString() ?: "",
+            gender = params["gender"]?.toString() ?: "",
+            signature = params["signature"]?.toString() ?: "",
             status = User.UserStatus.NORMAL,
             onlineStatus = User.OnlineStatus.ONLINE,
-            lastActiveTime = null,
+            lastActiveTime = LocalDateTime.now(),
             deletedAt = null,
-            settings = emptyMap(),
-            roles = "",
+            settings = settings,
+            roles = params["roles"]?.toString() ?: "",
             token = ""
         )
+        userEntity.createdAt = createdAt
+        userEntity.updatedAt = updatedAt
         return ResultEntity.success(userService.createUser(userEntity)).toJsonString()
+    }
+
+    private fun parseCreatedAt(value: Any?): LocalDateTime {
+        return when (value) {
+            is LocalDateTime -> value
+            is String -> parseDateTimeString(value)
+            else -> LocalDateTime.now()
+        }
+    }
+
+
+    private fun parseDateTimeString(dateStr: String): LocalDateTime {
+        val formats = listOf(
+            DateTimeFormatter.ISO_LOCAL_DATE_TIME,
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"),
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"),
+            DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")
+        )
+
+        for (format in formats) {
+            try {
+                return LocalDateTime.parse(dateStr, format)
+            } catch (e: Exception) {
+                continue
+            }
+        }
+
+        throw IllegalArgumentException("无法解析日期时间格式: $dateStr")
     }
 
     override fun getUserById(id: Long): String {

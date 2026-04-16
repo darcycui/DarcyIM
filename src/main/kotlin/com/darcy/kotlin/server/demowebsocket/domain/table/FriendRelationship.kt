@@ -32,17 +32,17 @@ open class FriendRelationship(
     open var friend: User,
 
     @Column(name = "alias", length = 64)
-    open var alias: String? = null,
+    open var alias: String = "",
 
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "relation_status", nullable = false)
     open var relationStatus: RelationStatus = RelationStatus.PENDING,
 
     @Column(name = "source", length = 20)
-    open var source: String? = null,
+    open var source: String = "",
 
     @Column(name = "greeting", length = 200)
-    open var greeting: String? = null,
+    open var greeting: String = "",
 
     @Column(name = "added_at")
     open var addedAt: LocalDateTime? = null,

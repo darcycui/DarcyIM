@@ -1,6 +1,7 @@
 package com.darcy.kotlin.server.demowebsocket.http.service
 
 import com.darcy.kotlin.server.demowebsocket.domain.table.User
+import com.darcy.kotlin.server.demowebsocket.exception.user.UserException
 import com.darcy.kotlin.server.demowebsocket.http.repository.UserRepository
 import com.darcy.kotlin.server.demowebsocket.utils.PasswordUtil
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,20 +16,14 @@ class UserService @Autowired constructor(
 
     @Transactional
     fun createUser(userEntity: User): User {
-//        val passwordEncoded = passwordUtil.encode(userEntity.passwordHash)
-//        return userRepository.save(userEntity.copy(password = passwordEncoded))
-        return userRepository.save(userEntity)
-    }
-
-    fun validateUser(name: String, password: String): User? {
-        val user = userRepository.findByUserName(name)
-        return if (user != null && passwordUtil.matches(password, user.passwordHash)) {
-            user
-        } else {
-            null
+        if (userRepository.existsByUsername(userEntity.username)) {
+            throw UserException.USER_NAME_ALREADY_EXIST
         }
+        val realUser = userEntity.apply {
+            passwordHash = passwordUtil.encode(passwordHash)
+        }
+        return userRepository.save(realUser)
     }
-
 
     fun getUserById(id: Long): User? {
         return userRepository.findById(id).orElse(null)

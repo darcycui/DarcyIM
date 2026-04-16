@@ -29,10 +29,10 @@ open class Group(
     open var groupName: String = "",
 
     @Column(name = "avatar", length = 512)
-    open var avatar: String? = null,
+    open var avatar: String = "",
 
     @Column(name = "description", length = 500)
-    open var description: String? = null,
+    open var description: String = "",
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
@@ -49,17 +49,17 @@ open class Group(
     open var joinType: JoinType = JoinType.VERIFICATION,
 
     @Column(name = "join_question", length = 200)
-    open var joinQuestion: String? = null,
+    open var joinQuestion: String = "",
 
     @Column(name = "join_answer", length = 200)
-    open var joinAnswer: String? = null,
+    open var joinAnswer: String = "",
 
     @Lob
     @Column(name = "announcement")
-    open var announcement: String? = null,
+    open var announcement: String = "",
 
     @Column(name = "announcement_publisher_id")
-    open var announcementPublisherId: Long? = null,
+    open var announcementPublisherId: Long = 0L,
 
     @Column(name = "announcement_publish_time")
     open var announcementPublishTime: LocalDateTime? = null,

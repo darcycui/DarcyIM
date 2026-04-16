@@ -29,10 +29,10 @@ open class FriendRequest(
     open var toUser: User,
 
     @Column(name = "greeting", length = 200)
-    open var greeting: String? = null,
+    open var greeting: String = "",
 
     @Column(name = "remark", length = 200)
-    open var remark: String? = null,
+    open var remark: String = "",
 
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "status", nullable = false)
@@ -42,7 +42,7 @@ open class FriendRequest(
     open var handleTime: LocalDateTime? = null,
 
     @Column(name = "handle_result", length = 50)
-    open var handleResult: String? = null
+    open var handleResult: String = ""
 ) : BaseEntity() {
 
     enum class RequestStatus {
@@ -53,13 +53,13 @@ open class FriendRequest(
         EXPIRED     // 4-已过期
     }
 
-    fun accept(remark: String? = null) {
+    fun accept(remark: String = "") {
         status = RequestStatus.ACCEPTED
         handleTime = LocalDateTime.now()
         handleResult = remark
     }
 
-    fun reject(remark: String? = null) {
+    fun reject(remark: String = "") {
         status = RequestStatus.REJECTED
         handleTime = LocalDateTime.now()
         handleResult = remark

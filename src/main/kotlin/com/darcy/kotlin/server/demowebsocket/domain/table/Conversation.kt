@@ -34,7 +34,7 @@ open class Conversation(
     open var targetId: Long = 0L,
 
     @Column(name = "last_msg_id", length = 64)
-    open var lastMsgId: String? = null,
+    open var lastMsgId: String = "",
 
     @Column(name = "last_msg_content", length = 500)
     open var lastMsgContent: String = "",
@@ -43,7 +43,7 @@ open class Conversation(
     open var lastMsgType: Int? = null,
 
     @Column(name = "last_msg_sender_id")
-    open var lastMsgSenderId: Long? = null,
+    open var lastMsgSenderId: Long = 0L,
 
     @Column(name = "last_msg_time")
     open var lastMsgTime: LocalDateTime? = null,
@@ -61,7 +61,7 @@ open class Conversation(
     open var isTop: Boolean = false,
 
     @Column(name = "draft", length = 1000)
-    open var draft: String? = null,
+    open var draft: String = "",
 
     @Column(name = "draft_time")
     open var draftTime: LocalDateTime? = null,

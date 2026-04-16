@@ -31,19 +31,19 @@ open class User(
     open var nickname: String = "",
 
     @Column(name = "avatar", length = 512)
-    open var avatar: String? = null,
+    open var avatar: String = "",
 
     @Column(name = "phone", length = 20, unique = true)
-    open var phone: String? = null,
+    open var phone: String = "",
 
     @Column(name = "email", length = 100, unique = true)
-    open var email: String? = null,
+    open var email: String = "",
 
     @Column(name = "gender", length = 10)
-    open var gender: String? = null,
+    open var gender: String = "",
 
     @Column(name = "signature", length = 200)
-    open var signature: String? = null,
+    open var signature: String = "",
 
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "status", nullable = false)

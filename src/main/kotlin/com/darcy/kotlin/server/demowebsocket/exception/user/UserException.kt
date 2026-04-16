@@ -12,6 +12,7 @@ class UserException(
         val USER_NAME_PASSWORD_EMPTY = UserException(103, "用户名或密码不能为空")
         val USER_DELETE_ERROR = UserException(104, "用户删除失败")
         val USER_UPDATE_ERROR = UserException(105, "用户更新失败")
+        val USER_NAME_ALREADY_EXIST = UserException(106, "用户名已存在")
     }
 
 }
