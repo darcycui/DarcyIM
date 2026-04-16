@@ -13,6 +13,7 @@ class UserException(
         val USER_DELETE_ERROR = UserException(104, "用户删除失败")
         val USER_UPDATE_ERROR = UserException(105, "用户更新失败")
         val USER_NAME_ALREADY_EXIST = UserException(106, "用户名已存在")
+        val USER_NAME_EMPTY = UserException(106, "用户名不能为空")
     }
 
 }

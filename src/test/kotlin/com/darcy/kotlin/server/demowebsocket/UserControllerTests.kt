@@ -11,7 +11,10 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.util.LinkedMultiValueMap
+import org.springframework.util.MultiValueMap
 import java.time.LocalDateTime
+import java.time.ZoneId
 import kotlin.test.Test
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -48,12 +51,32 @@ class UserControllerTests {
             token = "",
         )
         user.createdAt = LocalDateTime.now()
+        println("createAt: ${user.createdAt}")
         user.updatedAt = LocalDateTime.now()
+        println("updateAt: ${user.updatedAt}")
+
+        val params:  Map<String, String> = mapOf(
+        )
         val result = mockMvc.perform(
             post("http://localhost:$port/api/users/create")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .content(objectMapper.writeValueAsString(user))
-            )
+                .param("username", user.username)
+                .param("password", user.passwordHash)
+                .param("nickname", user.nickname)
+                .param("avatar", user.avatar)
+                .param("phone", user.phone)
+                .param("email", user.email)
+                .param("gender", user.gender)
+                .param("signature", user.signature)
+                .param("status", user.status.name)
+                .param("lastActiveTime", user.lastActiveTime.toString())
+                .param("deletedAt", user.deletedAt.toString())
+                .param("settings", objectMapper.writeValueAsString(user.settings))
+                .param("roles", user.roles)
+                .param("token", user.token)
+                .param("createdAt", user.createdAt.toString())
+                .param("updatedAt", user.updatedAt.toString())
+        )
             .andExpect(status().isOk)
             .andReturn()
             .response

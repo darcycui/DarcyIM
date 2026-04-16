@@ -1,5 +1,6 @@
 package com.darcy.kotlin.server.demowebsocket.config.aop
 
+import com.darcy.kotlin.server.demowebsocket.log.DarcyLogger
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -19,10 +20,7 @@ import org.springframework.web.multipart.MultipartFile
 @Component
 class ControllerLoggingAspect {
 
-    private val logger = LoggerFactory.getLogger(javaClass)
     private val objectMapper = ObjectMapper().apply {
-        // 禁用对字符串的转义
-        configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, false)
         // 美化输出
         enable(SerializationFeature.INDENT_OUTPUT)
         findAndRegisterModules()
@@ -35,29 +33,62 @@ class ControllerLoggingAspect {
         val methodName = "${signature.declaringType.simpleName}.${signature.name}"
 
         val requestHeaders = getRequestHeaders()
+        DarcyLogger.info("REQUEST: $methodName $methodName")
+        DarcyLogger.info("Headers: $requestHeaders")
         val requestBody = if (shouldSkipRequestBody(joinPoint)) {
             "(skipped - contains special parameters)"
         } else {
             getRequestBody()
         }
-        logger.info("REQUEST: $methodName $methodName")
-        logger.info("Headers: $requestHeaders")
-        logger.info("Body: $requestBody")
+        val formParams = getFormParameters()
+        if (formParams.isNotEmpty()) {
+            DarcyLogger.info("Form Params: $formParams")
+        } else {
+            DarcyLogger.info("Body: $requestBody")
+        }
 
         return try {
             // 执行方法
             val result = joinPoint.proceed()
             // 记录响应结果
-            logger.info(
+            DarcyLogger.info(
                 "RESPONSE: $methodName | Result: {} | Time: {}ms",
                 formatJson(result), System.currentTimeMillis() - startTime
             )
             result
         } catch (e: Exception) {
-            logger.error("ERROR in $methodName | {}", e.message)
+            DarcyLogger.error("ERROR in $methodName | {}", e.message)
             throw e
         }
     }
+
+    private fun getFormParameters(): String {
+        return try {
+            val requestAttributes = RequestContextHolder.getRequestAttributes() as? ServletRequestAttributes
+            val request = requestAttributes?.request
+
+            if (request != null) {
+                val contentType = request.contentType ?: ""
+                if (contentType.contains("application/x-www-form-urlencoded", ignoreCase = true)) {
+                    val params = mutableMapOf<String, String>()
+                    val parameterNames = request.parameterNames
+                    while (parameterNames.hasMoreElements()) {
+                        val paramName = parameterNames.nextElement()
+                        val paramValue = request.getParameter(paramName)
+                        params[paramName] = paramValue ?: ""
+                    }
+
+                    if (params.isNotEmpty()) {
+                        return formatJson(params)
+                    }
+                }
+            }
+            ""
+        } catch (e: Exception) {
+            "(error reading form params: ${e.message})"
+        }
+    }
+
 
     private fun shouldSkipRequestBody(joinPoint: ProceedingJoinPoint): Boolean {
         val args = joinPoint.args
@@ -94,12 +125,18 @@ class ControllerLoggingAspect {
         }
     }
 
+
     private fun getRequestBody(): String {
         return try {
             val requestAttributes = RequestContextHolder.getRequestAttributes() as? ServletRequestAttributes
             val request = requestAttributes?.request
 
             if (request != null) {
+                val contentType = request.contentType ?: ""
+                if (contentType.contains("application/x-www-form-urlencoded", ignoreCase = true)) {
+                    return "(form data - see Form Params)"
+                }
+
                 val body = request.inputStream.readBytes().toString(Charsets.UTF_8)
                 if (body.isNotBlank()) {
                     formatJson(body)

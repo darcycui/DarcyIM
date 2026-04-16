@@ -16,6 +16,9 @@ class UserService @Autowired constructor(
 
     @Transactional
     fun createUser(userEntity: User): User {
+        if (userEntity.username.isBlank() or userEntity.username.isEmpty()) {
+            throw UserException.USER_NAME_EMPTY
+        }
         if (userRepository.existsByUsername(userEntity.username)) {
             throw UserException.USER_NAME_ALREADY_EXIST
         }
