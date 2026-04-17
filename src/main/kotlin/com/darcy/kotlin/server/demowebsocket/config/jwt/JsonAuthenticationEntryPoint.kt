@@ -1,6 +1,6 @@
 package com.darcy.kotlin.server.demowebsocket.config.jwt
 
-import com.darcy.kotlin.server.demowebsocket.domain.error.ErrorEntiry
+import com.darcy.kotlin.server.demowebsocket.domain.error.ErrorEntity
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -24,7 +24,7 @@ class JsonAuthenticationEntryPoint : AuthenticationEntryPoint {
         response.characterEncoding = "UTF-8"
         response.status = HttpServletResponse.SC_UNAUTHORIZED
 
-        val errorEntity = ErrorEntiry(
+        val errorEntity = ErrorEntity(
             status = HttpServletResponse.SC_UNAUTHORIZED,
             error = "Unauthorized",
             message = "认证失败: ${authException.message}",

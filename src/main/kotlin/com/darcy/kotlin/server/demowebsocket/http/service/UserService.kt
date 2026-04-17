@@ -19,7 +19,9 @@ class UserService @Autowired constructor(
         if (userEntity.username.isBlank() or userEntity.username.isEmpty()) {
             throw UserException.USER_NAME_EMPTY
         }
-        if (userRepository.existsByUsername(userEntity.username)) {
+        if (userRepository.existsByUsername(userEntity.username) or userRepository.existsByEmail(userEntity.email)
+            or userRepository.existsByPhone(userEntity.phone)
+        ) {
             throw UserException.USER_NAME_ALREADY_EXIST
         }
         val realUser = userEntity.apply {
@@ -28,17 +30,25 @@ class UserService @Autowired constructor(
         return userRepository.save(realUser)
     }
 
-    fun getUserById(id: Long): User? {
-        return userRepository.findById(id).orElse(null)
+    fun getUserById(id: Long): User {
+        return userRepository.findById(id).orElse(User.EMPTY)
+    }
+
+    fun getUserByPhone(phone: String): User {
+        return userRepository.findByPhone(phone) ?: User.EMPTY
+    }
+
+    fun getUserByEmail(email: String): User {
+        return userRepository.findByEmail(email) ?: User.EMPTY
     }
 
     @Transactional
-    fun updateUser(user: User): User? {
+    fun updateUser(user: User): User {
         val oldUser = getUserById(user.id)
-        if (oldUser != null) {
+        if (oldUser != User.EMPTY) {
             return userRepository.save(user)
         }
-        return null
+        return User.EMPTY
     }
 
     fun deleteUser(user: User) {

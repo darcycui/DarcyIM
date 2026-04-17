@@ -15,7 +15,7 @@ interface UserRepository : JpaRepository<User, Long> {
     @Query("select u from User u where u.username = :userName")
     fun findByUserName(userName: String): User?
 
-    fun findByPhone(phone: String): User
+    fun findByPhone(phone: String): User?
 
     fun findByEmail(email: String): User?
 

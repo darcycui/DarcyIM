@@ -11,10 +11,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.util.LinkedMultiValueMap
-import org.springframework.util.MultiValueMap
 import java.time.LocalDateTime
-import java.time.ZoneId
 import kotlin.test.Test
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -32,24 +29,45 @@ class UserControllerTests {
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
+    private val user1 = User(
+        username = "Tom",
+        passwordHash = "123456",
+        nickname = "TomTom",
+        avatar = "https://avatars.githubusercontent.com/u/1020407?v=4",
+        phone = "150999888777",
+        email = "Tom@gmail.com",
+        gender = "male",
+        signature = "I'm a cat",
+        status = UserStatus.NORMAL,
+        lastActiveTime = null,
+        deletedAt = null,
+        settings = emptyMap(),
+        roles = "admin",
+        token = "",
+    )
+
+    private val user2 = User(
+        username = "Jerry",
+        passwordHash = "123456",
+        nickname = "JerryJerry",
+        avatar = "https://avatars.githubusercontent.com/u/1020407?v=4",
+        phone = "138000111222",
+        email = "Jerry@gmail.com",
+        gender = "male",
+        signature = "I'm a mouse",
+        status = UserStatus.NORMAL,
+        lastActiveTime = null,
+        deletedAt = null,
+        settings = emptyMap(),
+        roles = "admin",
+        token = "",
+    )
+
+
     @Test
     fun `test-create-user-mockmvc`() {
-        val user = User(
-            username = "darcy",
-            passwordHash = "123456",
-            nickname = "Darcy",
-            avatar = "https://avatars.githubusercontent.com/u/1020407?v=4",
-            phone = "12345678901",
-            email = "darcy@gmail.com",
-            gender = "male",
-            signature = "I'm a developer",
-            status = UserStatus.NORMAL,
-            lastActiveTime = null,
-            deletedAt = null,
-            settings = emptyMap(),
-            roles = "admin",
-            token = "",
-        )
+//        val user = user1
+        val user = user2
         user.createdAt = LocalDateTime.now()
         println("createAt: ${user.createdAt}")
         user.updatedAt = LocalDateTime.now()

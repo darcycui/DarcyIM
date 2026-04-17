@@ -1,6 +1,6 @@
 package com.darcy.kotlin.server.demowebsocket.domain.error
 
-open class ErrorEntiry(
+open class ErrorEntity(
     val timestamp: Long = System.currentTimeMillis(),
     open var status: Int = 0,
     open var error: String = "",

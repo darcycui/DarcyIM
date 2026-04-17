@@ -67,6 +67,10 @@ open class User(
     @Transient
     open var token: String = ""
 ) : BaseEntity() {
+    companion object {
+        val EMPTY = User()
+    }
+
     enum class UserStatus {
         DISABLED,   // 0-禁用
         NORMAL      // 1-正常

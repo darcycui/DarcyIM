@@ -1,5 +1,9 @@
 package com.darcy.kotlin.server.demowebsocket.exception
 
+/**
+ * 数据库相关异常
+ * 301-399
+ */
 class DBException(
     exceptionCode: Int,
     exceptionMessage: String

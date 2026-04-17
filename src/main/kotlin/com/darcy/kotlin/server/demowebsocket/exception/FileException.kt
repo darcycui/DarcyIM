@@ -1,5 +1,9 @@
 package com.darcy.kotlin.server.demowebsocket.exception
 
+/**
+ * 文件相关异常
+ * 201-299
+ */
 class FileException(
     exceptionCode: Int,
     exceptionMessage: String

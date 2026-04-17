@@ -2,7 +2,7 @@ package com.darcy.kotlin.server.demowebsocket.domain
 
 import com.alibaba.fastjson.JSONObject
 import com.alibaba.fastjson2.annotation.JSONField
-import com.darcy.kotlin.server.demowebsocket.domain.error.ErrorEntiry
+import com.darcy.kotlin.server.demowebsocket.domain.error.ErrorEntity
 import com.darcy.kotlin.server.demowebsocket.exception.BaseException
 import com.darcy.kotlin.server.demowebsocket.log.DarcyLogger
 
@@ -39,8 +39,8 @@ class ResultEntity<T>() {
             }
         }
 
-        fun error(errorEntity: ErrorEntiry): ResultEntity<ErrorEntiry> {
-            return ResultEntity<ErrorEntiry>().apply {
+        fun error(errorEntity: ErrorEntity): ResultEntity<ErrorEntity> {
+            return ResultEntity<ErrorEntity>().apply {
                 this.resultcode = errorEntity.status
                 this.reason = errorEntity.message
                 this.error_code = errorEntity.status
@@ -48,8 +48,8 @@ class ResultEntity<T>() {
             }
         }
 
-        fun error(e: BaseException): ResultEntity<ErrorEntiry> {
-            val errorEntity = ErrorEntiry(
+        fun error(e: BaseException): ResultEntity<ErrorEntity> {
+            val errorEntity = ErrorEntity(
                 status = e.exceptionCode,
                 message = e.exceptionMessage
             )

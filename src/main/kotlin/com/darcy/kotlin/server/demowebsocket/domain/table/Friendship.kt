@@ -18,7 +18,7 @@ import java.time.LocalDateTime
 )
 @DynamicInsert
 @DynamicUpdate
-open class FriendRelationship(
+open class Friendship(
     // 多对一 多个好友关系对应一个用户
     // 设置user_id是外键 关联到用户表 外键名为fk_friend_user
     @ManyToOne(fetch = FetchType.LAZY)

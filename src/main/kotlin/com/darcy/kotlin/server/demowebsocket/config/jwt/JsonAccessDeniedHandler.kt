@@ -1,7 +1,7 @@
 package com.darcy.kotlin.server.demowebsocket.config.jwt
 
 import com.darcy.kotlin.server.demowebsocket.domain.ResultEntity
-import com.darcy.kotlin.server.demowebsocket.domain.error.ErrorEntiry
+import com.darcy.kotlin.server.demowebsocket.domain.error.ErrorEntity
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -25,7 +25,7 @@ class JsonAccessDeniedHandler : AccessDeniedHandler {
         response.characterEncoding = "UTF-8"
         response.status = HttpServletResponse.SC_FORBIDDEN
 
-        val errorEntiry = ErrorEntiry(
+        val errorEntity = ErrorEntity(
             status = HttpServletResponse.SC_FORBIDDEN,
             error = "Forbidden",
             message = "权限不足: ${accessDeniedException.message}",
@@ -33,7 +33,7 @@ class JsonAccessDeniedHandler : AccessDeniedHandler {
         )
 
         response.writer.use {
-            it.write(ObjectMapper().writeValueAsString(ResultEntity.success(errorEntiry)))
+            it.write(ObjectMapper().writeValueAsString(ResultEntity.success(errorEntity)))
         }
     }
 }

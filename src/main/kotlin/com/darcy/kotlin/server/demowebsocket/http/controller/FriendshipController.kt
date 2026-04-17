@@ -1,0 +1,18 @@
+package com.darcy.kotlin.server.demowebsocket.http.controller
+
+import com.darcy.kotlin.server.demowebsocket.api.IFriendshipApi
+import com.darcy.kotlin.server.demowebsocket.domain.ResultEntity
+import com.darcy.kotlin.server.demowebsocket.http.service.FriendshipService
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.web.bind.annotation.RestController
+
+@RestController
+class FriendshipController @Autowired constructor(
+    val friendshipService: FriendshipService
+) : IFriendshipApi {
+    override fun queryFriendships(params: Map<String, Any>): String {
+        val userId = params["userId"] as? Long ?: 0L
+        val result = friendshipService.queryFriendships(userId)
+        return ResultEntity.success(result).toJsonString()
+    }
+}
