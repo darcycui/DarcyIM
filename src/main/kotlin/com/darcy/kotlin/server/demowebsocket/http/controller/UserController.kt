@@ -3,6 +3,7 @@ package com.darcy.kotlin.server.demowebsocket.http.controller
 import com.darcy.kotlin.server.demowebsocket.api.IUserApi
 import com.darcy.kotlin.server.demowebsocket.domain.ResultEntity
 import com.darcy.kotlin.server.demowebsocket.domain.table.User
+import com.darcy.kotlin.server.demowebsocket.exception.ParamsException
 import com.darcy.kotlin.server.demowebsocket.exception.user.UserException
 import com.darcy.kotlin.server.demowebsocket.http.service.UserService
 import com.darcy.kotlin.server.demowebsocket.log.DarcyLogger
@@ -14,7 +15,7 @@ import java.time.LocalDateTime
 @RestController
 class UserController @Autowired constructor(val userService: UserService) : IUserApi {
 
-    override fun createUser(params: Map<String, Any>): String {
+    override fun createUser(params: Map<String, String>): String {
         val settings = if (params.containsKey("settings")) {
             @Suppress("UNCHECKED_CAST")
             params["settings"] as? Map<String, Any> ?: emptyMap()
@@ -28,20 +29,23 @@ class UserController @Autowired constructor(val userService: UserService) : IUse
         DarcyLogger.info("-->updatedAt: $updatedAt")
 
         val userEntity = User(
-            username = params["username"]?.toString() ?: "",
-            passwordHash = params["password"]?.toString() ?: "",
-            nickname = params["nickname"]?.toString() ?: "",
-            avatar = params["avatar"]?.toString() ?: "",
-            phone = params["phone"]?.toString() ?: "",
-            email = params["email"]?.toString() ?: "",
-            gender = params["gender"]?.toString() ?: "",
-            signature = params["signature"]?.toString() ?: "",
+            username = params["username"]
+                ?: throw ParamsException.ParamsNotValid(mapOf("username" to "用户名不能为空")),
+            passwordHash = params["password"]
+                ?: throw ParamsException.ParamsNotValid(mapOf("password" to "密码不能为空")),
+            nickname = params["nickname"] ?: throw ParamsException.ParamsNotValid(mapOf("nickname" to "昵称不能为空")),
+            avatar = params["avatar"] ?: throw ParamsException.ParamsNotValid(mapOf("avatar" to "头像不能为空")),
+            phone = params["phone"] ?: throw ParamsException.ParamsNotValid(mapOf("phone" to "手机号不能为空")),
+            email = params["email"] ?: throw ParamsException.ParamsNotValid(mapOf("email" to "邮箱不能为空")),
+            gender = params["gender"] ?: throw ParamsException.ParamsNotValid(mapOf("gender" to "性别不能为空")),
+            signature = params["signature"]
+                ?: throw ParamsException.ParamsNotValid(mapOf("signature" to "个性签名不能为空")),
             status = User.UserStatus.NORMAL,
             onlineStatus = User.OnlineStatus.ONLINE,
             lastActiveTime = LocalDateTime.now(),
             deletedAt = null,
             settings = settings,
-            roles = params["roles"]?.toString() ?: "",
+            roles = params["roles"] ?: throw ParamsException.ParamsNotValid(mapOf("roles" to "角色不能为空")),
             token = ""
         )
         userEntity.createdAt = createdAt
@@ -49,11 +53,12 @@ class UserController @Autowired constructor(val userService: UserService) : IUse
         return ResultEntity.success(userService.createUser(userEntity)).toJsonString()
     }
 
-    override fun getUserById(id: Long): String {
-        return ResultEntity.success(userService.getUserById(id)).toJsonString()
+    override fun getUserById(id: String): String {
+        val idLong = id.toLongOrNull() ?: throw ParamsException.ParamsNotValid(mapOf("id" to "id不能为空"))
+        return ResultEntity.success(userService.getUserById(idLong)).toJsonString()
     }
 
-    override fun updateUser(params: Map<String, Any>): String {
+    override fun updateUser(params: Map<String, String>): String {
         val userBean: User = User(
             username = params["name"].toString()
         )
@@ -70,7 +75,7 @@ class UserController @Autowired constructor(val userService: UserService) : IUse
         }.getOrElse { "update user error" }
     }
 
-    override fun deleteUser(params: Map<String, Any>): String {
+    override fun deleteUser(params: Map<String, String>): String {
         val userBean: User = User(
             username = params["name"].toString()
         )

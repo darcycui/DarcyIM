@@ -31,8 +31,8 @@ class FriendRequestTests {
         val result = mockMvc.perform(
             post("http://localhost:$port/api/friend-requests/create")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("fromUserPhone", "150999888777")
-                .param("toUserPhone", "138000111222")
+                .param("fromUserId", "13")
+                .param("toUserId", "14")
         )
             .andExpect(status().isOk)
             .andReturn()
@@ -42,7 +42,7 @@ class FriendRequestTests {
     }
 
     @Test
-    fun `test-query-friend-request-by-from-user-phone`() {
+    fun `test-query-friend-request-by-from-user-id`() {
         val result = mockMvc.perform(
             post("http://localhost:$port/api/friend-requests/query/from")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -56,7 +56,7 @@ class FriendRequestTests {
     }
 
     @Test
-    fun `test-query-friend-request-by-to-user-phone`() {
+    fun `test-query-friend-request-by-to-user-id`() {
         val result = mockMvc.perform(
             post("http://localhost:$port/api/friend-requests/query/to")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -73,7 +73,7 @@ class FriendRequestTests {
         val result = mockMvc.perform(
             post("http://localhost:$port/api/friend-requests/accept")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("friendRequestId", "1")
+                .param("friendRequestId", "2")
         ).andExpect(status().isOk)
             .andReturn()
             .response
@@ -86,11 +86,12 @@ class FriendRequestTests {
         val result = mockMvc.perform(
             post("http://localhost:$port/api/friend-requests/reject")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("friendRequestId", "1")
+                .param("friendRequestId", "2")
         ).andExpect(status().isOk)
             .andReturn()
             .response
             .contentAsString
         println("result-->$result")
     }
+
 }

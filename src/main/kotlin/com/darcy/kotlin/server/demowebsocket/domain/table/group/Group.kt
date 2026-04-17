@@ -44,7 +44,7 @@ open class Group(
     @Column(name = "current_members", nullable = false)
     open var currentMembers: Int = 1,
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     @Column(name = "join_type", nullable = false)
     open var joinType: JoinType = JoinType.VERIFICATION,
 
@@ -64,7 +64,7 @@ open class Group(
     @Column(name = "announcement_publish_time")
     open var announcementPublishTime: LocalDateTime? = null,
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     open var status: GroupStatus = GroupStatus.NORMAL,
 

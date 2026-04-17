@@ -7,5 +7,5 @@ import org.springframework.web.bind.annotation.RequestParam
 @RequestMapping("/api")
 interface ILoginApi {
     @PostMapping("/login")
-    fun login(@RequestParam params: Map<String, Any>): String
+    fun login(@RequestParam params: Map<String, String>): String
 }

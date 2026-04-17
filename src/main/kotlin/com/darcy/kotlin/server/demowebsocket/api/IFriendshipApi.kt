@@ -6,6 +6,6 @@ import org.springframework.web.bind.annotation.RequestParam
 
 @RequestMapping("/api/friendships")
 interface IFriendshipApi {
-    @PostMapping("/query")
-    fun queryFriendships(@RequestParam params: Map<String, Any>): String
+    @PostMapping("/query/all")
+    fun queryFriendships(@RequestParam params: Map<String, String>): String
 }

@@ -13,6 +13,15 @@ class FriendshipService @Autowired constructor(
     val userService: UserService
 ) {
     @Transactional
+    fun createFriendship(userId: Long, friendId: Long): List<Friendship> {
+        val user = userService.getUserById(userId)
+        val friend = userService.getUserById(friendId)
+        val result1 = friendshipRepository.save(Friendship(user, friend))
+        val result2 = friendshipRepository.save(Friendship(friend, user))
+        return listOf(result1, result2)
+    }
+
+    @Transactional
     fun queryFriendships(userId: Long): List<User> {
         val friends = friendshipRepository.findByUserId(userId)
         return friends.map {
@@ -21,11 +30,8 @@ class FriendshipService @Autowired constructor(
     }
 
     @Transactional
-    fun createFriendship(userId: Long, friendId: Long): List<Friendship> {
-        val user = userService.getUserById(userId)
-        val friend = userService.getUserById(friendId)
-        val result1 = friendshipRepository.save(Friendship(user, friend))
-        val result2 = friendshipRepository.save(Friendship(friend, user))
-        return listOf(result1, result2)
+    fun isFriend(userId: Long, friendId: Long): Boolean {
+        val result = friendshipRepository.findByUserIdAndFriendId(userId, friendId)
+        return result != null
     }
 }

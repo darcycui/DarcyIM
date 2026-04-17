@@ -5,22 +5,21 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
-import java.util.Objects
 
 @RequestMapping("/api/users")
 interface IUserApi {
 
     @PostMapping("/create")
-    fun createUser(@RequestParam params: Map<String, Any>): String
+    fun createUser(@RequestParam params: Map<String, String>): String
 
     @PostMapping("/update")
-    fun updateUser(@RequestParam params: Map<String, Any>): String
+    fun updateUser(@RequestParam params: Map<String, String>): String
 
     @PostMapping("/delete")
-    fun deleteUser(@RequestParam params: Map<String, Any>): String
+    fun deleteUser(@RequestParam params: Map<String, String>): String
 
     @GetMapping("/{id}")
-    fun getUserById(@PathVariable id: Long): String
+    fun getUserById(@PathVariable id: String): String
 
     @GetMapping("/all")
     fun getAllUsers(): String

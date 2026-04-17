@@ -66,8 +66,8 @@ class UserControllerTests {
 
     @Test
     fun `test-create-user-mockmvc`() {
-//        val user = user1
-        val user = user2
+        val user = user1
+//        val user = user2
         user.createdAt = LocalDateTime.now()
         println("createAt: ${user.createdAt}")
         user.updatedAt = LocalDateTime.now()

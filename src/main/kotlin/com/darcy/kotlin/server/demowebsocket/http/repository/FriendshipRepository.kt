@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface FriendshipRepository : JpaRepository<Friendship, Long> {
     fun findByUserId(userId: Long): List<Friendship>
+
+    fun findByUserIdAndFriendId(userId: Long, friendId: Long): Friendship?
 }

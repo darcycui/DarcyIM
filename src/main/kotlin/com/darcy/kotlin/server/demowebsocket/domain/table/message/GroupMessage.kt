@@ -36,7 +36,7 @@ open class GroupMessage(
     @JoinColumn(name = "sender_id", nullable = false, foreignKey = ForeignKey(name = "fk_group_message_sender"))
     open var sender: User,
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     @Column(name = "msg_type", nullable = false)
     open var msgType: MessageType = MessageType.TEXT,
 

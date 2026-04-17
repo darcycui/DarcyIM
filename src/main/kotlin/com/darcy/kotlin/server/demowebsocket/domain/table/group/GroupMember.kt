@@ -35,7 +35,7 @@ open class GroupMember(
     @Column(name = "alias", length = 64)
     open var alias: String = "",
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     open var role: MemberRole = MemberRole.MEMBER,
 

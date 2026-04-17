@@ -2,6 +2,7 @@ package com.darcy.kotlin.server.demowebsocket.http.controller
 
 import com.darcy.kotlin.server.demowebsocket.api.IFriendRequestApi
 import com.darcy.kotlin.server.demowebsocket.domain.ResultEntity
+import com.darcy.kotlin.server.demowebsocket.exception.ParamsException
 import com.darcy.kotlin.server.demowebsocket.exception.user.UserException
 import com.darcy.kotlin.server.demowebsocket.http.service.FriendRequestService
 import com.darcy.kotlin.server.demowebsocket.http.service.FriendshipService
@@ -11,45 +12,60 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class FriendRequestController @Autowired constructor(
     val friendRequestService: FriendRequestService,
-    val friendshipService: FriendshipService
+    val friendshipService: FriendshipService,
 ) : IFriendRequestApi {
-    override fun createFriendRequest(params: Map<String, Any>): String {
-        val result = friendRequestService.createFriendRequest(params)
+    override fun createFriendRequest(params: Map<String, String>): String {
+        val fromUserId = params["fromUserId"]?.toLongOrNull() ?: 0L
+        val toUserId = params["toUserId"]?.toLongOrNull() ?: 0L
+        if (fromUserId == 0L || toUserId == 0L) {
+            throw ParamsException.ParamsNotValid(
+                mapOf(
+                    "fromUserId" to "发起人ID不能为空",
+                    "toUserId" to "目标人ID不能为空"
+                )
+            )
+        }
+        val result = friendRequestService.createFriendRequest(fromUserId, toUserId, params)
         return ResultEntity.success(result).toJsonString()
     }
 
-    override fun acceptFriendRequest(params: Map<String, Any>): String {
-        val friendRequestId = (params["friendRequestId"] as? String)?.toLongOrNull() ?: 0L
-        val friendRequest = friendRequestService.findFriendRequestById(friendRequestId)
-        friendRequest?.let {
-            val isAccepted = friendRequestService.acceptFriendRequest(friendRequestId)
-            if (!isAccepted) {
-                throw UserException.FRIEND_REQUEST_ACCEPT_FAILED
-            }
-            val result = friendshipService.createFriendship(it.fromUser.id, it.toUser.id)
-            return ResultEntity.success(result).toJsonString()
-        }?: run {
-            throw UserException.FRIEND_REQUEST_NOT_EXIST
-        }
+    override fun acceptFriendRequest(params: Map<String, String>): String {
+        val friendRequestId = params["friendRequestId"]?.toLongOrNull() ?: throw ParamsException.ParamsNotValid(
+            mapOf("friendRequestId" to "好友请求ID不能为空")
+        )
+        val result = friendRequestService.acceptFriendRequest(friendRequestId)
+        return ResultEntity.success(result).toJsonString()
     }
 
-    override fun rejectFriendRequest(params: Map<String, Any>): String {
-        TODO("Not yet implemented")
+    override fun rejectFriendRequest(params: Map<String, String>): String {
+        val friendRequestId = params["friendRequestId"]?.toLongOrNull() ?: throw ParamsException.ParamsNotValid(
+            mapOf("friendRequestId" to "好友请求ID不能为空")
+        )
+        val result = friendRequestService.rejectFriendRequest(friendRequestId)
+        return ResultEntity.success(result).toJsonString()
     }
 
-    override fun ignoreFriendRequest(params: Map<String, Any>): String {
-        TODO("Not yet implemented")
+    override fun ignoreFriendRequest(params: Map<String, String>): String {
+        val friendRequestId = params["friendRequestId"]?.toLongOrNull() ?: throw ParamsException.ParamsNotValid(
+            mapOf("friendRequestId" to "好友请求ID不能为空")
+        )
+        val result = friendRequestService.ignoreFriendRequest(friendRequestId)
+        return ResultEntity.success(result).toJsonString()
     }
 
-    override fun queryFriendRequestByFromUser(params: Map<String, Any>): String {
-        val fromUserId = params["fromUserId"] as? Long ?: 0L
+    override fun queryFriendRequestByFromUser(params: Map<String, String>): String {
+        val fromUserId = params["fromUserId"]?.toLongOrNull() ?: throw ParamsException.ParamsNotValid(
+            mapOf("fromUserId" to "用户ID不能为空")
+        )
         val result = friendRequestService.queryByFromUserPhone(fromUserId)
         return ResultEntity.success(result).toJsonString()
     }
 
-    override fun queryFriendRequestByToUser(params: Map<String, Any>): String {
-        val toUserPhone = params["toUserPhone"] as? String ?: ""
-        val result = friendRequestService.queryByToUserPhone(toUserPhone)
+    override fun queryFriendRequestByToUser(params: Map<String, String>): String {
+        val toUserId = params["toUserId"]?.toLongOrNull() ?: throw ParamsException.ParamsNotValid(
+            mapOf("toUserId" to "用户ID不能为空")
+        )
+        val result = friendRequestService.queryByToUserId(toUserId)
         return ResultEntity.success(result).toJsonString()
     }
 }

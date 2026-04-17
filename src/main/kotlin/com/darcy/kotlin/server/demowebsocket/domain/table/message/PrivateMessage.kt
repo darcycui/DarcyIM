@@ -40,7 +40,7 @@ open class PrivateMessage(
     @JoinColumn(name = "receiver_id", nullable = false, foreignKey = ForeignKey(name = "fk_private_message_receiver"))
     open var receiver: User,
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     @Column(name = "msg_type", nullable = false)
     open var msgType: MessageType = MessageType.TEXT,
 

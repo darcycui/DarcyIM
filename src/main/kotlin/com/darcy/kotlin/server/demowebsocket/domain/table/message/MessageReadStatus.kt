@@ -32,7 +32,7 @@ open class MessageReadStatus(
     @JoinColumn(name = "user_id", nullable = false, foreignKey = ForeignKey(name = "fk_message_read_status_user"))
     open var user: User,
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     @Column(name = "conversation_type", nullable = false)
     open var conversationType: Conversation.ConversationType,
 

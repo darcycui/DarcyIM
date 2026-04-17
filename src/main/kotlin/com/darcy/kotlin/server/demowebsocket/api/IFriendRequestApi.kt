@@ -7,20 +7,20 @@ import org.springframework.web.bind.annotation.RequestParam
 @RequestMapping("/api/friend-requests")
 interface IFriendRequestApi {
     @PostMapping("/create")
-    fun createFriendRequest(@RequestParam params: Map<String, Any>): String
+    fun createFriendRequest(@RequestParam params: Map<String, String>): String
 
     @PostMapping("/accept")
-    fun acceptFriendRequest(@RequestParam params: Map<String, Any>): String
+    fun acceptFriendRequest(@RequestParam params: Map<String, String>): String
 
     @PostMapping("/reject")
-    fun rejectFriendRequest(@RequestParam params: Map<String, Any>): String
+    fun rejectFriendRequest(@RequestParam params: Map<String, String>): String
 
     @PostMapping("/ignore")
-    fun ignoreFriendRequest(@RequestParam params: Map<String, Any>): String
+    fun ignoreFriendRequest(@RequestParam params: Map<String, String>): String
 
     @PostMapping("/query/from")
-    fun queryFriendRequestByFromUser(@RequestParam params: Map<String, Any>): String
+    fun queryFriendRequestByFromUser(@RequestParam params: Map<String, String>): String
 
     @PostMapping("/query/to")
-    fun queryFriendRequestByToUser(@RequestParam params: Map<String, Any>): String
+    fun queryFriendRequestByToUser(@RequestParam params: Map<String, String>): String
 }

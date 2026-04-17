@@ -34,7 +34,7 @@ open class Friendship(
     @Column(name = "alias", length = 64)
     open var alias: String = "",
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     @Column(name = "relation_status", nullable = false)
     open var relationStatus: RelationStatus = RelationStatus.PENDING,
 

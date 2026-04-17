@@ -34,7 +34,7 @@ open class FriendRequest(
     @Column(name = "remark", length = 200)
     open var remark: String = "",
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     open var status: RequestStatus = RequestStatus.PENDING,
 

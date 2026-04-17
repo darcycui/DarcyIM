@@ -45,11 +45,11 @@ open class User(
     @Column(name = "signature", length = 200)
     open var signature: String = "",
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     open var status: UserStatus = UserStatus.NORMAL,
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     @Column(name = "online_status", nullable = false)
     open var onlineStatus: OnlineStatus = OnlineStatus.OFFLINE,
 
@@ -69,6 +69,10 @@ open class User(
 ) : BaseEntity() {
     companion object {
         val EMPTY = User()
+    }
+
+    fun isEmpty(): Boolean {
+        return this == EMPTY
     }
 
     enum class UserStatus {

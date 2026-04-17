@@ -23,10 +23,10 @@ import java.time.LocalDateTime
 open class Conversation(
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false, foreignKey = ForeignKey(name = "fk_conversation_user"))
     open var user: User,
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     @Column(name = "conversation_type", nullable = false)
     open var conversationType: ConversationType,
 
@@ -77,7 +77,7 @@ open class Conversation(
 
         companion object {
             fun fromCode(code: Int): ConversationType {
-                return values().find { it.code == code } ?: PRIVATE
+                return entries.find { it.code == code } ?: PRIVATE
             }
         }
     }

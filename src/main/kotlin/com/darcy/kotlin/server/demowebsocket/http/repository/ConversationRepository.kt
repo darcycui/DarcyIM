@@ -17,7 +17,7 @@ interface ConversationRepository : JpaRepository<Conversation, Long> {
         userId: Long,
         conversationType: Conversation.ConversationType,
         targetId: Long
-    ): Optional<Conversation>
+    ): Conversation?
 
     fun findByUserIdOrderByLastMsgTimeDesc(userId: Long): List<Conversation>
 
