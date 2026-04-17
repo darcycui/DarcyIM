@@ -1,16 +1,19 @@
 package com.darcy.kotlin.server.demowebsocket.http.service
 
 import com.darcy.kotlin.server.demowebsocket.domain.table.Conversation
+import com.darcy.kotlin.server.demowebsocket.exception.ConversationException
 import com.darcy.kotlin.server.demowebsocket.exception.user.UserException
 import com.darcy.kotlin.server.demowebsocket.http.repository.ConversationRepository
+import com.darcy.kotlin.server.demowebsocket.utils.IdGenerator
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
 class ConversationService @Autowired constructor(
-    val conversationRepository: ConversationRepository,
-    val userService: UserService,
-    private val friendshipService: FriendshipService
+    private val conversationRepository: ConversationRepository,
+    private val userService: UserService,
+    private val friendshipService: FriendshipService,
+    private val idGenerator: IdGenerator
 ) {
     fun createConversation(
         userId: Long,
@@ -30,7 +33,9 @@ class ConversationService @Autowired constructor(
         if (existingConversation != null) {
             return existingConversation
         }
+        val conversationId = idGenerator.nextConversationId()
         val conversation = Conversation(
+            conversationId = conversationId,
             user = user,
             conversationType = conversationType,
             targetId = targetId
@@ -61,7 +66,11 @@ class ConversationService @Autowired constructor(
         return conversationRepository.findByUserId(userId)
     }
 
-    fun queryOneConversation(conversationId: Long): Conversation? {
-        return conversationRepository.findById(conversationId).orElse(null)
+    fun queryOneConversation(conversationId: Long): Conversation {
+        val conversation = conversationRepository.findById(conversationId)
+        if (conversation.isEmpty) {
+            throw ConversationException.CONVERSATION_NOT_EXIST
+        }
+        return conversation.get()
     }
 }

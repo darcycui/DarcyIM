@@ -38,7 +38,7 @@ class FriendRequestService @Autowired constructor(
 
     fun findFriendRequestById(id: Long): FriendRequest {
         val friendRequest = friendRequestRepository.findById(id)
-        if (!friendRequest.isPresent) {
+        if (friendRequest.isEmpty) {
             throw UserException.FRIEND_REQUEST_NOT_EXIST
         }
         return friendRequest.get()

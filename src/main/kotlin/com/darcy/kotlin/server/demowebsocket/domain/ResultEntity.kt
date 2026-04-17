@@ -24,10 +24,13 @@ class ResultEntity<T>() {
     // 指定json序列化顺序
     @JSONField(ordinal = 1)
     var resultcode: Int = 200
+
     @JSONField(ordinal = 2)
     var result: T? = null
+
     @JSONField(ordinal = 3)
     var error_code: Int = 0
+
     @JSONField(ordinal = 4)
     var reason: String = ""
 
@@ -58,6 +61,8 @@ class ResultEntity<T>() {
     }
 
     fun toJsonString(): String {
-        return JSONObject.toJSONString(this).also { DarcyLogger.warn(it) }
+        return JSONObject.toJSONString(this).also {
+//            DarcyLogger.warn(it)
+        }
     }
 }

@@ -21,6 +21,8 @@ import java.time.LocalDateTime
 
 @DynamicUpdate
 open class Conversation(
+    @Column(name = "conversation_id", nullable = false, length = 64, unique = true)
+    open var conversationId: String = "",
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, foreignKey = ForeignKey(name = "fk_conversation_user"))
