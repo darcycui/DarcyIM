@@ -100,17 +100,8 @@ class WebSocketGroupTests {
             val topicSubscription = session.subscribe("/topic/message", object : StompSessionHandlerAdapter() {
                 override fun handleFrame(headers: StompHeaders, payload: Any?) {
                     println("Received Topic message-->: $payload")
+                    // 收到消息后 调用 messageLatch 的 countDown
                     messageLatch.countDown()
-                }
-
-                override fun getPayloadType(headers: StompHeaders): Type {
-                    return PrivateMessageDTO::class.java
-                }
-            })
-
-            val queueSubscription = session.subscribe("/user/queue/message", object : StompSessionHandlerAdapter() {
-                override fun handleFrame(headers: StompHeaders, payload: Any?) {
-                    println("Received Queue message-->: $payload")
                 }
 
                 override fun getPayloadType(headers: StompHeaders): Type {
@@ -148,7 +139,6 @@ class WebSocketGroupTests {
 
             // 7. 清理
             topicSubscription.unsubscribe()
-            queueSubscription.unsubscribe()
             session.disconnect()
             println("✓ Disconnected")
 

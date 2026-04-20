@@ -121,6 +121,7 @@ class WebSocketPrivateTests {
             val queueSubscription2 = session2.subscribe("/user/queue/message", object : StompSessionHandlerAdapter() {
                 override fun handleFrame(headers: StompHeaders, payload: Any?) {
                     println("2--Received Queue message-->: $payload")
+                    // 收到消息后 调用 messageLatch 的 countDown
                     messageLatch.countDown()
                 }
 
