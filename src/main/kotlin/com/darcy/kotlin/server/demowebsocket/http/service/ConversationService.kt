@@ -20,11 +20,13 @@ class ConversationService @Autowired constructor(
         conversationType: Conversation.ConversationType,
         targetId: Long
     ): Conversation {
+        // 业务参数校验
         val user = userService.getUserById(userId)
         if (user.isEmpty()) {
             throw UserException.USER_NOT_EXIST
         }
         validateTarget(userId, conversationType, targetId)
+        // 检查会话是否存在
         val existingConversation = conversationRepository.findByUserIdAndConversationTypeAndTargetId(
             userId,
             conversationType,

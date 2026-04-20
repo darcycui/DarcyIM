@@ -45,7 +45,9 @@ class PrivateMessageService @Autowired constructor(
         if (conversation.conversationType != Conversation.ConversationType.PRIVATE) {
             throw ConversationException.CONVERSATION_TYPE_ERROR
         }
-        if (conversation.user.id != senderId || conversation.targetId != receiverId) {
+        val isSenderValidate = conversation.user.id == senderId && conversation.targetId == receiverId
+        val isReceiverValidate = conversation.targetId == senderId && conversation.user.id == receiverId
+        if (isSenderValidate.not() && isReceiverValidate.not()) {
             throw ConversationException.CONVERSATION_NOT_EXIST
         }
         if (!friendshipService.isFriend(senderId, receiverId)) {

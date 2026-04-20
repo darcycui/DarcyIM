@@ -13,6 +13,7 @@ class ConversationController @Autowired constructor(
     val conversationService: ConversationService
 ) : IConversationApi {
     override fun createConversation(params: Map<String, String>): String {
+        // http 参数校验
         val userId = params["userId"]?.toLongOrNull() ?: throw ParamsException.ParamsNotValid(
             mapOf("userId" to "用户ID不能为空")
         )
@@ -24,7 +25,9 @@ class ConversationController @Autowired constructor(
         } ?: throw ParamsException.ParamsNotValid(
             mapOf("conversationType" to "会话类型不能为空")
         )
+        // 调用 Service 完成业务逻辑
         val result = conversationService.createConversation(userId, conversationType, targetId)
+        // 返回 json结果
         return ResultEntity.success(result).toJsonString()
     }
 
