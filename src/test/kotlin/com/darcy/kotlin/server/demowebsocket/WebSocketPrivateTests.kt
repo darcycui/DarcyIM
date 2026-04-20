@@ -1,5 +1,6 @@
 package com.darcy.kotlin.server.demowebsocket
 
+import com.darcy.kotlin.server.demowebsocket.domain.dto.message.PrivateMessageDTO
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -16,15 +17,17 @@ import org.springframework.web.socket.WebSocketHttpHeaders
 import org.springframework.web.socket.client.standard.StandardWebSocketClient
 import org.springframework.web.socket.messaging.WebSocketStompClient
 import org.springframework.web.socket.sockjs.client.SockJsClient
-import org.springframework.web.socket.sockjs.client.Transport
 import org.springframework.web.socket.sockjs.client.WebSocketTransport
+import java.lang.reflect.Type
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
+import kotlin.test.assertEquals
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-class WebSocketTests {
+class WebSocketPrivateTests {
 
     // 注入随机端口
     @LocalServerPort
@@ -34,37 +37,37 @@ class WebSocketTests {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
-    private fun createJwtToken(): String {
+    private fun createJwtToken1(): String {
         return "test1"
     }
+    private fun createJwtToken2(): String {
+        return "test2"
+    }
 
-    // STOMP 是 Simple Text Oriented Messaging Protocol
-    // 简单文本定向消息协议。
-    @Test
-    fun `test-connect-websocket-stomp`() {
+    private fun createWebSocketStompClientSession(jwtToken: String): StompSession {
         // 1. 创建客户端
         val transports = listOf(WebSocketTransport(StandardWebSocketClient()))
         val sockJsClient = SockJsClient(transports)
         val stompClient = WebSocketStompClient(sockJsClient)
-
         // 设置消息转换器
         val converter = MappingJackson2MessageConverter()
         stompClient.messageConverter = converter
 
         // 2. 准备头部
         val webSocketHeaders = WebSocketHttpHeaders()
-        webSocketHeaders["Authorization"] = createJwtToken()
-
+        webSocketHeaders["Authorization"] = jwtToken
         val stompHeaders = StompHeaders()
         // 可以设置 STOMP 特定的头部
-        stompHeaders["Authorization"] = createJwtToken()
-
+        stompHeaders["Authorization"] = jwtToken
         val url = "http://localhost:$port/stomp-ws"  // 注意 SockJS 用 http
-
         val sessionFuture = CompletableFuture<StompSession>()
 
         // 3. 使用正确的 connectAsync 重载
         stompClient.connectAsync(url, webSocketHeaders, stompHeaders, object : StompSessionHandlerAdapter() {
+//            override fun getPayloadType(headers: StompHeaders): Type {
+//                return PrivateMessageDTO::class.java
+//            }
+
             override fun afterConnected(session: StompSession, connectedHeaders: StompHeaders) {
                 println("Connected! Session: ${session.sessionId}")
                 println("Connected headers: $connectedHeaders")
@@ -86,31 +89,84 @@ class WebSocketTests {
             }
         })
 
+        val session = sessionFuture.get(5, TimeUnit.SECONDS)
+        return session
+    }
+
+    // STOMP 是 Simple Text Oriented Messaging Protocol
+    // 简单文本定向消息协议。
+    @Test
+    fun `test-private-websocket-stomp`() {
+        // 创建两个会话
+        val session1 = createWebSocketStompClientSession(createJwtToken1())
+        val session2 = createWebSocketStompClientSession(createJwtToken2())
+
         // 4. 等待连接
         try {
-            val session = sessionFuture.get(5, TimeUnit.SECONDS)
+
+            // 使用 CountDownLatch 等待消息接收
+            val messageLatch = CountDownLatch(1)
 
             // 5. 订阅主题
-            val subscription = session.subscribe("/topic/messages", object : StompSessionHandlerAdapter() {
+            val queueSubscription = session1.subscribe("/user/queue/message", object : StompSessionHandlerAdapter() {
                 override fun handleFrame(headers: StompHeaders, payload: Any?) {
-                    println("Received message: $payload")
+                    println("1--Received Queue message-->: $payload")
+                }
+
+                override fun getPayloadType(headers: StompHeaders): Type {
+                    return PrivateMessageDTO::class.java
+                }
+            })
+
+            val queueSubscription2 = session2.subscribe("/user/queue/message", object : StompSessionHandlerAdapter() {
+                override fun handleFrame(headers: StompHeaders, payload: Any?) {
+                    println("2--Received Queue message-->: $payload")
+                    messageLatch.countDown()
+                }
+
+                override fun getPayloadType(headers: StompHeaders): Type {
+                    return PrivateMessageDTO::class.java
                 }
             })
 
             // 6. 发送消息
             val sendHeaders = StompHeaders().apply {
-                destination = "/app/send"
+                destination = "/app/sendPrivateMessage"
             }
-            session.send(sendHeaders, "Test message")
+            val privateMessage = PrivateMessageDTO(
+                msgId = "",
+                senderId = 1,
+                senderName = "test1",
+                receiverId = 2,
+                receiverName = "test2",
+                content = "测试消息1",
+                msgType = "TEXT",
+                isRead = false,
+                isRecalled = false
+            )
+            session1.send(sendHeaders, privateMessage)
 
-            Thread.sleep(2000)
+            // 等待
+            Thread.sleep(3_000)
+            // 等待消息接收（最多等待 5 秒）
+            val received = messageLatch.await(5, TimeUnit.SECONDS)
+            if (received) {
+                println("✓ Test passed: Message received successfully")
+            } else {
+                println("✗ Test failed: Message not received within timeout")
+            }
+            assertEquals(true, received, "接收消息错误")
 
             // 7. 清理
-            subscription.unsubscribe()
-            session.disconnect()
+            queueSubscription.unsubscribe()
+            queueSubscription2.unsubscribe()
+            session1.disconnect()
+            session2.disconnect()
+            println("✓ Disconnected")
 
         } catch (e: TimeoutException) {
-            println("Connection timeout")
+            e.printStackTrace()
+            println("✗ Connection timeout")
         }
     }
 

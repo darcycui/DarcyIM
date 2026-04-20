@@ -86,9 +86,6 @@
       const socket = new SockJS(`${baseUrl}/stomp-ws`, null, {
             transports: ['websocket', 'xhr-polling']
         });
-      // const socket = new SockJS(`${baseUrl}/chat`, null, {
-      //       transports: ['websocket', 'xhr-polling']
-      //   });
       stompClient = Stomp.over(socket);
       stompClient.debug = null;
 
@@ -98,11 +95,11 @@
           updateStatus('connected');
           appendMessage('系统', '连接成功，等待消息...', 'system');
 
-          stompClient.subscribe(`/user/queue/msg`, function (message) {
+          stompClient.subscribe(`/user/queue/message`, function (message) {
             appendMessage('服务器-user', message.body, 'incoming');
           });
 
-          stompClient.subscribe('/topic/messages', function (message) {
+          stompClient.subscribe('/topic/message', function (message) {
               appendMessage('服务器-topic', message.body, 'incoming');
           });
 
@@ -122,7 +119,7 @@
     function sendMessage() {
         const message = messageInput.value.trim();
         if (message && stompClient?.connected) {
-            stompClient.send('/app/sendMessage', {}, message);
+            stompClient.send('/app/sendGroupMessage', {}, message);
             appendMessage('我', message, 'outgoing');
             messageInput.value = '';
         }
@@ -132,7 +129,7 @@
         const token = tokenInput.value.trim();
         const message = messageInput.value.trim();
         if (message && stompClient?.connected) {
-          stompClient.send('/app/chat', {},
+          stompClient.send('/app/sendPrivateMessage', {},
               JSON.stringify({'from': token, 'text': message, 'recipient': 'test2'}));
           appendMessage('我', message, 'outgoing');
           messageInput.value = '';
