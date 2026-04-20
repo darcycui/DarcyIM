@@ -1,10 +1,10 @@
 package com.darcy.kotlin.server.demowebsocket.domain
 
-import com.alibaba.fastjson.JSONObject
+import com.alibaba.fastjson2.JSONObject
+import com.alibaba.fastjson2.JSONWriter
 import com.alibaba.fastjson2.annotation.JSONField
 import com.darcy.kotlin.server.demowebsocket.domain.error.ErrorEntity
 import com.darcy.kotlin.server.demowebsocket.exception.BaseException
-import com.darcy.kotlin.server.demowebsocket.log.DarcyLogger
 
 /**
  * {
@@ -20,7 +20,7 @@ import com.darcy.kotlin.server.demowebsocket.log.DarcyLogger
  *     "error_code": 0
  * }
  */
-class ResultEntity<T>() {
+open class ResultEntity<T>() {
     // 指定json序列化顺序
     @JSONField(ordinal = 1)
     var resultcode: Int = 200
@@ -44,7 +44,7 @@ class ResultEntity<T>() {
 
         fun error(errorEntity: ErrorEntity): ResultEntity<ErrorEntity> {
             return ResultEntity<ErrorEntity>().apply {
-                this.resultcode = errorEntity.status
+                this.resultcode = 200
                 this.reason = errorEntity.message
                 this.error_code = errorEntity.status
                 this.result = errorEntity
@@ -53,16 +53,24 @@ class ResultEntity<T>() {
 
         fun error(e: BaseException): ResultEntity<ErrorEntity> {
             val errorEntity = ErrorEntity(
-                status = e.exceptionCode,
-                message = e.exceptionMessage
+//                status = e.exceptionCode,
+//                message = e.exceptionMessage
             )
             return error(errorEntity)
         }
     }
 
     fun toJsonString(): String {
-        return JSONObject.toJSONString(this).also {
+        return JSONObject.toJSONString(
+            this,
+//            JSONWriter.Feature.ReferenceDetection
+        ).also {
 //            DarcyLogger.warn(it)
         }
     }
+
+    override fun toString(): String {
+        return "ResultEntity(resultcode=$resultcode, result=$result, error_code=$error_code, reason='$reason')"
+    }
+
 }

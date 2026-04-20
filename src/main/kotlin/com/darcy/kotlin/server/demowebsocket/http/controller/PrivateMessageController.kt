@@ -26,6 +26,12 @@ class PrivateMessageController @Autowired constructor(
     }
 
     override fun queryMessagesByConversation(params: Map<String, String>): String {
-        TODO("Not yet implemented")
+        val conversationId = params["conversationId"]?.toLongOrNull() ?: throw ParamsException.ParamsNotValid(
+            mapOf("conversationId" to "会话ID不能为空")
+        )
+        val page = params["page"]?.toIntOrNull() ?: 0
+        val size = params["size"]?.toIntOrNull() ?: 2
+        val result = privateMessageService.queryBothMessagesPageByConversation(conversationId, page, size)
+        return ResultEntity.success(result).toJsonString()
     }
 }

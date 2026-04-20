@@ -1,5 +1,6 @@
 package com.darcy.kotlin.server.demowebsocket.domain.table.message
 
+import com.alibaba.fastjson2.annotation.JSONField
 import com.darcy.kotlin.server.demowebsocket.domain.table.BaseEntity
 import com.darcy.kotlin.server.demowebsocket.domain.table.User
 import jakarta.persistence.*
@@ -32,12 +33,14 @@ open class PrivateMessage(
     // 设置sender_id是外键 关联到用户表 外键名为fk_private_message_sender
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id", nullable = false, foreignKey = ForeignKey(name = "fk_private_message_sender"))
+    @JSONField(serialize = false)
     open var sender: User,
 
     // 多对一 多个私聊消息对应一个接收者
     // 设置receiver_id是外键 关联到用户表 外键名为fk_private_message_receiver
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receiver_id", nullable = false, foreignKey = ForeignKey(name = "fk_private_message_receiver"))
+    @JSONField(serialize = false)
     open var receiver: User,
 
     @Enumerated(EnumType.STRING)
@@ -88,6 +91,15 @@ open class PrivateMessage(
     @Column(name = "client_version", length = 20)
     open var clientVersion: String = ""
 ) : BaseEntity() {
+    // 序列化时 只保留 sender User 的 id
+    @get:JSONField(name = "senderId")
+    val senderId: Long
+        get() = sender.id
+
+    // 序列化时 只保留 receiver User 的 id
+    @get:JSONField(name = "receiverId")
+    val receiverId: Long
+        get() = receiver.id
 
     enum class MessageType {
         TEXT,           // 文本

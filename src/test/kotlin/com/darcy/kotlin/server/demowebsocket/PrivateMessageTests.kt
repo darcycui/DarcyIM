@@ -23,6 +23,7 @@ class PrivateMessageTests {
     private lateinit var mockMvc: MockMvc
 
     private var count = 1
+    private val conversationId = "2"
 //    private val senderId = "13"
 //    private val receiverId = "14"
     private val senderId = "14"
@@ -36,7 +37,7 @@ class PrivateMessageTests {
                 .param("senderId", senderId)
                 .param("receiverId", receiverId)
                 .param("content", "文本消息:$count")
-                .param("conversationId", "2")
+                .param("conversationId", conversationId)
         )
             .andExpect(status().isOk)
             .andReturn()
@@ -50,7 +51,9 @@ class PrivateMessageTests {
         val result = mockMvc.perform(
             post("http://localhost:$port/api/private-messages/query/page")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("conversationId", "1")
+                .param("conversationId", conversationId)
+                .param("page", "0")
+                .param("size", "2")
         )
             .andExpect(status().isOk)
             .andReturn()

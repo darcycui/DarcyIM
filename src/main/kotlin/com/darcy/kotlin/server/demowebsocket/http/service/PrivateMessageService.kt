@@ -8,6 +8,9 @@ import com.darcy.kotlin.server.demowebsocket.exception.user.UserException
 import com.darcy.kotlin.server.demowebsocket.http.repository.PrivateMessageRepository
 import com.darcy.kotlin.server.demowebsocket.utils.IdGenerator
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
@@ -28,7 +31,8 @@ class PrivateMessageService @Autowired constructor(
         val sender = userService.getUserById(senderId)
         val receiver = userService.getUserById(receiverId)
         validateUser(sender, receiver)
-        validateConversationAndUser(senderId, receiverId, conversationId)
+        validateFriendship(senderId, receiverId)
+        validateConversation(conversationId, senderId, receiverId)
         val msgId = idGenerator.nextMessageId()
         val message = PrivateMessage(
             msgId = msgId,
@@ -40,16 +44,19 @@ class PrivateMessageService @Autowired constructor(
         return privateMessageRepository.save(message)
     }
 
-    private fun validateConversationAndUser(senderId: Long, receiverId: Long, conversationId: Long) {
+    private fun validateConversation(conversationId: Long, senderId: Long = -1, receiverId: Long = -1) {
         val conversation = conversationService.queryOneConversation(conversationId)
         if (conversation.conversationType != Conversation.ConversationType.PRIVATE) {
             throw ConversationException.CONVERSATION_TYPE_ERROR
         }
         val isSenderValidate = conversation.user.id == senderId && conversation.targetId == receiverId
         val isReceiverValidate = conversation.targetId == senderId && conversation.user.id == receiverId
-        if (isSenderValidate.not() && isReceiverValidate.not()) {
+        if (senderId > 0 && receiverId > 0 && isSenderValidate.not() && isReceiverValidate.not()) {
             throw ConversationException.CONVERSATION_NOT_EXIST
         }
+    }
+
+    private fun validateFriendship(senderId: Long, receiverId: Long) {
         if (!friendshipService.isFriend(senderId, receiverId)) {
             throw UserException.FRIENDSHIP_NOT_EXIST
         }
@@ -59,5 +66,28 @@ class PrivateMessageService @Autowired constructor(
         if (sender.isEmpty() || receiver.isEmpty()) {
             throw UserException.USER_NOT_EXIST
         }
+    }
+
+    fun queryBothMessagesAllByConversation(conversationId: Long): List<PrivateMessage> {
+        validateConversation(conversationId)
+        val conversation = conversationService.queryOneConversation(conversationId)
+        val senderId = conversation.user.id
+        val receiverId = conversation.targetId
+        return privateMessageRepository.findBothMessagesAll(senderId, receiverId)
+    }
+
+    fun queryBothMessagesPageByConversation(conversationId: Long, page: Int, size: Int): Page<PrivateMessage> {
+        validateConversation(conversationId)
+        val conversation = conversationService.queryOneConversation(conversationId)
+        val senderId = conversation.user.id
+        val receiverId = conversation.targetId
+        val pageable = PageRequest.of(page, size)
+        return privateMessageRepository.findBothMessagesPage(senderId, receiverId, pageable)
+
+        // 获取分页数据 result
+        //val messages = result.content  // 当前页的消息列表
+        //val totalPages = result.totalPages  // 总页数
+        //val totalElements = result.totalElements  // 总记录数
+        //val currentPage = result.number  // 当前页码（从 0 开始）
     }
 }

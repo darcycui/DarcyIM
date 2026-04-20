@@ -53,7 +53,7 @@ dependencies {
     // mysql
     implementation ("com.mysql:mysql-connector-j:9.4.0")
     // json
-    implementation ("com.alibaba:fastjson:2.0.51")
+    implementation ("com.alibaba.fastjson2:fastjson2:2.0.61")
     // 添加 Spring Security 依赖(包含 BCryptPasswordEncoder)
     implementation("org.springframework.boot:spring-boot-starter-security")
     // 添加 JWT 依赖
