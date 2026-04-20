@@ -35,11 +35,28 @@ repositories {
     maven("https://maven.aliyun.com/repository/public")
     mavenCentral()
 }
+// Mockito Agent 注入
+// https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+val mockitoAgent = configurations.create("mockitoAgent")
+
+tasks {
+    test {
+        jvmArgs?.add("-javaagent:${mockitoAgent.asPath}")
+    }
+}
 
 dependencies {
+    val mockitoVersion = "5.23.0"
+    testImplementation("org.mockito:mockito-core:$mockitoVersion")
+    mockitoAgent("org.mockito:mockito-core:$mockitoVersion") { isTransitive = false }
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    // WebSocket 客户端测试依赖
+    testImplementation("org.springframework.boot:spring-boot-starter-websocket")
+//    testImplementation("org.java-websocket:Java-WebSocket:1.5.4")
+    testImplementation ("org.springframework:spring-messaging")
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
