@@ -42,6 +42,7 @@ class SecurityConfig {
                     "/api/users/create",
                     "/api/login",
                     "/api/**",
+                    "/stomp-ws/**",
                 ).permitAll()
                     .anyRequest().authenticated()
             }

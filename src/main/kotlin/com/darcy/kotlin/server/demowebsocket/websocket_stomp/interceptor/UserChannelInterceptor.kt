@@ -28,6 +28,8 @@ class UserChannelInterceptor @Autowired constructor(
                 StompCommand.CONNECT -> {
                     // 注册用户名
                     val userId = accessor.getNativeHeader("Authorization")?.get(0) ?: ""
+                    DarcyLogger.info("用户名：$userId")
+
                     setupUserNameForSTOMP(accessor, userId)
                     DarcyLogger.info("用户$userId 上线了")
                 }
@@ -36,8 +38,8 @@ class UserChannelInterceptor @Autowired constructor(
                 }
 
                 StompCommand.DISCONNECT -> {
-                    val userId1 = user?.name ?: ""
-                    DarcyLogger.info("用户$userId1 下线了")
+                    val userId = user?.name ?: ""
+                    DarcyLogger.info("用户$userId 下线了")
                     userCount()
                 }
 

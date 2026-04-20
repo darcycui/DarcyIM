@@ -85,9 +85,9 @@ class PrivateMessageService @Autowired constructor(
         return privateMessageRepository.findBothMessagesPage(senderId, receiverId, pageable)
 
         // 获取分页数据 result
-        //val messages = result.content  // 当前页的消息列表
-        //val totalPages = result.totalPages  // 总页数
-        //val totalElements = result.totalElements  // 总记录数
-        //val currentPage = result.number  // 当前页码（从 0 开始）
+        // result.content  // 当前页的消息列表
+        // result.totalPages  // 总页数
+        // result.totalElements  // 总记录数
+        // result.number  // 当前页码（从 0 开始）
     }
 }
