@@ -71,9 +71,6 @@ open class Group(
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "permissions", columnDefinition = "json")
     open var permissions: Map<String, Boolean> = emptyMap(),
-
-    @OneToMany(mappedBy = "group", cascade = [CascadeType.ALL], orphanRemoval = true)
-    open var members: MutableList<GroupMember> = mutableListOf()
 ) : BaseEntity() {
 
 
@@ -92,16 +89,4 @@ open class Group(
     fun isFull(): Boolean = currentMembers >= maxMembers
 
     fun canJoin(): Boolean = status == GroupStatus.NORMAL && !isFull()
-
-    fun addMember(member: GroupMember) {
-        if (isFull()) throw IllegalStateException("群组已满")
-        members.add(member)
-        member.group = this
-        currentMembers++
-    }
-
-    fun removeMember(member: GroupMember) {
-        members.remove(member)
-        currentMembers--
-    }
 }

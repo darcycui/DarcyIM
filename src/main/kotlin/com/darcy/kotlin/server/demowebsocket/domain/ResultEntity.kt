@@ -53,8 +53,8 @@ open class ResultEntity<T>() {
 
         fun error(e: BaseException): ResultEntity<ErrorEntity> {
             val errorEntity = ErrorEntity(
-//                status = e.exceptionCode,
-//                message = e.exceptionMessage
+                status = e.exceptionCode,
+                message = e.exceptionMessage
             )
             return error(errorEntity)
         }

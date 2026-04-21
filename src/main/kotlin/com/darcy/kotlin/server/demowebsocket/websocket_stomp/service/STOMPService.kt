@@ -3,6 +3,7 @@ package com.darcy.kotlin.server.demowebsocket.websocket_stomp.service
 import com.darcy.kotlin.server.demowebsocket.domain.dto.message.GroupMessageDTO
 import com.darcy.kotlin.server.demowebsocket.domain.dto.message.PrivateMessageDTO
 import com.darcy.kotlin.server.demowebsocket.domain.dto.message.toEntity
+import com.darcy.kotlin.server.demowebsocket.exception.user.UserException
 import com.darcy.kotlin.server.demowebsocket.exception.websocket.STOMPException
 import com.darcy.kotlin.server.demowebsocket.http.service.PrivateMessageService
 import com.darcy.kotlin.server.demowebsocket.http.service.UserService
@@ -23,8 +24,8 @@ class STOMPService @Autowired constructor(
             DarcyLogger.warn("单发消息 -->$recipient")
             // Spring STOMP 单播 Unicast
             websocket.convertAndSendToUser(recipient, "/queue/message", privateMessage)
-            val sendUser = userService.getUserById(privateMessage.senderId)
-            val receiveUser = userService.getUserById(privateMessage.receiverId)
+            val sendUser = userService.getUserById(privateMessage.senderId) ?: throw UserException.USER_NOT_EXIST
+            val receiveUser = userService.getUserById(privateMessage.receiverId) ?: throw UserException.USER_NOT_EXIST
             privateMessageService.sendMessage(privateMessage.toEntity(sendUser, receiveUser))
         }.onSuccess {
             DarcyLogger.info("send private message SUCCESS")

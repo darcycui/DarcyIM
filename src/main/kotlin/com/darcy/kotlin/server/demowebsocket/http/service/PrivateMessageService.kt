@@ -28,9 +28,8 @@ class PrivateMessageService @Autowired constructor(
         content: String,
         conversationId: Long
     ): PrivateMessage {
-        val sender = userService.getUserById(senderId)
-        val receiver = userService.getUserById(receiverId)
-        validateUser(sender, receiver)
+        val sender = userService.getUserById(senderId) ?: throw UserException.USER_NOT_EXIST
+        val receiver = userService.getUserById(receiverId) ?: throw UserException.USER_NOT_EXIST
         validateFriendship(senderId, receiverId)
         validateConversation(conversationId, senderId, receiverId)
         val msgId = idGenerator.nextMessageId()
@@ -63,12 +62,6 @@ class PrivateMessageService @Autowired constructor(
     private fun validateFriendship(senderId: Long, receiverId: Long) {
         if (!friendshipService.isFriend(senderId, receiverId)) {
             throw UserException.FRIENDSHIP_NOT_EXIST
-        }
-    }
-
-    private fun validateUser(sender: User, receiver: User) {
-        if (sender.isEmpty() || receiver.isEmpty()) {
-            throw UserException.USER_NOT_EXIST
         }
     }
 

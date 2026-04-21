@@ -72,10 +72,8 @@ class IdGenerator {
             while (networkInterfaces.hasMoreElements()) {
                 val networkInterface = networkInterfaces.nextElement()
                 val mac = networkInterface.hardwareAddress
-                if (mac != null) {
-                    mac.forEach { byte ->
-                        sb.append("%02X".format(byte))
-                    }
+                mac?.forEach { byte ->
+                    sb.append("%02X".format(byte))
                 }
             }
             (sb.toString().hashCode() and MAX_NODE_ID.toInt()).toLong()

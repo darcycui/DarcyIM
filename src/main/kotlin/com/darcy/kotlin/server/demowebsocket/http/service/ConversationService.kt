@@ -2,6 +2,7 @@ package com.darcy.kotlin.server.demowebsocket.http.service
 
 import com.darcy.kotlin.server.demowebsocket.domain.table.Conversation
 import com.darcy.kotlin.server.demowebsocket.exception.ConversationException
+import com.darcy.kotlin.server.demowebsocket.exception.GroupException
 import com.darcy.kotlin.server.demowebsocket.exception.user.UserException
 import com.darcy.kotlin.server.demowebsocket.http.repository.ConversationRepository
 import com.darcy.kotlin.server.demowebsocket.utils.IdGenerator
@@ -13,7 +14,8 @@ class ConversationService @Autowired constructor(
     private val conversationRepository: ConversationRepository,
     private val userService: UserService,
     private val friendshipService: FriendshipService,
-    private val idGenerator: IdGenerator
+    private val idGenerator: IdGenerator,
+    private val groupService: GroupService,
 ) {
     fun createConversation(
         userId: Long,
@@ -21,10 +23,7 @@ class ConversationService @Autowired constructor(
         targetId: Long
     ): Conversation {
         // 业务参数校验
-        val user = userService.getUserById(userId)
-        if (user.isEmpty()) {
-            throw UserException.USER_NOT_EXIST
-        }
+        val user = userService.getUserById(userId) ?: throw UserException.USER_NOT_EXIST
         validateTarget(userId, conversationType, targetId)
         // 检查会话是否存在
         val existingConversation = conversationRepository.findByUserIdAndConversationTypeAndTargetId(
@@ -48,10 +47,7 @@ class ConversationService @Autowired constructor(
     private fun validateTarget(userId: Long, conversationType: Conversation.ConversationType, targetId: Long) {
         when (conversationType) {
             Conversation.ConversationType.PRIVATE -> {
-                val targetUser = userService.getUserById(targetId)
-                if (targetUser.isEmpty()) {
-                    throw UserException.USER_NOT_EXIST
-                }
+                val targetUser = userService.getUserById(targetId)?:throw UserException.USER_NOT_EXIST
                 val isFriend = friendshipService.isFriend(userId, targetId)
                 if (!isFriend) {
                     throw UserException.FRIENDSHIP_NOT_EXIST
@@ -60,6 +56,7 @@ class ConversationService @Autowired constructor(
 
             Conversation.ConversationType.GROUP -> {
                 // TODO: 验证群组是否存在
+                val group = groupService.queryGroupById(targetId) ?: throw GroupException.GROUP_NOT_EXIST
             }
         }
     }

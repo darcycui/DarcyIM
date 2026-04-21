@@ -30,25 +30,21 @@ class UserService @Autowired constructor(
         return userRepository.save(realUser)
     }
 
-    fun getUserById(id: Long): User {
-        return userRepository.findById(id).orElse(User.EMPTY)
+    fun getUserById(id: Long): User? {
+        return userRepository.findById(id).orElse(null)
     }
 
-    fun getUserByPhone(phone: String): User {
-        return userRepository.findByPhone(phone) ?: User.EMPTY
+    fun getUserByPhone(phone: String): User? {
+        return userRepository.findByPhone(phone)
     }
 
-    fun getUserByEmail(email: String): User {
-        return userRepository.findByEmail(email) ?: User.EMPTY
+    fun getUserByEmail(email: String): User? {
+        return userRepository.findByEmail(email)
     }
 
     @Transactional
     fun updateUser(user: User): User {
-        val oldUser = getUserById(user.id)
-        if (oldUser != User.EMPTY) {
-            return userRepository.save(user)
-        }
-        return User.EMPTY
+        return userRepository.save(user)
     }
 
     fun deleteUser(user: User) {

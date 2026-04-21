@@ -18,11 +18,8 @@ class FriendRequestService @Autowired constructor(
 
     @Transactional
     fun createFriendRequest(fromUserId: Long, toUserId: Long, params: Map<String, Any>): FriendRequest {
-        val fromUser = userService.getUserById(fromUserId)
-        val toUser = userService.getUserById(toUserId)
-        if (fromUser.isEmpty() or toUser.isEmpty()) {
-            throw UserException.USER_NOT_EXIST
-        }
+        val fromUser = userService.getUserById(fromUserId) ?: throw UserException.USER_NOT_EXIST
+        val toUser = userService.getUserById(toUserId) ?: throw UserException.USER_NOT_EXIST
         val friendRequest = FriendRequest(
             fromUser = fromUser,
             toUser = toUser,

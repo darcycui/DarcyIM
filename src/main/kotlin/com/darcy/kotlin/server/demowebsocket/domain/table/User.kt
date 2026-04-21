@@ -68,11 +68,6 @@ open class User(
     open var token: String = ""
 ) : BaseEntity() {
     companion object {
-        val EMPTY = User()
-    }
-
-    fun isEmpty(): Boolean {
-        return this == EMPTY
     }
 
     enum class UserStatus {
