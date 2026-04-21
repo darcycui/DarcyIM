@@ -116,7 +116,7 @@ class WebSocketAllGroupTests {
             }
             val groupMessage = GroupMessageDTO(
                 msgId = "",
-                senderId = 1,
+                senderId = 14,
                 senderName = "test1",
                 groupId = 0,
                 groupName = "",

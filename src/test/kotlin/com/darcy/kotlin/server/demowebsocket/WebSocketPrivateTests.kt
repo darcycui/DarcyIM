@@ -1,6 +1,7 @@
 package com.darcy.kotlin.server.demowebsocket
 
 import com.darcy.kotlin.server.demowebsocket.domain.dto.message.PrivateMessageDTO
+import com.darcy.kotlin.server.demowebsocket.utils.TimeUtil
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -142,6 +143,7 @@ class WebSocketPrivateTests {
                 receiverName = "test2",
                 content = "测试消息1",
                 msgType = "TEXT",
+                sendTime = TimeUtil.getCurrentTimeStamp(),
                 isRead = false,
                 isRecalled = false
             )

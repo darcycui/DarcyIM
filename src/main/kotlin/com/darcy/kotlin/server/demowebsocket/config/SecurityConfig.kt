@@ -43,6 +43,7 @@ class SecurityConfig {
                     "/api/login",
                     "/api/**",
                     "/stomp-ws/**",
+                    "/js/**",
                 ).permitAll()
                     .anyRequest().authenticated()
             }
