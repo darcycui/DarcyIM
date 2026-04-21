@@ -1,5 +1,9 @@
 package com.darcy.kotlin.server.demowebsocket.exception
 
+/**
+ * 会话相关异常
+ * 701-799
+ */
 class ConversationException(
     exceptionCode: Int,
     exceptionMessage: String

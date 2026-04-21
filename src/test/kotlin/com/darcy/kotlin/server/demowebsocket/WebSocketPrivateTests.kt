@@ -136,9 +136,9 @@ class WebSocketPrivateTests {
             }
             val privateMessage = PrivateMessageDTO(
                 msgId = "",
-                senderId = 1,
+                senderId = 14,
                 senderName = "test1",
-                receiverId = 2,
+                receiverId = 13,
                 receiverName = "test2",
                 content = "测试消息1",
                 msgType = "TEXT",

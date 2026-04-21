@@ -1,5 +1,6 @@
 package com.darcy.kotlin.server.demowebsocket.domain.dto.message
 
+import com.darcy.kotlin.server.demowebsocket.domain.table.User
 import com.darcy.kotlin.server.demowebsocket.domain.table.message.PrivateMessage
 import com.darcy.kotlin.server.demowebsocket.utils.TimeUtil
 import java.time.LocalDateTime
@@ -33,8 +34,8 @@ fun PrivateMessage.toDTO(): PrivateMessageDTO {
 }
 
 fun PrivateMessageDTO.toEntity(
-    sender: com.darcy.kotlin.server.demowebsocket.domain.table.User,
-    receiver: com.darcy.kotlin.server.demowebsocket.domain.table.User
+    sender: User,
+    receiver: User
 ): PrivateMessage {
     return PrivateMessage(
         msgId = this.msgId.ifEmpty { java.util.UUID.randomUUID().toString() },

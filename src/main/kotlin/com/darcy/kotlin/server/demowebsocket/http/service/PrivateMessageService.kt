@@ -41,6 +41,10 @@ class PrivateMessageService @Autowired constructor(
             content = content,
             sendTime = LocalDateTime.now()
         )
+        return sendMessage(message)
+    }
+
+    fun sendMessage(message: PrivateMessage): PrivateMessage {
         return privateMessageRepository.save(message)
     }
 

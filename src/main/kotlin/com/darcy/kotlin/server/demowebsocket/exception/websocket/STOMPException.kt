@@ -1,0 +1,21 @@
+package com.darcy.kotlin.server.demowebsocket.exception.websocket
+
+import com.darcy.kotlin.server.demowebsocket.exception.BaseException
+/**
+ * WebSocket相关异常
+ * 错误码 801-899
+ */
+class STOMPException(
+    exceptionCode: Int,
+    exceptionMessage: String
+) : BaseException(exceptionCode, exceptionMessage) {
+    companion object {
+        val STOMP_CONNECT_FAILED = STOMPException(801, "STOMP连接失败")
+        val STOMP_CONNECT_TIMEOUT = STOMPException(802, "STOMP连接超时")
+        val STOMP_CONNECT_ERROR = STOMPException(803, "STOMP心跳错误")
+
+        val STOMP_SEND_PRIVATE_MESSAGE_FAILED = STOMPException(821, "STOMP发送单聊消息失败")
+        val STOMP_SEND_ALL_GROUP_MESSAGE_FAILED = STOMPException(822, "STOMP发送全部群聊消息失败")
+        val STOMP_SEND_TARGET_GROUP_MESSAGE_FAILED = STOMPException(823, "STOMP发送指定群聊消息失败")
+    }
+}
