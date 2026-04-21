@@ -23,9 +23,9 @@ class UserController @Autowired constructor(val userService: UserService) : IUse
             emptyMap()
         }
 
-        val createdAt = TimeUtil.parseDataTime(params["createdAt"])
+        val createdAt = TimeUtil.parseToDateTime(params["createdAt"])
         DarcyLogger.info("-->createdAt: $createdAt")
-        val updatedAt = TimeUtil.parseDataTime(params["updatedAt"])
+        val updatedAt = TimeUtil.parseToDateTime(params["updatedAt"])
         DarcyLogger.info("-->updatedAt: $updatedAt")
 
         val userEntity = User(

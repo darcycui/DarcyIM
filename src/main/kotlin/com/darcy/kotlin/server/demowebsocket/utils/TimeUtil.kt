@@ -5,15 +5,12 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 object TimeUtil {
-    private const val TIME_FORMATTER: String = "yyyy-MM-dd HH:mm:ss"
-
-    fun getCurrentTimeStamp(): String {
-        val formatter = DateTimeFormatter.ofPattern(TIME_FORMATTER)
-        return LocalDateTime.now().format(formatter)
-    }
+    private const val TIME_FORMATTER_1: String = "yyyy-MM-dd HH:mm:ss"
+    private const val TIME_FORMATTER_2: String = "yyyy-MM-dd'T'HH:mm:ss"
+    private const val TIME_FORMATTER_3: String = "yyyy/MM/dd HH:mm:ss"
 
 
-    fun parseDataTime(value: Any?): LocalDateTime {
+    fun parseToDateTime(value: Any?): LocalDateTime {
         return when (value) {
             is LocalDateTime -> value.also {
                 DarcyLogger.info("parseCreatedAt is LocalDateTime")
@@ -32,9 +29,9 @@ object TimeUtil {
     fun parseStringToDateTime(dateStr: String): LocalDateTime {
         val formats = listOf(
             DateTimeFormatter.ISO_LOCAL_DATE_TIME,
-            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"),
-            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"),
-            DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")
+            DateTimeFormatter.ofPattern(TIME_FORMATTER_1),
+            DateTimeFormatter.ofPattern(TIME_FORMATTER_2),
+            DateTimeFormatter.ofPattern(TIME_FORMATTER_3)
         )
 
         for (format in formats) {
@@ -46,5 +43,15 @@ object TimeUtil {
         }
         DarcyLogger.debug("无法解析日期时间格式: $dateStr")
         return LocalDateTime.of(1970, 1, 1, 0, 0, 0)
+    }
+
+    fun getCurrentTimeStamp(): String {
+        val now = LocalDateTime.now()
+        return dateTimeFormat(now)
+    }
+
+    fun dateTimeFormat(dateTime: LocalDateTime): String {
+        val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+        return dateTime.format(formatter)
     }
 }

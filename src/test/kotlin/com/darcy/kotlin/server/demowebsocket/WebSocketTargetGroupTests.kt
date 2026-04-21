@@ -1,5 +1,6 @@
 package com.darcy.kotlin.server.demowebsocket
 
+import com.darcy.kotlin.server.demowebsocket.domain.dto.message.GroupMessageDTO
 import com.darcy.kotlin.server.demowebsocket.domain.dto.message.PrivateMessageDTO
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,7 +28,7 @@ import kotlin.test.assertEquals
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-class WebSocketGroupTests {
+class WebSocketTargetGroupTests {
 
     // 注入随机端口
     @LocalServerPort
@@ -44,7 +45,7 @@ class WebSocketGroupTests {
     // STOMP 是 Simple Text Oriented Messaging Protocol
     // 简单文本定向消息协议。
     @Test
-    fun `test-group-websocket-stomp`() {
+    fun `test-target-group-websocket-stomp`() {
         // 1. 创建客户端
         val transports = listOf(WebSocketTransport(StandardWebSocketClient()))
         val sockJsClient = SockJsClient(transports)
@@ -65,7 +66,7 @@ class WebSocketGroupTests {
         // 3. 使用正确的 connectAsync 重载
         stompClient.connectAsync(url, webSocketHeaders, stompHeaders, object : StompSessionHandlerAdapter() {
 //            override fun getPayloadType(headers: StompHeaders): Type {
-//                return PrivateMessageDTO::class.java
+//                return GroupMessageDTO::class.java
 //            }
 
             override fun afterConnected(session: StompSession, connectedHeaders: StompHeaders) {
@@ -90,6 +91,7 @@ class WebSocketGroupTests {
         })
 
         // 4. 等待连接
+        var received = false
         try {
             val session = sessionFuture.get(5, TimeUnit.SECONDS)
 
@@ -97,7 +99,8 @@ class WebSocketGroupTests {
             val messageLatch = CountDownLatch(1)
 
             // 5. 订阅主题
-            val topicSubscription = session.subscribe("/topic/message", object : StompSessionHandlerAdapter() {
+            val groupId = 1L
+            val topicSubscription = session.subscribe("/topic/group/$groupId", object : StompSessionHandlerAdapter() {
                 override fun handleFrame(headers: StompHeaders, payload: Any?) {
                     println("Received Topic message-->: $payload")
                     // 收到消息后 调用 messageLatch 的 countDown
@@ -105,23 +108,22 @@ class WebSocketGroupTests {
                 }
 
                 override fun getPayloadType(headers: StompHeaders): Type {
-                    return PrivateMessageDTO::class.java
+                    return GroupMessageDTO::class.java
                 }
             })
 
             // 6. 发送消息
             val sendHeaders = StompHeaders().apply {
-                destination = "/app/sendGroupMessage"
+                destination = "/app/sendTargetGroupMessage"
             }
-            val groupMessage = PrivateMessageDTO(
+            val groupMessage = GroupMessageDTO(
                 msgId = "",
                 senderId = 1,
                 senderName = "test1",
-                receiverId = 2,
-                receiverName = "test2",
-                content = "测试消息1",
+                groupId = 1,
+                groupName = "group1",
+                content = "测试群消息1",
                 msgType = "TEXT",
-                isRead = false,
                 isRecalled = false
             )
             session.send(sendHeaders, groupMessage)
@@ -129,13 +131,12 @@ class WebSocketGroupTests {
             // 等待
             Thread.sleep(3_000)
             // 等待消息接收（最多等待 5 秒）
-            val received = messageLatch.await(5, TimeUnit.SECONDS)
+            received = messageLatch.await(5, TimeUnit.SECONDS)
             if (received) {
                 println("✓ Test passed: Message received successfully")
             } else {
                 println("✗ Test failed: Message not received within timeout")
             }
-            assertEquals(true, received, "接收消息错误")
 
             // 7. 清理
             topicSubscription.unsubscribe()
@@ -145,6 +146,8 @@ class WebSocketGroupTests {
         } catch (e: TimeoutException) {
             e.printStackTrace()
             println("✗ Connection timeout")
+        } finally {
+            assertEquals(true, received, "接收消息错误")
         }
     }
 

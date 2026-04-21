@@ -11,20 +11,22 @@ class LocalDateTimeTests {
     @Test
     fun `test-LocalDateTime-now`() {
 //        val now = LocalDateTime.now()
-//        val now =  LocalDateTime.now(ZoneId.of("Asia/Shanghai"))
-        val now =  LocalDateTime.now(ZoneId.of("America/New_York"))
+        val now =  LocalDateTime.now(ZoneId.of("Asia/Shanghai"))
+//        val now =  LocalDateTime.now(ZoneId.of("America/New_York"))
         println(now)
         println(now.toString())
         val format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         val formatNow = now.format(format)
         println(formatNow)
+        val formatNowISO = TimeUtil.dateTimeFormat( now)
+        println(formatNowISO)
     }
 
     @Test
     fun `test-LocalDateTime-parse`() {
         val now = LocalDateTime.now()
         val timeStr = now.toString()
-        val format = TimeUtil.parseDataTime(timeStr)
+        val format = TimeUtil.parseToDateTime(timeStr)
         println(format)
     }
 }
