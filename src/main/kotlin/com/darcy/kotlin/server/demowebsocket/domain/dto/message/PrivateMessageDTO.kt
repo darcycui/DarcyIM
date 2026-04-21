@@ -1,6 +1,7 @@
 package com.darcy.kotlin.server.demowebsocket.domain.dto.message
 
 import com.darcy.kotlin.server.demowebsocket.domain.table.message.PrivateMessage
+import com.darcy.kotlin.server.demowebsocket.utils.TimeUtil
 import java.time.LocalDateTime
 
 data class PrivateMessageDTO(
@@ -11,6 +12,7 @@ data class PrivateMessageDTO(
     val receiverName: String = "",
     val content: String = "",
     val msgType: String = "TEXT",
+    val sendTime: String = TimeUtil.dateTimeFormat(LocalDateTime.now()),
     val isRead: Boolean = false,
     val isRecalled: Boolean = false
 )
@@ -24,6 +26,7 @@ fun PrivateMessage.toDTO(): PrivateMessageDTO {
         receiverName = this.receiver.username,
         content = this.content,
         msgType = this.msgType.name,
+        sendTime = TimeUtil.dateTimeFormat(this.sendTime),
         isRead = this.isRead,
         isRecalled = this.isRecalled
     )
@@ -39,5 +42,6 @@ fun PrivateMessageDTO.toEntity(
         receiver = receiver,
         content = this.content,
         msgType = PrivateMessage.MessageType.valueOf(this.msgType),
+        sendTime = TimeUtil.parseToDateTime(this.sendTime),
     )
 }
