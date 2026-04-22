@@ -6,9 +6,9 @@ plugins {
     id("io.spring.dependency-management") version "1.1.7"
 //    kotlin("plugin.allopen") version kotlinVersion
     // 添加 Kotlin JPA 插件
-    kotlin("plugin.jpa") version "1.9.0"
+    kotlin("plugin.jpa") version kotlinVersion
     // 或者使用 no-arg 插件
-//    kotlin("plugin.noarg") version "1.9.0"
+//    kotlin("plugin.noarg") version kotlinVersion
 }
 
 //allOpen {
