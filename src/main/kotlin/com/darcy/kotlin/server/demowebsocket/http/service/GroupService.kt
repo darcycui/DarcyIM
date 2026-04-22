@@ -26,8 +26,9 @@ class GroupService @Autowired constructor(
     @Transactional
     fun createGroup(params: Map<String, String>): Group {
         val ownerId = params["ownerId"]?.toLongOrNull() ?: throw UserException.USER_NOT_EXIST
-        val owner = userService.getUserById(ownerId) ?: throw UserException.USER_NOT_EXIST
+        val owner = userService.getUserById(ownerId)
         val group = Group(
+            // 群ID 唯一
             groupId = idGenerator.nextGroupId(),
             groupName = params["groupName"] as String,
             owner = owner,
@@ -75,16 +76,17 @@ class GroupService @Autowired constructor(
     }
 
     @Transactional
-    fun queryGroupById(id: Long): Group? {
-        val group = groupRepository.findById(id).orElse(null) ?: throw GroupException.GROUP_NOT_EXIST
-        return group
+    fun queryGroupById(id: Long): Group {
+        val group = groupRepository.findById(id)
+        if (group.isEmpty) throw GroupException.GROUP_NOT_EXIST
+        return group.get()
     }
 
     @Transactional
     fun inviteToGroup(inviterId: Long, inviteeId: Long, groupId: Long): GroupMember {
-        val group = groupRepository.findById(groupId).orElse(null) ?: throw GroupException.GROUP_NOT_EXIST
-        val inviter = userService.getUserById(inviterId) ?: throw UserException.USER_NOT_EXIST
-        val invitee = userService.getUserById(inviteeId) ?: throw UserException.USER_NOT_EXIST
+        val group = queryGroupById(groupId)
+        val inviter = userService.getUserById(inviterId)
+        val invitee = userService.getUserById(inviteeId)
         // 邀请记录
         groupInviteService.createGroupInvite(inviterId, inviteeId, groupId)
         val member = GroupMember(

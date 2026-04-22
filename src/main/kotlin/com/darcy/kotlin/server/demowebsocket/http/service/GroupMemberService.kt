@@ -16,4 +16,8 @@ class GroupMemberService @Autowired constructor(
     fun queryGroupMembers(id: Long): List<GroupMember> {
         return groupMemberRepository.findByGroupId(id)
     }
+
+    fun isGroupMember(userId: Long, groupId: Long): Boolean {
+        return groupMemberRepository.findByGroupIdAndUserId(groupId, userId) != null
+    }
 }

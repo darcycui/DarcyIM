@@ -23,7 +23,7 @@ class ConversationService @Autowired constructor(
         targetId: Long
     ): Conversation {
         // 业务参数校验
-        val user = userService.getUserById(userId) ?: throw UserException.USER_NOT_EXIST
+        val user = userService.getUserById(userId)
         validateTarget(userId, conversationType, targetId)
         // 检查会话是否存在
         val existingConversation = conversationRepository.findByUserIdAndConversationTypeAndTargetId(
@@ -34,9 +34,9 @@ class ConversationService @Autowired constructor(
         if (existingConversation != null) {
             return existingConversation
         }
-        val conversationId = idGenerator.nextConversationId()
         val conversation = Conversation(
-            conversationId = conversationId,
+            // 会话ID 唯一
+            conversationId = idGenerator.nextConversationId(),
             user = user,
             conversationType = conversationType,
             targetId = targetId
@@ -47,7 +47,7 @@ class ConversationService @Autowired constructor(
     private fun validateTarget(userId: Long, conversationType: Conversation.ConversationType, targetId: Long) {
         when (conversationType) {
             Conversation.ConversationType.PRIVATE -> {
-                val targetUser = userService.getUserById(targetId)?:throw UserException.USER_NOT_EXIST
+                val targetUser = userService.getUserById(targetId)
                 val isFriend = friendshipService.isFriend(userId, targetId)
                 if (!isFriend) {
                     throw UserException.FRIENDSHIP_NOT_EXIST
@@ -56,7 +56,7 @@ class ConversationService @Autowired constructor(
 
             Conversation.ConversationType.GROUP -> {
                 // TODO: 验证群组是否存在
-                val group = groupService.queryGroupById(targetId) ?: throw GroupException.GROUP_NOT_EXIST
+                val group = groupService.queryGroupById(targetId)
             }
         }
     }

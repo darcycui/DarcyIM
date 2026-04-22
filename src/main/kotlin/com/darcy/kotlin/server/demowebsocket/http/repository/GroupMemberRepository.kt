@@ -11,4 +11,6 @@ interface GroupMemberRepository : JpaRepository<GroupMember, Long> {
      * GroupId - Group 实体中的 groupId 字段
      */
     fun findByGroupId(groupId: Long): List<GroupMember>
+
+    fun findByGroupIdAndUserId(userId: Long, groupId: Long): GroupMember?
 }

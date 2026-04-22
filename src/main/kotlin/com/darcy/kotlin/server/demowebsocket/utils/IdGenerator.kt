@@ -29,6 +29,8 @@ class IdGenerator {
 
     fun nextGroupId(): String = "group_${nextId()}"
 
+    fun nextGroupMessageId(): String = "msg_${nextId()}"
+
     fun nextConversationId(): String = "conv_${nextId()}"
 
     @Synchronized

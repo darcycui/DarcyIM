@@ -14,5 +14,6 @@ class ConversationException(
         val CONVERSATION_UPDATE_FAILED = ConversationException(703, "会话更新失败")
         val CONVERSATION_DELETE_FAILED = ConversationException(704, "会话删除失败")
         val CONVERSATION_TYPE_ERROR = ConversationException(705, "会话类型错误")
+        val CONVERSATION_MEMBER_ERROR = ConversationException(706, "会话成员错误")
     }
 }

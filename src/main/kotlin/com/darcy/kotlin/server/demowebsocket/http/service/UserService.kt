@@ -30,8 +30,12 @@ class UserService @Autowired constructor(
         return userRepository.save(realUser)
     }
 
-    fun getUserById(id: Long): User? {
-        return userRepository.findById(id).orElse(null)
+    fun getUserById(id: Long): User {
+        val user = userRepository.findById(id)
+        if (user.isEmpty){
+            throw UserException.USER_NOT_EXIST
+        }
+        return user.get()
     }
 
     fun getUserByPhone(phone: String): User? {

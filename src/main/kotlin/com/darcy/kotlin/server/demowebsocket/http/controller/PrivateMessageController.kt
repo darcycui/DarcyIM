@@ -16,12 +16,12 @@ class PrivateMessageController @Autowired constructor(
             ?: throw ParamsException.ParamsNotValid(mapOf("senderId" to "发送者ID不能为空"))
         val receiverId = params["receiverId"]?.toLongOrNull()
             ?: throw ParamsException.ParamsNotValid(mapOf("receiverId" to "接收者ID不能为空"))
-        val content = params["content"]
-            ?: throw ParamsException.ParamsNotValid(mapOf("content" to "消息内容不能为空"))
         val conversationId = params["conversationId"]?.toLongOrNull() ?: throw ParamsException.ParamsNotValid(
             mapOf("conversationId" to "会话ID不能为空")
         )
-        val result = privateMessageService.sendMessage(senderId, receiverId, content, conversationId)
+        val content = params["content"]
+            ?: throw ParamsException.ParamsNotValid(mapOf("content" to "消息内容不能为空"))
+        val result = privateMessageService.sendMessage(senderId, receiverId, conversationId, content)
         return ResultEntity.success(result).toJsonString()
     }
 

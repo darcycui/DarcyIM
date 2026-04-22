@@ -25,16 +25,16 @@ class PrivateMessageService @Autowired constructor(
     fun sendMessage(
         senderId: Long,
         receiverId: Long,
+        conversationId: Long,
         content: String,
-        conversationId: Long
     ): PrivateMessage {
-        val sender = userService.getUserById(senderId) ?: throw UserException.USER_NOT_EXIST
-        val receiver = userService.getUserById(receiverId) ?: throw UserException.USER_NOT_EXIST
+        val sender = userService.getUserById(senderId)
+        val receiver = userService.getUserById(receiverId)
         validateFriendship(senderId, receiverId)
         validateConversation(conversationId, senderId, receiverId)
-        val msgId = idGenerator.nextMessageId()
         val message = PrivateMessage(
-            msgId = msgId,
+            // 单聊消息ID 唯一
+            msgId = idGenerator.nextMessageId(),
             sender = sender,
             receiver = receiver,
             content = content,

@@ -45,7 +45,7 @@ open class ResultEntity<T>() {
         fun error(errorEntity: ErrorEntity): ResultEntity<ErrorEntity> {
             return ResultEntity<ErrorEntity>().apply {
                 this.resultcode = 200
-                this.reason = errorEntity.message
+//                this.reason = errorEntity.message
                 this.error_code = errorEntity.status
                 this.result = errorEntity
             }

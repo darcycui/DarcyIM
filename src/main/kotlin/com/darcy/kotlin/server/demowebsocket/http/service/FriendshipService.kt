@@ -15,8 +15,8 @@ class FriendshipService @Autowired constructor(
 ) {
     @Transactional
     fun createFriendship(userId: Long, friendId: Long): List<Friendship> {
-        val user = userService.getUserById(userId) ?: throw UserException.USER_NOT_EXIST
-        val friend = userService.getUserById(friendId) ?: throw UserException.USER_NOT_EXIST
+        val user = userService.getUserById(userId)
+        val friend = userService.getUserById(friendId)
         val result1 = friendshipRepository.save(Friendship(user, friend))
         val result2 = friendshipRepository.save(Friendship(friend, user))
         return listOf(result1, result2)

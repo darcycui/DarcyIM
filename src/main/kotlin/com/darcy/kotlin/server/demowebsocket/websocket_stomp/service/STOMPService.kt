@@ -24,8 +24,8 @@ class STOMPService @Autowired constructor(
             DarcyLogger.warn("单发消息 -->$recipient")
             // Spring STOMP 单播 Unicast
             websocket.convertAndSendToUser(recipient, "/queue/message", privateMessage)
-            val sendUser = userService.getUserById(privateMessage.senderId) ?: throw UserException.USER_NOT_EXIST
-            val receiveUser = userService.getUserById(privateMessage.receiverId) ?: throw UserException.USER_NOT_EXIST
+            val sendUser = userService.getUserById(privateMessage.senderId)
+            val receiveUser = userService.getUserById(privateMessage.receiverId)
             privateMessageService.sendMessage(privateMessage.toEntity(sendUser, receiveUser))
         }.onSuccess {
             DarcyLogger.info("send private message SUCCESS")
