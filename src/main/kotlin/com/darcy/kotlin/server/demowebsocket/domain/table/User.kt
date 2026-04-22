@@ -70,21 +70,37 @@ open class User(
     companion object {
     }
 
-    enum class UserStatus {
-        DISABLED,   // 0-禁用
-        NORMAL      // 1-正常
+    enum class UserStatus(val code: Int) {
+        NORMAL(1),      // 正常
+        DISABLED(2),   // 禁用
+        ;
+
+        companion object {
+            fun fromCode(code: Int): UserStatus {
+                return values().first { it.code == code }
+            }
+        }
+
+        fun toCode(): Int {
+            return code
+        }
     }
 
-    enum class OnlineStatus {
-        OFFLINE,    // 0-离线
-        ONLINE,     // 1-在线
-        BUSY,       // 2-忙碌
-        STEALTH     // 3-隐身
-    }
+    enum class OnlineStatus(val code: Int) {
+        OFFLINE(1),    // 离线
+        ONLINE(2),     // 在线
+        BUSY(3),       // 忙碌
+        STEALTH(4)     // 隐身
+        ;
 
-    fun isOnline(): Boolean = onlineStatus == OnlineStatus.ONLINE
+        companion object {
+            fun fromCode(code: Int): OnlineStatus {
+                return entries.first { it.code == code }
+            }
+        }
 
-    fun updateLastActiveTime() {
-        lastActiveTime = LocalDateTime.now()
+        fun toCode(): Int {
+            return code
+        }
     }
 }

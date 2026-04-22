@@ -53,7 +53,7 @@ class GroupService @Autowired constructor(
     }
 
     @Transactional
-    fun updateGroup(params: Map<String, String>): Group? {
+    fun updateGroup(params: Map<String, String>): Group {
         val id = params["groupId"]?.toLongOrNull() ?: throw GroupException.GROUP_NOT_EXIST
         val groupName = params["groupName"] as String
         val group = groupRepository.findById(id).orElse(null) ?: throw GroupException.GROUP_NOT_EXIST

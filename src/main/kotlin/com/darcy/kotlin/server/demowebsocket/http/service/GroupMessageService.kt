@@ -39,7 +39,11 @@ class GroupMessageService @Autowired constructor(
             content = content,
             sendTime = LocalDateTime.now()
         )
-        return groupMessageRepository.save(message)
+        return sendMessage(message)
+    }
+
+    fun sendMessage(groupMessage: GroupMessage): GroupMessage {
+        return groupMessageRepository.save(groupMessage)
     }
 
     private fun validateGroupMember(senderId: Long, groupId: Long) {
@@ -59,7 +63,13 @@ class GroupMessageService @Autowired constructor(
         }
     }
 
-    fun queryGroupMessages(userId: Long, groupId: Long, conversationId: Long, page: Int, size: Int): Page<GroupMessage> {
+    fun queryGroupMessages(
+        userId: Long,
+        groupId: Long,
+        conversationId: Long,
+        page: Int,
+        size: Int
+    ): Page<GroupMessage> {
         validateConversation(conversationId, userId, groupId)
         validateGroupMember(userId, groupId)
         val pageable = PageRequest.of(page, size)

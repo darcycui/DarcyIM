@@ -59,44 +59,22 @@ open class GroupInvite(
     open var remindCount: Int = 0
 ) : BaseEntity() {
 
-    enum class InviteStatus {
-        PENDING,    // 待处理
-        ACCEPTED,   // 已接受
-        REJECTED,   // 已拒绝
-        EXPIRED,    // 已过期
-        CANCELLED   // 已取消（邀请人撤回）
-    }
+    enum class InviteStatus(val code: Int) {
+        PENDING(1),    // 待处理
+        ACCEPTED(2),   // 已接受
+        REJECTED(3),   // 已拒绝
+        EXPIRED(4),    // 已过期
+        CANCELLED(5)   // 已取消（邀请人撤回）
+        ;
 
-    fun accept(remark: String = "") {
-        status = InviteStatus.ACCEPTED
-        handleTime = LocalDateTime.now()
-        handleRemark = remark
-    }
+        companion object {
+            fun fromCode(code: Int): InviteStatus {
+                return entries.firstOrNull { it.code == code } ?: PENDING
+            }
+        }
 
-    fun reject(remark: String = "") {
-        status = InviteStatus.REJECTED
-        handleTime = LocalDateTime.now()
-        handleRemark = remark
-    }
-
-    fun cancel() {
-        status = InviteStatus.CANCELLED
-        handleTime = LocalDateTime.now()
-    }
-
-    fun expire() {
-        status = InviteStatus.EXPIRED
-        handleTime = LocalDateTime.now()
-    }
-
-    fun isProcessed(): Boolean = status != InviteStatus.PENDING
-
-    fun isExpired(): Boolean = LocalDateTime.now().isAfter(expireTime)
-
-    fun canRemind(): Boolean = !isReminded && status == InviteStatus.PENDING && !isExpired()
-
-    fun incrementRemindCount() {
-        remindCount++
-        isReminded = true
+        fun toCode(): Int {
+            return code
+        }
     }
 }

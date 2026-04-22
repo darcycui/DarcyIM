@@ -27,8 +27,8 @@ class GroupTest {
         val result = mockMvc.perform(
             post("http://localhost:$port/api/groups/create")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("ownerId", "13")
-                .param("groupName", "group2")
+                .param("ownerId", "15")
+                .param("groupName", "group3")
         ).andExpect(status().isOk)
             .andReturn()
             .response
@@ -41,7 +41,7 @@ class GroupTest {
         val result = mockMvc.perform(
             post("http://localhost:$port/api/groups/query/id")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("groupId", "2")
+                .param("groupId", "3")
         ).andExpect(status().isOk)
             .andReturn()
             .response
@@ -54,7 +54,7 @@ class GroupTest {
         val result = mockMvc.perform(
             post("http://localhost:$port/api/groups/query/members")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("groupId", "2")
+                .param("groupId", "3")
         ).andExpect(status().isOk)
             .andReturn()
             .response
@@ -67,9 +67,9 @@ class GroupTest {
         val result = mockMvc.perform(
             post("http://localhost:$port/api/groups/invite")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("inviterId", "13")
-                .param("inviteeId", "14")
-                .param("groupId", "2")
+                .param("inviterId", "15")
+                .param("inviteeId", "16")
+                .param("groupId", "3")
         ).andExpect(status().isOk)
             .andReturn()
             .response

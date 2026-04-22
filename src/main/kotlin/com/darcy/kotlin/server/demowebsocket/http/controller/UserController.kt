@@ -2,6 +2,8 @@ package com.darcy.kotlin.server.demowebsocket.http.controller
 
 import com.darcy.kotlin.server.demowebsocket.api.IUserApi
 import com.darcy.kotlin.server.demowebsocket.domain.ResultEntity
+import com.darcy.kotlin.server.demowebsocket.domain.dto.string.toDTO
+import com.darcy.kotlin.server.demowebsocket.domain.dto.toDTO
 import com.darcy.kotlin.server.demowebsocket.domain.table.User
 import com.darcy.kotlin.server.demowebsocket.exception.ParamsException
 import com.darcy.kotlin.server.demowebsocket.exception.user.UserException
@@ -23,9 +25,9 @@ class UserController @Autowired constructor(val userService: UserService) : IUse
             emptyMap()
         }
 
-        val createdAt = TimeUtil.parseToDateTime(params["createdAt"])
+        val createdAt = TimeUtil.parseStringToDateTime(params["createdAt"]?:"")
         DarcyLogger.info("-->createdAt: $createdAt")
-        val updatedAt = TimeUtil.parseToDateTime(params["updatedAt"])
+        val updatedAt = TimeUtil.parseStringToDateTime(params["updatedAt"]?:"")
         DarcyLogger.info("-->updatedAt: $updatedAt")
 
         val userEntity = User(
@@ -50,12 +52,12 @@ class UserController @Autowired constructor(val userService: UserService) : IUse
         )
         userEntity.createdAt = createdAt
         userEntity.updatedAt = updatedAt
-        return ResultEntity.success(userService.createUser(userEntity)).toJsonString()
+        return ResultEntity.success(userService.createUser(userEntity).toDTO()).toJsonString()
     }
 
     override fun getUserById(id: String): String {
         val idLong = id.toLongOrNull() ?: throw ParamsException.ParamsNotValid(mapOf("id" to "id不能为空"))
-        return ResultEntity.success(userService.getUserById(idLong)).toJsonString()
+        return ResultEntity.success(userService.getUserById(idLong).toDTO()).toJsonString()
     }
 
     override fun updateUser(params: Map<String, String>): String {
@@ -66,7 +68,7 @@ class UserController @Autowired constructor(val userService: UserService) : IUse
             if (contains(userBean).not()) {
                 return ResultEntity.error(UserException.USER_NOT_EXIST).toJsonString()
             }
-            ResultEntity.success(userService.updateUser(userBean)).toJsonString()
+            ResultEntity.success(userService.updateUser(userBean).toDTO()).toJsonString()
         }.onFailure {
             DarcyLogger.error("update user error:", it)
             ResultEntity.error(UserException.USER_UPDATE_ERROR).toJsonString()
@@ -84,7 +86,7 @@ class UserController @Autowired constructor(val userService: UserService) : IUse
                 return ResultEntity.error(UserException.USER_NOT_EXIST).toJsonString()
             }
             userService.deleteUser(userBean)
-            ResultEntity.success<String>("delete user SUCCESS").toJsonString()
+            ResultEntity.success("删除用户成功".toDTO()).toJsonString()
         }.onFailure {
             DarcyLogger.error("delete user error:", it)
             return ResultEntity.error(UserException.USER_DELETE_ERROR).toJsonString()
@@ -100,6 +102,6 @@ class UserController @Autowired constructor(val userService: UserService) : IUse
 
     override fun getAllUsers(): String {
         val users = userService.getAllUsers()
-        return ResultEntity.success(users).toJsonString()
+        return ResultEntity.success(users.toDTO()).toJsonString()
     }
 }

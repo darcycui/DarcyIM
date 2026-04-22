@@ -2,6 +2,9 @@ package com.darcy.kotlin.server.demowebsocket.http.controller
 
 import com.darcy.kotlin.server.demowebsocket.api.IUploadFileApi
 import com.darcy.kotlin.server.demowebsocket.domain.ResultEntity
+import com.darcy.kotlin.server.demowebsocket.domain.dto.media.toDTO
+import com.darcy.kotlin.server.demowebsocket.domain.table.media.UploadFile
+import com.darcy.kotlin.server.demowebsocket.domain.table.media.toFileType
 import com.darcy.kotlin.server.demowebsocket.exception.BaseException
 import com.darcy.kotlin.server.demowebsocket.exception.DBException
 import com.darcy.kotlin.server.demowebsocket.exception.FileException
@@ -44,14 +47,14 @@ class UploadFileController @Autowired constructor(
                     savedFile.name,
                     savedFile.absolutePath,
                     savedFile.length(),
-                    file.contentType ?: "unknown mime",
+                    file.contentType?.toFileType()?.toCode() ?: UploadFile.FileType.OTHER.toCode(),
                     fileHash
                 )
             } catch (e: Exception) {
                 e.printStackTrace()
                 return DBException.DB_SAVE_FAILURE.toJsonString()
             }
-            return ResultEntity.success(fileEntity).toJsonString()
+            return ResultEntity.success(fileEntity.toDTO()).toJsonString()
         } catch (e: Exception) {
             e.printStackTrace()
             return BaseException.UNKNOWN_EXCEPTION.toJsonString()

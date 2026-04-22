@@ -2,6 +2,7 @@ package com.darcy.kotlin.server.demowebsocket.http.controller
 
 import com.darcy.kotlin.server.demowebsocket.IGroupMessageApi
 import com.darcy.kotlin.server.demowebsocket.domain.ResultEntity
+import com.darcy.kotlin.server.demowebsocket.domain.dto.message.toDTO
 import com.darcy.kotlin.server.demowebsocket.exception.ParamsException
 import com.darcy.kotlin.server.demowebsocket.http.service.GroupMessageService
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,7 +20,7 @@ class GroupMessageController @Autowired constructor(
             mapOf("content" to "消息内容不能为空")
         )
         val result = groupMessageService.sendMessage(senderId, groupId, conversationId, content)
-        return ResultEntity.success(result).toJsonString()
+        return ResultEntity.success(result.toDTO()).toJsonString()
     }
 
     private fun validateConversationId(params: Map<String, String>): Long {
@@ -50,6 +51,6 @@ class GroupMessageController @Autowired constructor(
         val page = params["page"]?.toIntOrNull() ?: 0
         val size = params["size"]?.toIntOrNull() ?: 2
         val result = groupMessageService.queryGroupMessages(userId, groupId, conversationId, page, size)
-        return ResultEntity.success(result).toJsonString()
+        return ResultEntity.success(result.toDTO()).toJsonString()
     }
 }

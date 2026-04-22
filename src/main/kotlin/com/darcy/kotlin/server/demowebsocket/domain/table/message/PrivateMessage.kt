@@ -101,32 +101,27 @@ open class PrivateMessage(
     val receiverId: Long
         get() = receiver.id
 
-    enum class MessageType {
-        TEXT,           // 文本
-        IMAGE,          // 图片
-        VOICE,          // 语音
-        VIDEO,          // 视频
-        FILE,           // 文件
-        LOCATION,       // 位置
-        CARD,           // 名片
-        EMOJI,          // 表情
-        SYSTEM,         // 系统消息
-        CUSTOM          // 自定义消息
-    }
+    enum class MessageType(private val value: Int) {
+        TEXT(1),           // 文本
+        IMAGE(2),          // 图片
+        VOICE(3),          // 语音
+        VIDEO(4),          // 视频
+        FILE(5),           // 文件
+        LOCATION(6),       // 位置
+        CARD(7),           // 名片
+        EMOJI(8),          // 表情
+        SYSTEM(9),         // 系统消息
+        CUSTOM(10)          // 自定义消息
+        ;
 
-    fun markAsRead(time: LocalDateTime = LocalDateTime.now()) {
-        isRead = true
-        readTime = time
-    }
+        companion object {
+            fun fromValue(value: Int): MessageType {
+                return entries.first { it.value == value }
+            }
+        }
 
-    fun recall(time: LocalDateTime = LocalDateTime.now()) {
-        isRecalled = true
-        recallTime = time
-    }
-
-    fun canRecall(recallWindowMinutes: Long = 2): Boolean {
-        val now = LocalDateTime.now()
-        val recallDeadline = sendTime.plusMinutes(recallWindowMinutes)
-        return now.isBefore(recallDeadline) && !isRecalled
+        fun toValue(): Int {
+            return value
+        }
     }
 }

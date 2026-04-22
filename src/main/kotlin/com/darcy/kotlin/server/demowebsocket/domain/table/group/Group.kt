@@ -2,6 +2,8 @@ package com.darcy.kotlin.server.demowebsocket.domain.table.group
 
 import com.darcy.kotlin.server.demowebsocket.domain.table.BaseEntity
 import com.darcy.kotlin.server.demowebsocket.domain.table.User
+import com.darcy.kotlin.server.demowebsocket.domain.table.media.UploadFile.FileType
+import com.darcy.kotlin.server.demowebsocket.domain.table.media.UploadFile.FileType.OTHER
 import jakarta.persistence.*
 import org.hibernate.annotations.DynamicInsert
 import org.hibernate.annotations.DynamicUpdate
@@ -74,19 +76,40 @@ open class Group(
 ) : BaseEntity() {
 
 
-    enum class GroupStatus {
-        DISSOLVED,  // 已解散
-        NORMAL,     // 正常
-        BANNED      // 被封禁
+    enum class GroupStatus(private val code: Int) {
+        NORMAL(1),     // 正常
+        DISSOLVED(2),  // 已解散
+        BANNED(3)      // 被封禁
+        ;
+
+        companion object {
+
+            fun fromCode(code: Int): GroupStatus {
+                return GroupStatus.entries.find { it.code == code } ?: NORMAL
+            }
+        }
+
+        fun toCode(): Int {
+            return code
+        }
     }
 
-    enum class JoinType {
-        FREE,           // 自由加入
-        VERIFICATION,   // 需要验证
-        INVITATION      // 仅限邀请
+    enum class JoinType(val code: Int) {
+        FREE(1),           // 自由加入
+        VERIFICATION(2),   // 需要验证
+        INVITATION(3)      // 仅限邀请
+
+        ;
+
+        companion object {
+
+            fun fromCode(code: Int): JoinType {
+                return entries.find { it.code == code } ?: FREE
+            }
+        }
+
+        fun toCode(): Int {
+            return code
+        }
     }
-
-    fun isFull(): Boolean = currentMembers >= maxMembers
-
-    fun canJoin(): Boolean = status == GroupStatus.NORMAL && !isFull()
 }

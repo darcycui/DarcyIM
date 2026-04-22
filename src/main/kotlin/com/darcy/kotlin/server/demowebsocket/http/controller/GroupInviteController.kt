@@ -2,6 +2,7 @@ package com.darcy.kotlin.server.demowebsocket.http.controller
 
 import com.darcy.kotlin.server.demowebsocket.api.IGroupInviteApi
 import com.darcy.kotlin.server.demowebsocket.domain.ResultEntity
+import com.darcy.kotlin.server.demowebsocket.domain.dto.group.toDTO
 import com.darcy.kotlin.server.demowebsocket.exception.ParamsException
 import com.darcy.kotlin.server.demowebsocket.http.service.GroupInviteService
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,21 +19,21 @@ class GroupInviteController @Autowired constructor(
         val inviteeId = params["inviteeId"]?.toLongOrNull()
             ?: throw ParamsException.ParamsNotValid(mapOf("inviteeId" to "被邀请人ID不能为空"))
         val result = groupInviteService.createGroupInvite(inviterId, inviteeId, groupId)
-        return ResultEntity.success(result).toJsonString()
+        return ResultEntity.success(result.toDTO()).toJsonString()
     }
 
     override fun queryGroupInviteByFromUser(params: Map<String, String>): String {
         val fromUserId = params["fromUserId"]?.toLongOrNull()
             ?: throw ParamsException.ParamsNotValid(mapOf("fromUserId" to "邀请人ID不能为空"))
         val result = groupInviteService.queryGroupInvitesByFromUser(fromUserId)
-        return ResultEntity.success(result).toJsonString()
+        return ResultEntity.success(result.toDTO()).toJsonString()
     }
 
     override fun queryGroupInviteByToUser(params: Map<String, String>): String {
         val toUserId = params["toUserId"]?.toLongOrNull()
             ?: throw ParamsException.ParamsNotValid(mapOf("toUserId" to "被邀请人ID不能为空"))
         val result = groupInviteService.queryGroupInvitesByToUser(toUserId)
-        return ResultEntity.success(result).toJsonString()
+        return ResultEntity.success(result.toDTO()).toJsonString()
     }
 
 }

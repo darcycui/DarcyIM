@@ -17,7 +17,9 @@ class UserException(
         val USER_DELETE_ERROR = UserException(104, "用户删除失败")
         val USER_UPDATE_ERROR = UserException(105, "用户更新失败")
         val USER_NAME_ALREADY_EXIST = UserException(106, "用户名已存在")
-        val USER_NAME_EMPTY = UserException(106, "用户名不能为空")
+        val USER_PHONE_ALREADY_EXIST = UserException(107, "手机号已存在")
+        val USER_EMAIL_ALREADY_EXIST = UserException(108, "邮箱已存在")
+        val USER_NAME_EMPTY = UserException(109, "用户名不能为空")
 
         val FRIEND_REQUEST_NOT_EXIST = UserException(111, "好友请求不存在")
         val FRIEND_REQUEST_ACCEPT_FAILED = UserException(112, "接受好友请求失败")

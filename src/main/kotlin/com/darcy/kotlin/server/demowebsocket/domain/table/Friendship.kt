@@ -57,11 +57,22 @@ open class Friendship(
     open var isPinned: Boolean = false,
 ) : BaseEntity() {
 
-    enum class RelationStatus {
-        PENDING,    // 0-待处理
-        FRIEND,     // 1-已是好友
-        REJECTED,   // 2-已拒绝
-        DELETED     // 3-已删除
+    enum class RelationStatus(val code: Int) {
+        PENDING(1),    // 待处理
+        FRIEND(2),     // 已是好友
+        REJECTED(3),   // 已拒绝
+        DELETED(4)     // 已删除
+        ;
+
+        companion object {
+            fun fromCode(code: Int): RelationStatus {
+                return entries.first { it.code == code }
+            }
+        }
+
+        fun toCode(): Int {
+            return code
+        }
     }
 
     @PrePersist

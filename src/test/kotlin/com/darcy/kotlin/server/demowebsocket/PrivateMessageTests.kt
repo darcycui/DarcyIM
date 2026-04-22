@@ -24,10 +24,10 @@ class PrivateMessageTests {
 
     private var count = 1
     private val conversationId = "2"
-//    private val senderId = "13"
-//    private val receiverId = "14"
-    private val senderId = "14"
-    private val receiverId = "13"
+    private val senderId = "15"
+    private val receiverId = "16"
+//    private val senderId = "16"
+//    private val receiverId = "15"
 
     @Test
     fun `test-send-message`() {
@@ -36,7 +36,7 @@ class PrivateMessageTests {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("senderId", senderId)
                 .param("receiverId", receiverId)
-                .param("content", "文本消息:$count")
+                .param("content", "新文本消息:$count")
                 .param("conversationId", conversationId)
         )
             .andExpect(status().isOk)

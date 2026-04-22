@@ -2,6 +2,7 @@ package com.darcy.kotlin.server.demowebsocket.http.controller
 
 import com.darcy.kotlin.server.demowebsocket.api.IPrivateMessageApi
 import com.darcy.kotlin.server.demowebsocket.domain.ResultEntity
+import com.darcy.kotlin.server.demowebsocket.domain.dto.message.toDTO
 import com.darcy.kotlin.server.demowebsocket.exception.ParamsException
 import com.darcy.kotlin.server.demowebsocket.http.service.PrivateMessageService
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,7 +23,7 @@ class PrivateMessageController @Autowired constructor(
         val content = params["content"]
             ?: throw ParamsException.ParamsNotValid(mapOf("content" to "消息内容不能为空"))
         val result = privateMessageService.sendMessage(senderId, receiverId, conversationId, content)
-        return ResultEntity.success(result).toJsonString()
+        return ResultEntity.success(result.toDTO()).toJsonString()
     }
 
     override fun queryMessagesByConversation(params: Map<String, String>): String {
@@ -32,6 +33,6 @@ class PrivateMessageController @Autowired constructor(
         val page = params["page"]?.toIntOrNull() ?: 0
         val size = params["size"]?.toIntOrNull() ?: 2
         val result = privateMessageService.queryBothMessagesPageByConversation(conversationId, page, size)
-        return ResultEntity.success(result).toJsonString()
+        return ResultEntity.success(result.toDTO()).toJsonString()
     }
 }

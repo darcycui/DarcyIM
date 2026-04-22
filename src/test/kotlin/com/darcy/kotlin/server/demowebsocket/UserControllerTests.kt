@@ -63,11 +63,47 @@ class UserControllerTests {
         token = "",
     )
 
+    private val user3 = User(
+        username = "Spike",
+        passwordHash = "123456",
+        nickname = "SpikeSpike",
+        avatar = "https://avatars.githubusercontent.com/u/1020407?v=4",
+        phone = "137000111222",
+        email = "Spike@gmail.com",
+        gender = "male",
+        signature = "I'm a dog",
+        status = UserStatus.NORMAL,
+        lastActiveTime = null,
+        deletedAt = null,
+        settings = emptyMap(),
+        roles = "admin",
+        token = "",
+    )
+
+    private val user4 = User(
+        username = "Tyke",
+        passwordHash = "123456",
+        nickname = "TykeTyke",
+        avatar = "https://avatars.githubusercontent.com/u/1020407?v=4",
+        phone = "136000111222",
+        email = "Tyke@gmail.com",
+        gender = "male",
+        signature = "I'm a small dog",
+        status = UserStatus.NORMAL,
+        lastActiveTime = null,
+        deletedAt = null,
+        settings = emptyMap(),
+        roles = "admin",
+        token = "",
+    )
+
 
     @Test
     fun `test-create-user-mockmvc`() {
-        val user = user1
+//        val user = user1
 //        val user = user2
+//        val user = user3
+        val user = user4
         user.createdAt = LocalDateTime.now()
         println("createAt: ${user.createdAt}")
         user.updatedAt = LocalDateTime.now()

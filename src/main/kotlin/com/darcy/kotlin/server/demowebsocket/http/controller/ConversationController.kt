@@ -2,6 +2,7 @@ package com.darcy.kotlin.server.demowebsocket.http.controller
 
 import com.darcy.kotlin.server.demowebsocket.api.IConversationApi
 import com.darcy.kotlin.server.demowebsocket.domain.ResultEntity
+import com.darcy.kotlin.server.demowebsocket.domain.dto.toDTO
 import com.darcy.kotlin.server.demowebsocket.domain.table.Conversation
 import com.darcy.kotlin.server.demowebsocket.exception.ParamsException
 import com.darcy.kotlin.server.demowebsocket.http.service.ConversationService
@@ -28,7 +29,7 @@ class ConversationController @Autowired constructor(
         // 调用 Service 完成业务逻辑
         val result = conversationService.createConversation(userId, conversationType, targetId)
         // 返回 json结果
-        return ResultEntity.success(result).toJsonString()
+        return ResultEntity.success(result.toDTO()).toJsonString()
     }
 
     override fun queryConversations(params: Map<String, String>): String {
@@ -37,7 +38,7 @@ class ConversationController @Autowired constructor(
             throw ParamsException.ParamsNotValid(mapOf("userId" to "用户ID不能为空"))
         }
         val result = conversationService.queryConversations(userId)
-        return ResultEntity.success(result).toJsonString()
+        return ResultEntity.success(result.toDTO()).toJsonString()
     }
 
     override fun queryConversationById(params: Map<String, String>): String {
@@ -46,7 +47,7 @@ class ConversationController @Autowired constructor(
             throw ParamsException.ParamsNotValid(mapOf("conversationId" to "会话ID不能为空"))
         }
         val result = conversationService.queryOneConversation(conversationId)
-        return ResultEntity.success(result).toJsonString()
+        return ResultEntity.success(result.toDTO()).toJsonString()
     }
 
 }

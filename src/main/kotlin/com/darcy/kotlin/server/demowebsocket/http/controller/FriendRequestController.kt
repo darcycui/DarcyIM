@@ -2,6 +2,7 @@ package com.darcy.kotlin.server.demowebsocket.http.controller
 
 import com.darcy.kotlin.server.demowebsocket.api.IFriendRequestApi
 import com.darcy.kotlin.server.demowebsocket.domain.ResultEntity
+import com.darcy.kotlin.server.demowebsocket.domain.dto.toDTO
 import com.darcy.kotlin.server.demowebsocket.exception.ParamsException
 import com.darcy.kotlin.server.demowebsocket.exception.user.UserException
 import com.darcy.kotlin.server.demowebsocket.http.service.FriendRequestService
@@ -15,18 +16,13 @@ class FriendRequestController @Autowired constructor(
     val friendshipService: FriendshipService,
 ) : IFriendRequestApi {
     override fun createFriendRequest(params: Map<String, String>): String {
-        val fromUserId = params["fromUserId"]?.toLongOrNull() ?: 0L
-        val toUserId = params["toUserId"]?.toLongOrNull() ?: 0L
-        if (fromUserId == 0L || toUserId == 0L) {
-            throw ParamsException.ParamsNotValid(
-                mapOf(
-                    "fromUserId" to "发起人ID不能为空",
-                    "toUserId" to "目标人ID不能为空"
-                )
-            )
-        }
+        val fromUserId = params["fromUserId"]?.toLongOrNull()
+            ?: throw ParamsException.ParamsNotValid(mapOf("fromUserId" to "发起人ID不能为空"))
+        val toUserId = params["toUserId"]?.toLongOrNull() ?: throw ParamsException.ParamsNotValid(
+            mapOf("toUserId" to "目标人ID不能为空")
+        )
         val result = friendRequestService.createFriendRequest(fromUserId, toUserId, params)
-        return ResultEntity.success(result).toJsonString()
+        return ResultEntity.success(result.toDTO()).toJsonString()
     }
 
     override fun acceptFriendRequest(params: Map<String, String>): String {
@@ -34,7 +30,7 @@ class FriendRequestController @Autowired constructor(
             mapOf("friendRequestId" to "好友请求ID不能为空")
         )
         val result = friendRequestService.acceptFriendRequest(friendRequestId)
-        return ResultEntity.success(result).toJsonString()
+        return ResultEntity.success(result.toDTO()).toJsonString()
     }
 
     override fun rejectFriendRequest(params: Map<String, String>): String {
@@ -42,7 +38,7 @@ class FriendRequestController @Autowired constructor(
             mapOf("friendRequestId" to "好友请求ID不能为空")
         )
         val result = friendRequestService.rejectFriendRequest(friendRequestId)
-        return ResultEntity.success(result).toJsonString()
+        return ResultEntity.success(result.toDTO()).toJsonString()
     }
 
     override fun ignoreFriendRequest(params: Map<String, String>): String {
@@ -50,7 +46,7 @@ class FriendRequestController @Autowired constructor(
             mapOf("friendRequestId" to "好友请求ID不能为空")
         )
         val result = friendRequestService.ignoreFriendRequest(friendRequestId)
-        return ResultEntity.success(result).toJsonString()
+        return ResultEntity.success(result.toDTO()).toJsonString()
     }
 
     override fun queryFriendRequestByFromUser(params: Map<String, String>): String {
@@ -58,7 +54,7 @@ class FriendRequestController @Autowired constructor(
             mapOf("fromUserId" to "用户ID不能为空")
         )
         val result = friendRequestService.queryByFromUserPhone(fromUserId)
-        return ResultEntity.success(result).toJsonString()
+        return ResultEntity.success(result.toDTO()).toJsonString()
     }
 
     override fun queryFriendRequestByToUser(params: Map<String, String>): String {
@@ -66,6 +62,6 @@ class FriendRequestController @Autowired constructor(
             mapOf("toUserId" to "用户ID不能为空")
         )
         val result = friendRequestService.queryByToUserId(toUserId)
-        return ResultEntity.success(result).toJsonString()
+        return ResultEntity.success(result.toDTO()).toJsonString()
     }
 }

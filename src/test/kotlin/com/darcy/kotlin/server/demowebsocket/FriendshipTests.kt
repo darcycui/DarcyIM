@@ -27,7 +27,7 @@ class FriendshipTests {
         val result = mockMvc.perform(
             post("http://localhost:$port/api/friendships/query/all")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("userId", "1")
+                .param("userId", "15")
         ).andExpect(status().isOk)
             .andReturn()
             .response

@@ -2,6 +2,8 @@ package com.darcy.kotlin.server.demowebsocket.domain.table.group
 
 import com.darcy.kotlin.server.demowebsocket.domain.table.BaseEntity
 import com.darcy.kotlin.server.demowebsocket.domain.table.User
+import com.darcy.kotlin.server.demowebsocket.domain.table.group.GroupInvite.InviteStatus
+import com.darcy.kotlin.server.demowebsocket.domain.table.group.GroupInvite.InviteStatus.PENDING
 
 import jakarta.persistence.*
 import org.hibernate.annotations.DynamicInsert
@@ -67,17 +69,20 @@ open class GroupMember(
     open var inviteTime: LocalDateTime? = null
 ) : BaseEntity() {
 
-    enum class MemberRole {
-        OWNER,      // 群主
-        ADMIN,      // 管理员
-        MEMBER      // 普通成员
-    }
+    enum class MemberRole(val code: Int) {
+        OWNER(1),      // 群主
+        ADMIN(2),      // 管理员
+        MEMBER(3)      // 普通成员
+        ;
 
-    fun incrementUnread() {
-        unreadCount++
-    }
+        companion object {
+            fun fromCode(code: Int): MemberRole {
+                return entries.firstOrNull { it.code == code } ?: MEMBER
+            }
+        }
 
-    fun clearUnread() {
-        unreadCount = 0
+        fun toCode(): Int {
+            return code
+        }
     }
 }

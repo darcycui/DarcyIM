@@ -27,8 +27,8 @@ class ConversationTests {
         val result = mockMvc.perform(
             post("http://localhost:$port/api/conversations/create")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("userId", "13")
-                .param("targetId", "14")
+                .param("userId", "15")
+                .param("targetId", "16")
                 .param("conversationType", "1")
                 .param("name", "test")
                 .param("avatar", "https://www.baidu.com")
@@ -47,7 +47,7 @@ class ConversationTests {
         val result = mockMvc.perform(
             post("http://localhost:$port/api/conversations/query/all")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("userId", "13")
+                .param("userId", "15")
         )
             .andExpect(status().isOk)
             .andReturn()
@@ -61,7 +61,7 @@ class ConversationTests {
         val result = mockMvc.perform(
             post("http://localhost:$port/api/conversations/query/id")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("conversationId", "1")
+                .param("conversationId", "5")
         )
             .andExpect(status().isOk)
             .andReturn()

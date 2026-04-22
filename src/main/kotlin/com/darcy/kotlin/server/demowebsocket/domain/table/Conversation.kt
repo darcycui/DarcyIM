@@ -42,7 +42,7 @@ open class Conversation(
     open var lastMsgContent: String = "",
 
     @Column(name = "last_msg_type")
-    open var lastMsgType: Int? = null,
+    open var lastMsgType: Int = 0,
 
     @Column(name = "last_msg_sender_id")
     open var lastMsgSenderId: Long = 0L,
@@ -82,30 +82,9 @@ open class Conversation(
                 return entries.find { it.code == code } ?: PRIVATE
             }
         }
-    }
 
-    fun updateWithMessage(
-        msgId: String,
-        content: String,
-        msgType: Int,
-        senderId: Long,
-        sendTime: LocalDateTime,
-        increaseUnread: Boolean = true
-    ) {
-        lastMsgId = msgId
-        lastMsgContent = if (content.isNotEmpty() && content.length <= 500) content
-        else if (content.length > 500) content.substring(0, 500) + "..."
-        else "[非文本消息]"
-        lastMsgType = msgType
-        lastMsgSenderId = senderId
-        lastMsgTime = sendTime
-
-        if (increaseUnread && !isMuted) {
-            unreadCount++
+        fun toCode(): Int {
+            return code
         }
-    }
-
-    fun clearUnread() {
-        unreadCount = 0
     }
 }

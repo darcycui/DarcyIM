@@ -47,7 +47,7 @@ class PrivateMessageService @Autowired constructor(
         return privateMessageRepository.save(message)
     }
 
-    private fun validateConversation(conversationId: Long, senderId: Long = -1, receiverId: Long = -1) {
+    private fun validateConversation(conversationId: Long, senderId: Long = 0, receiverId: Long = 0) {
         val conversation = conversationService.queryOneConversation(conversationId)
         if (conversation.conversationType != Conversation.ConversationType.PRIVATE) {
             throw ConversationException.CONVERSATION_TYPE_ERROR
@@ -55,7 +55,7 @@ class PrivateMessageService @Autowired constructor(
         val isSenderValidate = conversation.user.id == senderId && conversation.targetId == receiverId
         val isReceiverValidate = conversation.targetId == senderId && conversation.user.id == receiverId
         if (senderId > 0 && receiverId > 0 && isSenderValidate.not() && isReceiverValidate.not()) {
-            throw ConversationException.CONVERSATION_NOT_EXIST
+            throw ConversationException.CONVERSATION_MEMBER_ERROR
         }
     }
 

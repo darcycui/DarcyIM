@@ -28,10 +28,10 @@ class GroupMessageTests {
         val result = mockMvc.perform(
             post("http://localhost:$port/api/group-messages/send")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("senderId", "13")
-                .param("groupId", "2")
-                .param("conversationId", "3")
-                .param("content", "测试群消息4")
+                .param("userId", "15")
+                .param("groupId", "3")
+                .param("conversationId", "6")
+                .param("content", "新测试群消息4")
         ).andExpect(status().isOk)
             .andReturn()
             .response
@@ -44,9 +44,9 @@ class GroupMessageTests {
         val result = mockMvc.perform(
             post("http://localhost:$port/api/group-messages/query/page")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("userId", "14")
-                .param("groupId", "2")
-                .param("conversationId", "3")
+                .param("userId", "16")
+                .param("groupId", "3")
+                .param("conversationId", "6")
                 .param("page", "1")
                 .param("size", "2")
         ).andExpect(status().isOk)

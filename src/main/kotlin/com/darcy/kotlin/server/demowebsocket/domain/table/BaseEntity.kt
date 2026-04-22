@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 abstract class BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    open var id: Long = -1L
+    open var id: Long = 0L
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

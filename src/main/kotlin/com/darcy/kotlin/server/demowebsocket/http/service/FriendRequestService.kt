@@ -42,15 +42,16 @@ class FriendRequestService @Autowired constructor(
     }
 
     @Transactional
-    fun acceptFriendRequest(friendRequestId: Long): List<Friendship> {
+    fun acceptFriendRequest(friendRequestId: Long): FriendRequest {
         val friendRequest = findFriendRequestById(friendRequestId)
         friendRequest.apply {
             status = FriendRequest.RequestStatus.ACCEPTED
             handleTime = LocalDateTime.now()
             handleResult = "已接受"
         }
-        friendRequestRepository.save(friendRequest)
-        return friendshipService.createFriendship(friendRequest.fromUser.id, friendRequest.toUser.id)
+        val result = friendRequestRepository.save(friendRequest)
+        friendshipService.createFriendship(friendRequest.fromUser.id, friendRequest.toUser.id)
+        return result
     }
 
     @Transactional

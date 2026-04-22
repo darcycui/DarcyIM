@@ -45,25 +45,23 @@ open class FriendRequest(
     open var handleResult: String = ""
 ) : BaseEntity() {
 
-    enum class RequestStatus {
-        PENDING,    // 0-待处理
-        ACCEPTED,   // 1-已接受
-        REJECTED,   // 2-已拒绝
-        IGNORED,    // 3-已忽略
-        EXPIRED     // 4-已过期
-    }
+    enum class RequestStatus(val code: Int) {
+        PENDING(1),    // 1-待处理
+        ACCEPTED(2),   // 2-已接受
+        REJECTED(3),   // 3-已拒绝
+        IGNORED(4),    // 4-已忽略
+        EXPIRED(5)     // 5-已过期
+        ;
 
-    fun accept(remark: String = "") {
-        status = RequestStatus.ACCEPTED
-        handleTime = LocalDateTime.now()
-        handleResult = remark
-    }
+        companion object {
+            fun fromCode(code: Int): RequestStatus {
+                return entries.find { it.code == code } ?: PENDING
+            }
+        }
 
-    fun reject(remark: String = "") {
-        status = RequestStatus.REJECTED
-        handleTime = LocalDateTime.now()
-        handleResult = remark
-    }
+        fun toCode(): Int {
+            return code
+        }
 
-    fun isProcessed(): Boolean = status != RequestStatus.PENDING
+    }
 }

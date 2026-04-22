@@ -3,8 +3,9 @@ package com.darcy.kotlin.server.demowebsocket.websocket_stomp.service
 import com.darcy.kotlin.server.demowebsocket.domain.dto.message.GroupMessageDTO
 import com.darcy.kotlin.server.demowebsocket.domain.dto.message.PrivateMessageDTO
 import com.darcy.kotlin.server.demowebsocket.domain.dto.message.toEntity
-import com.darcy.kotlin.server.demowebsocket.exception.user.UserException
 import com.darcy.kotlin.server.demowebsocket.exception.websocket.STOMPException
+import com.darcy.kotlin.server.demowebsocket.http.service.GroupMessageService
+import com.darcy.kotlin.server.demowebsocket.http.service.GroupService
 import com.darcy.kotlin.server.demowebsocket.http.service.PrivateMessageService
 import com.darcy.kotlin.server.demowebsocket.http.service.UserService
 import com.darcy.kotlin.server.demowebsocket.log.DarcyLogger
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Service
 class STOMPService @Autowired constructor(
     private val websocket: SimpMessagingTemplate,
     private val privateMessageService: PrivateMessageService,
+    private val groupMessageService: GroupMessageService,
+    private val groupService: GroupService,
     private val userService: UserService,
 ) {
     fun sendPrivate(privateMessage: PrivateMessageDTO) {
@@ -41,6 +44,9 @@ class STOMPService @Autowired constructor(
             DarcyLogger.warn("群发消息All -->/topic/message")
             // Spring STOMP 广播 Broadcast - 广播给所有订阅者
             websocket.convertAndSend("/topic/message", groupMessage)
+            val sender = userService.getUserById(groupMessage.senderId)
+            val group = groupService.queryGroupById(groupMessage.groupId)
+            groupMessageService.sendMessage(groupMessage.toEntity(sender, group))
         }.onSuccess {
             DarcyLogger.info("send all group message SUCCESS")
         }.onFailure {
@@ -56,6 +62,9 @@ class STOMPService @Autowired constructor(
             DarcyLogger.warn("群发消息 -->/topic/group/$groupId")
             // Spring STOMP 广播 Broadcast - 只发送给指定群组的订阅者
             websocket.convertAndSend("/topic/group/$groupId", groupMessage)
+            val sender = userService.getUserById(groupMessage.senderId)
+            val group = groupService.queryGroupById(groupMessage.groupId)
+            groupMessageService.sendMessage(groupMessage.toEntity(sender, group))
         }.onSuccess {
             DarcyLogger.info("send target group message SUCCESS")
         }.onFailure {

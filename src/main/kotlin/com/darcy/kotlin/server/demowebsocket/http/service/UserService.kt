@@ -19,10 +19,14 @@ class UserService @Autowired constructor(
         if (userEntity.username.isBlank() or userEntity.username.isEmpty()) {
             throw UserException.USER_NAME_EMPTY
         }
-        if (userRepository.existsByUsername(userEntity.username) or userRepository.existsByEmail(userEntity.email)
-            or userRepository.existsByPhone(userEntity.phone)
-        ) {
+        if (userRepository.existsByUsername(userEntity.username)) {
             throw UserException.USER_NAME_ALREADY_EXIST
+        }
+        if (userRepository.existsByPhone(userEntity.phone)) {
+            throw UserException.USER_PHONE_ALREADY_EXIST
+        }
+        if (userRepository.existsByEmail(userEntity.email)) {
+            throw UserException.USER_EMAIL_ALREADY_EXIST
         }
         val realUser = userEntity.apply {
             passwordHash = passwordUtil.encode(passwordHash)

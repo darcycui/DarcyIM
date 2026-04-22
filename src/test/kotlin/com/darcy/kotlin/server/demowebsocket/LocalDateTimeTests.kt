@@ -13,20 +13,17 @@ class LocalDateTimeTests {
 //        val now = LocalDateTime.now()
         val now =  LocalDateTime.now(ZoneId.of("Asia/Shanghai"))
 //        val now =  LocalDateTime.now(ZoneId.of("America/New_York"))
-        println(now)
-        println(now.toString())
-        val format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        val formatNow = now.format(format)
-        println(formatNow)
-        val formatNowISO = TimeUtil.dateTimeFormat( now)
-        println(formatNowISO)
+        println("now=$now")
+        println("now.toString()=${now.toString()}")
+        val formatNowISO = TimeUtil.formatDateTimeToString( now)
+        println("formatNowISO=${formatNowISO}")
     }
 
     @Test
     fun `test-LocalDateTime-parse`() {
         val now = LocalDateTime.now()
         val timeStr = now.toString()
-        val format = TimeUtil.parseToDateTime(timeStr)
+        val format = TimeUtil.parseStringToDateTime(timeStr)
         println(format)
     }
 }

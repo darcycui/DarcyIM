@@ -1,8 +1,11 @@
 package com.darcy.kotlin.server.demowebsocket.domain.dto.message
 
+import com.darcy.kotlin.server.demowebsocket.domain.table.User
+import com.darcy.kotlin.server.demowebsocket.domain.table.group.Group
 import com.darcy.kotlin.server.demowebsocket.domain.table.message.GroupMessage
 import com.darcy.kotlin.server.demowebsocket.utils.IdGenerator
 import com.darcy.kotlin.server.demowebsocket.utils.TimeUtil
+import org.springframework.data.domain.Page
 import java.time.LocalDateTime
 
 data class GroupMessageDTO(
@@ -16,7 +19,7 @@ data class GroupMessageDTO(
     val extraData: Map<String, Any> = emptyMap(),
     val isRecalled: Boolean = false,
     val seqId: Long = 0L,
-    val sendTime: String = TimeUtil.dateTimeFormat(LocalDateTime.now()),
+    val sendTime: String = TimeUtil.formatDateTimeToString(LocalDateTime.now()),
     val recallTime: LocalDateTime? = null,
     val isAtAll: Boolean = false,
     val atUsers: List<Long> = emptyList(),
@@ -37,7 +40,7 @@ fun GroupMessage.toDTO(): GroupMessageDTO {
         extraData = this.extraData,
         isRecalled = this.isRecalled,
         seqId = this.seqId,
-        sendTime = TimeUtil.dateTimeFormat(this.sendTime),
+        sendTime = TimeUtil.formatDateTimeToString(this.sendTime),
         recallTime = this.recallTime,
         isAtAll = this.isAtAll,
         atUsers = this.atUsers,
@@ -47,9 +50,17 @@ fun GroupMessage.toDTO(): GroupMessageDTO {
     )
 }
 
+fun List<GroupMessage>.toDTO(): List<GroupMessageDTO> {
+    return this.map { it.toDTO() }
+}
+
+fun Page<GroupMessage>.toDTO(): Page<GroupMessageDTO> {
+    return this.map { it.toDTO() }
+}
+
 fun GroupMessageDTO.toEntity(
-    group: com.darcy.kotlin.server.demowebsocket.domain.table.group.Group,
-    sender: com.darcy.kotlin.server.demowebsocket.domain.table.User
+    sender: User,
+    group: Group,
 ): GroupMessage {
     return GroupMessage(
         msgId = IdGenerator().nextGroupId(),
@@ -60,7 +71,7 @@ fun GroupMessageDTO.toEntity(
         extraData = this.extraData,
         isRecalled = this.isRecalled,
         seqId = this.seqId,
-        sendTime = TimeUtil.parseToDateTime(this.sendTime),
+        sendTime = TimeUtil.parseStringToDateTime(this.sendTime),
         recallTime = this.recallTime,
         isAtAll = this.isAtAll,
         atUsers = this.atUsers,

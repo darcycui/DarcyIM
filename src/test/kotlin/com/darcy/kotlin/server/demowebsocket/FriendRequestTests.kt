@@ -31,8 +31,8 @@ class FriendRequestTests {
         val result = mockMvc.perform(
             post("http://localhost:$port/api/friend-requests/create")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("fromUserId", "13")
-                .param("toUserId", "14")
+                .param("fromUserId", "15")
+                .param("toUserId", "16")
         )
             .andExpect(status().isOk)
             .andReturn()
@@ -46,7 +46,7 @@ class FriendRequestTests {
         val result = mockMvc.perform(
             post("http://localhost:$port/api/friend-requests/query/from")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("fromUserId", "13")
+                .param("fromUserId", "15")
 
         ).andExpect(status().isOk)
             .andReturn()
@@ -60,7 +60,7 @@ class FriendRequestTests {
         val result = mockMvc.perform(
             post("http://localhost:$port/api/friend-requests/query/to")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("toUserId", "14")
+                .param("toUserId", "16")
         ).andExpect(status().isOk)
             .andReturn()
             .response
@@ -73,7 +73,7 @@ class FriendRequestTests {
         val result = mockMvc.perform(
             post("http://localhost:$port/api/friend-requests/accept")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("friendRequestId", "2")
+                .param("friendRequestId", "3")
         ).andExpect(status().isOk)
             .andReturn()
             .response
@@ -86,7 +86,7 @@ class FriendRequestTests {
         val result = mockMvc.perform(
             post("http://localhost:$port/api/friend-requests/reject")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("friendRequestId", "2")
+                .param("friendRequestId", "3")
         ).andExpect(status().isOk)
             .andReturn()
             .response

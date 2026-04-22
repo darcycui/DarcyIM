@@ -122,7 +122,7 @@ class WebSocketAllGroupTests {
                 groupName = "",
                 content = "测试消息1",
                 msgType = "TEXT",
-                sendTime = TimeUtil.getCurrentTimeStamp(),
+                sendTime = TimeUtil.getCurrentTimeString(),
                 isRecalled = false
             )
             session.send(sendHeaders, groupMessage)

@@ -34,7 +34,7 @@ class UploadFileService @Autowired constructor(
     }
 
     @Transactional
-    fun createItem(userId: Long, name: String, path: String, size: Long, type: String, hash: String): UploadFile {
+    fun createItem(userId: Long, name: String, path: String, size: Long, type: Int, hash: String): UploadFile {
         val existItem = uploadFileRepository.findByHash(hash).firstOrNull()
         if (existItem != null) {
             DarcyLogger.warn("数据库已存在:$name 无需写入数据库")
@@ -43,7 +43,12 @@ class UploadFileService @Autowired constructor(
         DarcyLogger.info("数据库不存在:$name 写入数据库.")
         return uploadFileRepository.save(
             UploadFile(
-                userId = userId, name = name, path = path, size = size, type = type, hash = hash
+                userId = userId,
+                name = name,
+                path = path,
+                size = size,
+                type = UploadFile.FileType.fromCode(type),
+                hash = hash
             )
         )
     }
@@ -58,7 +63,7 @@ class UploadFileService @Autowired constructor(
         name: String,
         path: String,
         size: Long,
-        type: String,
+        type: Int,
         hash: String
     ): UploadFile? {
         val file = getItemId(id)
@@ -67,7 +72,7 @@ class UploadFileService @Autowired constructor(
             file.name = name
             file.path = path
             file.size = size
-            file.type = type
+            file.type = UploadFile.FileType.fromCode(type)
             file.hash = hash
             return uploadFileRepository.save(file)
         }

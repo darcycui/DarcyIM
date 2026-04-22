@@ -9,23 +9,6 @@ object TimeUtil {
     private const val TIME_FORMATTER_2: String = "yyyy-MM-dd'T'HH:mm:ss"
     private const val TIME_FORMATTER_3: String = "yyyy/MM/dd HH:mm:ss"
 
-
-    fun parseToDateTime(value: Any?): LocalDateTime {
-        return when (value) {
-            is LocalDateTime -> value.also {
-                DarcyLogger.info("parseCreatedAt is LocalDateTime")
-            }
-
-            is String -> parseStringToDateTime(value).also {
-                DarcyLogger.info("parseCreatedAt is String")
-            }
-
-            else -> LocalDateTime.now().also {
-                DarcyLogger.info("parseCreatedAt is else")
-            }
-        }
-    }
-
     fun parseStringToDateTime(dateStr: String): LocalDateTime {
         val formats = listOf(
             DateTimeFormatter.ISO_LOCAL_DATE_TIME,
@@ -42,16 +25,24 @@ object TimeUtil {
             }
         }
         DarcyLogger.debug("无法解析日期时间格式: $dateStr")
-        return LocalDateTime.of(1970, 1, 1, 0, 0, 0)
+        return defaultDateTime()
     }
 
-    fun getCurrentTimeStamp(): String {
-        val now = LocalDateTime.now()
-        return dateTimeFormat(now)
-    }
-
-    fun dateTimeFormat(dateTime: LocalDateTime): String {
+    fun formatDateTimeToString(dateTime: LocalDateTime?): String {
         val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
-        return dateTime.format(formatter)
+        return if (dateTime == null) {
+            defaultDateTime().format(formatter)
+        } else {
+            dateTime.format(formatter)
+        }
+    }
+
+    fun getCurrentTimeString(): String {
+        val now = LocalDateTime.now()
+        return formatDateTimeToString(now)
+    }
+
+    private fun defaultDateTime(): LocalDateTime {
+        return LocalDateTime.of(1970, 1, 1, 0, 0, 0)
     }
 }

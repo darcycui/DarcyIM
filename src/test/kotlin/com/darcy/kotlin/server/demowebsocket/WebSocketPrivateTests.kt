@@ -143,7 +143,7 @@ class WebSocketPrivateTests {
                 receiverName = "test2",
                 content = "测试消息1",
                 msgType = "TEXT",
-                sendTime = TimeUtil.getCurrentTimeStamp(),
+                sendTime = TimeUtil.getCurrentTimeString(),
                 isRead = false,
                 isRecalled = false
             )

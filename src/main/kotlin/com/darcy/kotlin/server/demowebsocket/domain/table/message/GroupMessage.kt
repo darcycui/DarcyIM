@@ -77,16 +77,27 @@ open class GroupMessage(
     open var totalMembers: Int = 1
 ) : BaseEntity() {
 
-    enum class MessageType {
-        TEXT, IMAGE, VOICE, VIDEO, FILE, LOCATION, CARD, EMOJI, SYSTEM, CUSTOM
-    }
+    enum class MessageType(private val code: Int) {
+        TEXT(1),
+        IMAGE(2),
+        VOICE(3),
+        VIDEO(4),
+        FILE(5),
+        LOCATION(6),
+        CARD(7),
+        EMOJI(8),
+        SYSTEM(9),
+        CUSTOM(10)
+        ;
 
-    fun incrementReadCount() {
-        readCount++
-    }
+        companion object {
+            fun fromCode(code: Int): MessageType {
+                return entries.find { it.code == code } ?: TEXT
+            }
+        }
 
-    fun recall(time: LocalDateTime = LocalDateTime.now()) {
-        isRecalled = true
-        recallTime = time
+        fun toCode(): Int {
+            return code
+        }
     }
 }

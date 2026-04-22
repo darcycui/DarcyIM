@@ -2,6 +2,7 @@ package com.darcy.kotlin.server.demowebsocket.http.controller
 
 import com.darcy.kotlin.server.demowebsocket.api.IFriendshipApi
 import com.darcy.kotlin.server.demowebsocket.domain.ResultEntity
+import com.darcy.kotlin.server.demowebsocket.domain.dto.toDTO
 import com.darcy.kotlin.server.demowebsocket.exception.ParamsException
 import com.darcy.kotlin.server.demowebsocket.http.service.FriendshipService
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,6 +17,6 @@ class FriendshipController @Autowired constructor(
             mapOf("userId" to "用户ID不能为空")
         )
         val result = friendshipService.queryFriendships(userId)
-        return ResultEntity.success(result).toJsonString()
+        return ResultEntity.success(result.toDTO()).toJsonString()
     }
 }
