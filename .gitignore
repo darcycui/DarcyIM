@@ -40,3 +40,7 @@ out/
 .kotlin
 logs/
 *.p12
+
+### Gradle ###
+.gradle/
+local.properties

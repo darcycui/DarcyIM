@@ -46,11 +46,10 @@
 </div>
 
 <script>
-    let senderId = 14;
-    let receiverId = 13;
-    let senderName = "test1";
-    let receiverName = "test2";
-
+    let senderId = 13;
+    let receiverId = 14;
+    let senderName = "test2";
+    let receiverName = "test1";
 
     let stompClient = null;
 
@@ -92,7 +91,7 @@
                 appendMessage('系统', '连接成功，等待消息...', 'system');
 
                 stompClient.subscribe(`/user/queue/message`, function (message) {
-                    appendMessage('服务器-user', message.body, 'incoming');
+                    appendMessage('服务器-私聊', message.body, 'incoming');
                 });
 
                 stompClient.subscribe('/topic/message', function (message) {
