@@ -55,11 +55,6 @@ class UserController @Autowired constructor(val userService: UserService) : IUse
         return ResultEntity.success(userService.createUser(userEntity).toDTO()).toJsonString()
     }
 
-    override fun getUserById(id: String): String {
-        val idLong = id.toLongOrNull() ?: throw ParamsException.ParamsNotValid(mapOf("id" to "id不能为空"))
-        return ResultEntity.success(userService.getUserById(idLong).toDTO()).toJsonString()
-    }
-
     override fun updateUser(params: Map<String, String>): String {
         val userBean: User = User(
             username = params["name"].toString()
@@ -93,6 +88,21 @@ class UserController @Autowired constructor(val userService: UserService) : IUse
         }.onSuccess {
             DarcyLogger.info("delete user success")
         }.getOrElse { "default delete error" }
+    }
+
+    override fun getUserById(params: Map<String, String>): String {
+        val idLong = params["id"]?.toLong() ?: throw ParamsException.ParamsNotValid(mapOf("id" to "id不能为空"))
+        return ResultEntity.success(userService.getUserById(idLong).toDTO()).toJsonString()
+    }
+
+    override fun getUserByPhone(params: Map<String, String>): String {
+        val phone = params["phone"] ?: throw ParamsException.ParamsNotValid(mapOf("phone" to "手机号不能为空"))
+        return ResultEntity.success(userService.getUserByPhone(phone).toDTO()).toJsonString()
+    }
+
+    override fun getUserByEmail(params: Map<String, String>): String {
+        val email = params["email"] ?: throw ParamsException.ParamsNotValid(mapOf("email" to "邮箱不能为空"))
+        return ResultEntity.success(userService.getUserByEmail(email).toDTO()).toJsonString()
     }
 
     private fun contains(userBean: User): Boolean {

@@ -42,12 +42,12 @@ class UserService @Autowired constructor(
         return user.get()
     }
 
-    fun getUserByPhone(phone: String): User? {
-        return userRepository.findByPhone(phone)
+    fun getUserByPhone(phone: String): User {
+        return userRepository.findByPhone(phone) ?: throw UserException.USER_NOT_EXIST
     }
 
-    fun getUserByEmail(email: String): User? {
-        return userRepository.findByEmail(email)
+    fun getUserByEmail(email: String): User {
+        return userRepository.findByEmail(email) ?: throw UserException.USER_NOT_EXIST
     }
 
     @Transactional

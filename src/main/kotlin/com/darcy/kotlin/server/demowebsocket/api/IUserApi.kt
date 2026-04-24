@@ -18,9 +18,15 @@ interface IUserApi {
     @PostMapping("/delete")
     fun deleteUser(@RequestParam params: Map<String, String>): String
 
-    @GetMapping("/{id}")
-    fun getUserById(@PathVariable id: String): String
+    @PostMapping("/query/id")
+    fun getUserById(@RequestParam params: Map<String, String>): String
 
-    @GetMapping("/all")
+    @PostMapping("/query/phone")
+    fun getUserByPhone(@RequestParam params: Map<String, String>): String
+
+    @PostMapping("/query/email")
+    fun getUserByEmail(@RequestParam params: Map<String, String>): String
+
+    @PostMapping("/all")
     fun getAllUsers(): String
 }
