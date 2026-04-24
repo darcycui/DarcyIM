@@ -3,6 +3,7 @@ package com.darcy.kotlin.server.demowebsocket
 import com.darcy.kotlin.server.demowebsocket.domain.table.User
 import com.darcy.kotlin.server.demowebsocket.domain.table.User.UserStatus
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -12,11 +13,10 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.LocalDateTime
-import kotlin.test.Test
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-class UserControllerTests {
+class RegisterTests {
 
     // 注入随机端口
     @LocalServerPort
@@ -29,15 +29,27 @@ class UserControllerTests {
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
+    /**
+     * u/1020407 (你原本使用的)
+     * u/1
+     * u/2
+     * u/9919
+     * u/583231
+     * u/1726002
+     * u/23617146
+     * u/3814078
+     * u/44036562
+     * u/66685688
+     */
     private val user1 = User(
-        username = "Tom",
+        username = "Butch",
         passwordHash = "123456",
-        nickname = "TomTom",
-        avatar = "https://avatars.githubusercontent.com/u/1020407?v=4",
-        phone = "150999888777",
-        email = "Tom@gmail.com",
+        nickname = "ButchButch",
+        avatar = "https://avatars.githubusercontent.com/u/3814078?v=4",
+        phone = "151999888777",
+        email = "Butch@gmail.com",
         gender = "male",
-        signature = "I'm a cat",
+        signature = "I'm a black cat",
         status = UserStatus.NORMAL,
         lastActiveTime = null,
         deletedAt = null,
@@ -45,74 +57,19 @@ class UserControllerTests {
         roles = "admin",
         token = "",
     )
-
-    private val user2 = User(
-        username = "Jerry",
-        passwordHash = "123456",
-        nickname = "JerryJerry",
-        avatar = "https://avatars.githubusercontent.com/u/9919?v=4",
-        phone = "138000111222",
-        email = "Jerry@gmail.com",
-        gender = "male",
-        signature = "I'm a mouse",
-        status = UserStatus.NORMAL,
-        lastActiveTime = null,
-        deletedAt = null,
-        settings = emptyMap(),
-        roles = "admin",
-        token = "",
-    )
-
-    private val user3 = User(
-        username = "Spike",
-        passwordHash = "123456",
-        nickname = "SpikeSpike",
-        avatar = "https://avatars.githubusercontent.com/u/583231?v=4",
-        phone = "137000111222",
-        email = "Spike@gmail.com",
-        gender = "male",
-        signature = "I'm a dog",
-        status = UserStatus.NORMAL,
-        lastActiveTime = null,
-        deletedAt = null,
-        settings = emptyMap(),
-        roles = "admin",
-        token = "",
-    )
-
-    private val user4 = User(
-        username = "Tyke",
-        passwordHash = "123456",
-        nickname = "TykeTyke",
-        avatar = "https://avatars.githubusercontent.com/u/1726002?v=4",
-        phone = "136000111222",
-        email = "Tyke@gmail.com",
-        gender = "male",
-        signature = "I'm a small dog",
-        status = UserStatus.NORMAL,
-        lastActiveTime = null,
-        deletedAt = null,
-        settings = emptyMap(),
-        roles = "admin",
-        token = "",
-    )
-
 
     @Test
-    fun `test-create-user-mockmvc`() {
-//        val user = user1
-//        val user = user2
-//        val user = user3
-        val user = user4
+    fun `test-register`() {
+        val user = user1
         user.createdAt = LocalDateTime.now()
         println("createAt: ${user.createdAt}")
         user.updatedAt = LocalDateTime.now()
         println("updateAt: ${user.updatedAt}")
 
-        val params:  Map<String, String> = mapOf(
+        val params: Map<String, String> = mapOf(
         )
         val result = mockMvc.perform(
-            post("http://localhost:$port/api/users/create")
+            post("http://localhost:$port/api/register")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("username", user.username)
                 .param("password", user.passwordHash)
@@ -136,6 +93,5 @@ class UserControllerTests {
             .response
             .contentAsString
         println("result-->$result")
-
     }
 }

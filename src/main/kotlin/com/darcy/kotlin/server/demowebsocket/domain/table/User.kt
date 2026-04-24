@@ -76,6 +76,8 @@ open class User(
     enum class UserStatus(val code: Int) {
         NORMAL(1),      // 正常
         DISABLED(2),   // 禁用
+        DELETED(3),    // 删除
+        BANNED(4),      // 封禁
         ;
 
         companion object {
