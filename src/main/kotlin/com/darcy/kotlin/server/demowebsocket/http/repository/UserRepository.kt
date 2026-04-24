@@ -12,7 +12,9 @@ import java.time.LocalDateTime
 
 interface UserRepository : JpaRepository<User, Long> {
 
-    @Query("select u from User u where u.username = :userName")
+    // Mysql默认大小写不敏感 这里使用BINARY 精确检查大小写
+//    @Query("select u from User u where function('BINARY', u.username) = :userName")
+    @Query("select u from User u where  u.username = :userName")
     fun findByUserName(userName: String): User?
 
     fun findByPhone(phone: String): User?

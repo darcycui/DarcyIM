@@ -22,6 +22,13 @@ spring:
     database-platform: org.hibernate.dialect.MySQLDialect
     show-sql: true  #控制台显示SQL
     hibernate.ddl-auto: update #更新或者创建数据表结构
+  flyway:
+    enabled: true              # 开启 Flyway
+    baseline-on-migrate: true  # 允许在已有数据库上基线迁移
+    baseline-version: 1.0.0    # 基线版本 低于此版本号不会迁移
+    clean-disabled: true       # 生产环境严禁开启 clean
+    validate-on-migrate: true  # 开启数据表结构验证
+    locations: classpath:db/migration # Flyway 迁移脚本位置
   servlet:
     multipart:
       max-file-size: 10240MB
@@ -29,7 +36,7 @@ spring:
   sql:
     init:
       mode: always
-      schema-locations: classpath:db.sql
+      schema-locations: classpath:db/db.sql
 
   security:
     user:

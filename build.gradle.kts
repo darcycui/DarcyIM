@@ -11,10 +11,12 @@ plugins {
 //    kotlin("plugin.noarg") version "1.9.0"
 }
 
-//allOpen {
-//    // @Entity注解的类改为open 且所有属性改为open
-//    annotation("jakarta.persistence.Entity")
-//}
+allOpen {
+    // @Entity注解的类改为open 且所有属性改为open
+    annotation("jakarta.persistence.Entity")
+    annotation("jakarta.persistence.MappedSuperclass")
+    annotation("jakarta.persistence.Embeddable")
+}
 
 group = "com.darcy.kotlin.server"
 version = "0.0.4-SNAPSHOT"
@@ -79,6 +81,9 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-jackson:0.13.0")
     // 添加 Spring AOP 依赖
     implementation("org.springframework.boot:spring-boot-starter-aop")
+    // 添加 Flyway 用于数据库升级
+    implementation("org.flywaydb:flyway-core:10.22.0")
+    implementation("org.flywaydb:flyway-mysql:10.22.0")
 
 }
 
