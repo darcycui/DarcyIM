@@ -6,8 +6,8 @@ import com.darcy.kotlin.server.demowebsocket.utils.TimeUtil
 import org.springframework.data.domain.Page
 
 data class FriendshipDTO(
-    val userId: Long,
-    val friendId: Long,
+    val user: UserDTO = UserDTO(),
+    val friend: UserDTO = UserDTO(),
     val alias: String = "",
     val relationStatus: Int = 0,
     val source: String = "",
@@ -23,8 +23,8 @@ data class FriendshipDTO(
 
 fun Friendship.toDTO(): FriendshipDTO {
     return FriendshipDTO(
-        userId = this.user.id,
-        friendId = this.friend.id,
+        user = this.user.toDTO(),
+        friend = this.friend.toDTO(),
         alias = this.alias,
         relationStatus = this.relationStatus.toCode(),
         source = this.source,

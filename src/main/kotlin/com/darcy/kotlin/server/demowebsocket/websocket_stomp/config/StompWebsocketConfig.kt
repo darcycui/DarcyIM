@@ -16,9 +16,10 @@ import org.springframework.web.socket.config.annotation.WebSocketTransportRegist
 class StompWebsocketConfig @Autowired constructor(
     val userChannelInterceptor: UserChannelInterceptor
 ) : WebSocketMessageBrokerConfigurer {
+    // todo 如何开启确认帧 Receipt
     companion object {
         private const val WEBSOCKET_PATH = "/stomp-ws"
-        private const val HEARTBEAT_PERIOD = 60_000L
+        private const val HEARTBEAT_PERIOD = 10_000L
 
         private const val SUBSCRIBE_GROUP_MESSAGE_PREFIX = "/topic"
         private const val SUBSCRIBE_SINGLE_MESSAGE_PREFIX = "/queue"
