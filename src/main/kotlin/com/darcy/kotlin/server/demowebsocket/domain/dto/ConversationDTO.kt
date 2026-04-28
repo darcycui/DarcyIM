@@ -7,9 +7,9 @@ import org.springframework.data.domain.Page
 
 data class ConversationDTO(
     val conversationId: String = "",
-    val userId: Long,
+    val user: UserDTO,
     val conversationType: Int,
-    val targetId: Long = 0L,
+    val target: UserDTO = UserDTO(),
     val lastMsgId: String = "",
     val lastMsgContent: String = "",
     val lastMsgType: Int = 0,
@@ -27,12 +27,12 @@ data class ConversationDTO(
     val updatedAt: String = ""
 )
 
-fun Conversation.toDTO(): ConversationDTO {
+fun Conversation.toDTO(target: UserDTO): ConversationDTO {
     return ConversationDTO(
         conversationId = this.conversationId,
-        userId = this.user.id,
+        user = this.user.toDTO(),
         conversationType = this.conversationType.code,
-        targetId = this.targetId,
+        target = target,
         lastMsgId = this.lastMsgId,
         lastMsgContent = this.lastMsgContent,
         lastMsgType = this.lastMsgType,
@@ -51,12 +51,18 @@ fun Conversation.toDTO(): ConversationDTO {
     )
 }
 
-fun List<Conversation>.toDTO(): List<ConversationDTO> {
-    return this.map { it.toDTO() }
+fun List<Conversation>.toDTO(targetList: List<User>): List<ConversationDTO> {
+    return this.mapIndexed { index, item ->
+        item.toDTO(targetList[index].toDTO())
+    }
 }
 
-fun Page<Conversation>.toDTO(): Page<ConversationDTO> {
-    return this.map { it.toDTO() }
+fun Page<Conversation>.toDTO(targetList: List<User>): Page<ConversationDTO> {
+    var index = -1
+    return this.map { item ->
+        index += 1
+        item.toDTO(targetList[index].toDTO())
+    }
 }
 
 fun ConversationDTO.toEntity(user: User): Conversation {
@@ -64,7 +70,7 @@ fun ConversationDTO.toEntity(user: User): Conversation {
         conversationId = this.conversationId,
         user = user,
         conversationType = Conversation.ConversationType.fromCode(this.conversationType),
-        targetId = this.targetId,
+        targetId = this.target.id,
         lastMsgId = this.lastMsgId,
         lastMsgContent = this.lastMsgContent,
         lastMsgType = this.lastMsgType,

@@ -23,11 +23,12 @@ class FriendshipService @Autowired constructor(
     }
 
     @Transactional
-    fun queryFriendships(userId: Long): List<User> {
+    fun queryFriendships(userId: Long): List<Friendship> {
         val friends = friendshipRepository.findByUserId(userId)
-        return friends.map {
-            it.friend
-        }
+        return friends
+//            .map {
+//                it.friend
+//            }
     }
 
     @Transactional
