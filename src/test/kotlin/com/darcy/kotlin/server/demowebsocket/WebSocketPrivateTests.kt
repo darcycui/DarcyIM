@@ -195,9 +195,9 @@ class WebSocketPrivateTests {
             // 等待消息接收（最多等待 5 秒）
             val received = messageLatch.await(5, TimeUnit.SECONDS)
             if (received) {
-                println("✓ Test passed: Message received successfully")
+                println("✓ 测试通过：成功接收消息")
             } else {
-                println("✗ Test failed: Message not received within timeout")
+                println("✗ 测试失败：未在超时时间内接收到消息")
             }
             assertEquals(true, received, "接收消息错误")
 
@@ -205,7 +205,7 @@ class WebSocketPrivateTests {
             if (receiptReceived) {
                 println("✓ 测试通过：成功接收消息与确认帧")
             } else {
-                println("✗ 警告：未在超时时间内收到确认帧，但消息已成功投递")
+                println("✗ 测试失败：未在超时时间内收到确认帧，但消息已成功投递")
             }
             assertEquals(true, receiptReceived, "未在超时时间内收到确认帧，但消息已成功投递")
 

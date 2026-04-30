@@ -22,8 +22,8 @@ class STOMPService @Autowired constructor(
     private val groupMessageService: GroupMessageService,
     private val groupService: GroupService,
     private val userService: UserService,
-    @Lazy
-    private val simpUserRegistry: SimpUserRegistry
+//    @Lazy
+//    private val simpUserRegistry: SimpUserRegistry
 ) {
     fun sendPrivate(privateMessage: PrivateMessageDTO) {
         val recipient = privateMessage.receiverName
@@ -55,9 +55,9 @@ class STOMPService @Autowired constructor(
         }
     }
 
-    fun isUserOnline(username: String): Boolean {
-        return simpUserRegistry.getUser(username)?.hasSessions() ?: false
-    }
+//    fun isUserOnline(username: String): Boolean {
+//        return simpUserRegistry.getUser(username)?.hasSessions() ?: false
+//    }
 
     fun sendAllGroup(groupMessage: GroupMessageDTO) {
         kotlin.runCatching {

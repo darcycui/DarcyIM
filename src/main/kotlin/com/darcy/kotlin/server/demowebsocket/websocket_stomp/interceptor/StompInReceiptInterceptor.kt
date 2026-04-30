@@ -5,9 +5,6 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Lazy
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor
-import org.springframework.messaging.simp.SimpMessageType
-import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.messaging.simp.stomp.StompCommand
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor
 import org.springframework.messaging.support.ChannelInterceptor
@@ -15,10 +12,12 @@ import org.springframework.messaging.support.MessageBuilder
 import org.springframework.stereotype.Component
 import org.springframework.util.StringUtils
 import java.lang.Exception
-import java.nio.charset.StandardCharsets
 
+/**
+ * In拦截器 拦截服务器收到的 确认帧
+ */
 @Component
-class StompReceiptInterceptor : ChannelInterceptor {
+class StompInReceiptInterceptor : ChannelInterceptor {
 
     @Autowired
     @Lazy
@@ -74,7 +73,7 @@ class StompReceiptInterceptor : ChannelInterceptor {
             if (sent) {
                 println("[Receipt] 消息已成功处理，准备发送确认帧: receipt=$receipt")
                 // 这里可以触发业务逻辑，如记录日志到数据库
-                // 手动发送 RECEIPT 帧
+                // 这里手动发送 RECEIPT 帧
                 sendReceiptIfNeeded(message)
             } else if (ex != null) {
                 println("[Receipt] 消息处理失败: receipt=$receipt, error=${ex.message}")
