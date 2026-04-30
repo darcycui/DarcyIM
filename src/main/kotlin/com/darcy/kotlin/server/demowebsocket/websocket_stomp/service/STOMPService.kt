@@ -10,7 +10,9 @@ import com.darcy.kotlin.server.demowebsocket.http.service.PrivateMessageService
 import com.darcy.kotlin.server.demowebsocket.http.service.UserService
 import com.darcy.kotlin.server.demowebsocket.log.DarcyLogger
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Lazy
 import org.springframework.messaging.simp.SimpMessagingTemplate
+import org.springframework.messaging.simp.user.SimpUserRegistry
 import org.springframework.stereotype.Service
 
 @Service
@@ -20,10 +22,12 @@ class STOMPService @Autowired constructor(
     private val groupMessageService: GroupMessageService,
     private val groupService: GroupService,
     private val userService: UserService,
+    @Lazy
+    private val simpUserRegistry: SimpUserRegistry
 ) {
     fun sendPrivate(privateMessage: PrivateMessageDTO) {
+        val recipient = privateMessage.receiverName
         kotlin.runCatching {
-            val recipient = privateMessage.receiverName
             DarcyLogger.warn("单发消息 -->$recipient")
             // Spring STOMP 单播 Unicast
             websocket.convertAndSendToUser(recipient, "/queue/message", privateMessage)
@@ -33,10 +37,26 @@ class STOMPService @Autowired constructor(
         }.onSuccess {
             DarcyLogger.info("send private message SUCCESS")
         }.onFailure {
-            DarcyLogger.error("send private message FAILED")
-            it.printStackTrace()
+            DarcyLogger.error("send private message FAILED: ${it::class.java.simpleName} ${it.message}")
+            when (it) {
+                is IllegalArgumentException -> {
+                    if (it.message?.contains("Cannot send a message when session is closed") == true) {
+                        DarcyLogger.warn("用户已下线 无法发送消息 这里记录状态到数据库，忽略异常")
+                    } else {
+                        it.printStackTrace()
+                    }
+                }
+
+                else -> {
+                    it.printStackTrace()
+                }
+            }
             throw STOMPException.STOMP_SEND_PRIVATE_MESSAGE_FAILED
         }
+    }
+
+    fun isUserOnline(username: String): Boolean {
+        return simpUserRegistry.getUser(username)?.hasSessions() ?: false
     }
 
     fun sendAllGroup(groupMessage: GroupMessageDTO) {

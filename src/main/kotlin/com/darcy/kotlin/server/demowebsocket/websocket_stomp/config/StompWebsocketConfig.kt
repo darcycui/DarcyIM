@@ -1,11 +1,16 @@
 package com.darcy.kotlin.server.demowebsocket.websocket_stomp.config
 
+import com.darcy.kotlin.server.demowebsocket.websocket_stomp.interceptor.StompReceiptInterceptor
 import com.darcy.kotlin.server.demowebsocket.websocket_stomp.interceptor.UserChannelInterceptor
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.messaging.converter.MessageConverter
 import org.springframework.messaging.simp.config.ChannelRegistration
 import org.springframework.messaging.simp.config.MessageBrokerRegistry
+import org.springframework.scheduling.TaskScheduler
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer
@@ -14,7 +19,8 @@ import org.springframework.web.socket.config.annotation.WebSocketTransportRegist
 @Configuration
 @EnableWebSocketMessageBroker
 class StompWebsocketConfig @Autowired constructor(
-    val userChannelInterceptor: UserChannelInterceptor
+    val userChannelInterceptor: UserChannelInterceptor,
+    val stompReceiptInterceptor: StompReceiptInterceptor
 ) : WebSocketMessageBrokerConfigurer {
     // todo 如何开启确认帧 Receipt
     companion object {
@@ -56,10 +62,21 @@ class StompWebsocketConfig @Autowired constructor(
 
     override fun configureClientInboundChannel(registration: ChannelRegistration) {
         super.configureClientInboundChannel(registration)
-        registration.interceptors(userChannelInterceptor)
+        // 配置 TaskScheduler 以启用 receipt 确认帧
+        registration.taskExecutor(ThreadPoolTaskExecutor().apply {
+            corePoolSize = 4
+            maxPoolSize = 4
+            queueCapacity = 10_000
+        })
+        registration.interceptors(userChannelInterceptor, stompReceiptInterceptor)
     }
 
     override fun configureClientOutboundChannel(registration: ChannelRegistration) {
+        registration.taskExecutor(ThreadPoolTaskExecutor().apply {
+            corePoolSize = 4
+            maxPoolSize = 4
+            queueCapacity = 10_000
+        })
         super.configureClientOutboundChannel(registration)
     }
 

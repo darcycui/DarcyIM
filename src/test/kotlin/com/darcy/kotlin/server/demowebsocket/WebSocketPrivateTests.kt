@@ -13,6 +13,7 @@ import org.springframework.messaging.simp.stomp.StompCommand
 import org.springframework.messaging.simp.stomp.StompHeaders
 import org.springframework.messaging.simp.stomp.StompSession
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.web.socket.WebSocketHttpHeaders
 import org.springframework.web.socket.client.standard.StandardWebSocketClient
@@ -41,6 +42,7 @@ class WebSocketPrivateTests {
     private fun createJwtToken1(): String {
         return "test1"
     }
+
     private fun createJwtToken2(): String {
         return "test2"
     }
@@ -50,9 +52,19 @@ class WebSocketPrivateTests {
         val transports = listOf(WebSocketTransport(StandardWebSocketClient()))
         val sockJsClient = SockJsClient(transports)
         val stompClient = WebSocketStompClient(sockJsClient)
+        // 关键：配置 TaskScheduler
+        val taskScheduler = ThreadPoolTaskScheduler().apply {
+            poolSize = 4
+//            threadNamePrefix = "websocket-receipt-scheduler-"
+            isDaemon = true
+            initialize()
+        }
+        stompClient.taskScheduler = taskScheduler
         // 设置消息转换器
         val converter = MappingJackson2MessageConverter()
         stompClient.messageConverter = converter
+        // 开启底层调试
+        stompClient.receiptTimeLimit = 10_000  // RECEIPT 超时时间（如果你的版本支持）
 
         // 2. 准备头部
         val webSocketHeaders = WebSocketHttpHeaders()
@@ -102,11 +114,16 @@ class WebSocketPrivateTests {
         val session1 = createWebSocketStompClientSession(createJwtToken1())
         val session2 = createWebSocketStompClientSession(createJwtToken2())
 
+        // 设置 receipt 确认帧
+        session1.setAutoReceipt(true)
+        session2.setAutoReceipt(true)
+
         // 4. 等待连接
         try {
 
             // 使用 CountDownLatch 等待消息接收
             val messageLatch = CountDownLatch(1)
+            val receiptLatch = CountDownLatch(1)
 
             // 5. 订阅主题
             val queueSubscription = session1.subscribe("/user/queue/message", object : StompSessionHandlerAdapter() {
@@ -118,6 +135,13 @@ class WebSocketPrivateTests {
                     return PrivateMessageDTO::class.java
                 }
             })
+            queueSubscription.addReceiptTask(Runnable {
+                println("🎉 [RECEIPT SUCCESS] 订阅1的确认帧已被服务器接收!")
+            })
+            queueSubscription.addReceiptLostTask {
+                println("❌ [RECEIPT FAILURE] 订阅1的确认帧失败!")
+            }
+            Thread.sleep(500) // 等待订阅确认日志
 
             val queueSubscription2 = session2.subscribe("/user/queue/message", object : StompSessionHandlerAdapter() {
                 override fun handleFrame(headers: StompHeaders, payload: Any?) {
@@ -130,10 +154,19 @@ class WebSocketPrivateTests {
                     return PrivateMessageDTO::class.java
                 }
             })
+            queueSubscription2.addReceiptTask(Runnable {
+                println("🎉 [RECEIPT SUCCESS] 订阅2的确认帧已被服务器接收!")
+            })
+            queueSubscription2.addReceiptLostTask {
+                println("❌ [RECEIPT FAILURE] 订阅2的确认帧失败!")
+            }
+            Thread.sleep(500) // 等待订阅确认日志
 
             // 6. 发送消息
             val sendHeaders = StompHeaders().apply {
                 destination = "/app/sendPrivateMessage"
+                receipt = "receipt-1${System.currentTimeMillis()}"
+//                receiptId = "receipt-1${System.currentTimeMillis()}"
             }
             val privateMessage = PrivateMessageDTO(
                 msgId = "",
@@ -147,10 +180,18 @@ class WebSocketPrivateTests {
                 isRead = false,
                 isRecalled = false
             )
-            session1.send(sendHeaders, privateMessage)
+            // 发送消息 获取返回值用于处理Receipt确认帧
+            val sendReceipt = session1.send(sendHeaders, privateMessage)
+            // *** 核心：注册异步接收任务以记录日志 ***
+            sendReceipt.addReceiptTask(Runnable {
+                println("🎉 [RECEIPT SUCCESS] 发送操作成功! Receipt ID: ${sendReceipt.receiptId}")
+                receiptLatch.countDown()
+            })
+            sendReceipt.addReceiptLostTask {
+                println("❌ [RECEIPT FAILURE] 发送操作失败! Receipt ID: ${sendReceipt.receiptId}")
+            }
 
-            // 等待
-            Thread.sleep(3_000)
+            // 3. 等待消息接收与确认帧结果
             // 等待消息接收（最多等待 5 秒）
             val received = messageLatch.await(5, TimeUnit.SECONDS)
             if (received) {
@@ -159,6 +200,14 @@ class WebSocketPrivateTests {
                 println("✗ Test failed: Message not received within timeout")
             }
             assertEquals(true, received, "接收消息错误")
+
+            val receiptReceived = receiptLatch.await(10, TimeUnit.SECONDS)
+            if (receiptReceived) {
+                println("✓ 测试通过：成功接收消息与确认帧")
+            } else {
+                println("✗ 警告：未在超时时间内收到确认帧，但消息已成功投递")
+            }
+            assertEquals(true, receiptReceived, "未在超时时间内收到确认帧，但消息已成功投递")
 
             // 7. 清理
             queueSubscription.unsubscribe()

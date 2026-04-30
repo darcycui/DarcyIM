@@ -52,7 +52,8 @@ logging:
     org.springframework.web: DEBUG
     org.springframework.security: DEBUG
     org.springframework.security.config.annotation.web.builders.HttpSecurity: DEBUG
-
+    org.springframework.web.socket: DEBUG
+    org.springframework.messaging.simp: DEBUG
 upload:
   path:
     image: D:/uploads/image

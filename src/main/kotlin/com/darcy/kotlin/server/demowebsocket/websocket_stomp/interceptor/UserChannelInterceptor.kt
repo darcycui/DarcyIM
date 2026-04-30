@@ -28,13 +28,14 @@ class UserChannelInterceptor @Autowired constructor(
                 StompCommand.CONNECT -> {
                     // 注册用户名
                     val userId = accessor.getNativeHeader("Authorization")?.get(0) ?: ""
-                    DarcyLogger.info("用户名：$userId")
-
                     setupUserNameForSTOMP(accessor, userId)
                     DarcyLogger.info("用户$userId 上线了")
+                    userCount()
                 }
 
                 StompCommand.SUBSCRIBE -> {
+                    val userId = user?.name ?: ""
+                    DarcyLogger.info("用户$userId 订阅了 $destination")
                 }
 
                 StompCommand.DISCONNECT -> {
@@ -44,8 +45,14 @@ class UserChannelInterceptor @Autowired constructor(
                 }
 
                 StompCommand.STOMP -> {}
-                StompCommand.UNSUBSCRIBE -> {}
-                StompCommand.SEND -> {}
+                StompCommand.UNSUBSCRIBE -> {
+                    val userId = user?.name ?: ""
+                    DarcyLogger.info("用户$userId 取消订阅了 $destination")
+                }
+                StompCommand.SEND -> {
+                    val userId = user?.name ?: ""
+                    DarcyLogger.info("用户$userId 发送了消息到 $destination" )
+                }
                 StompCommand.ACK -> {}
                 StompCommand.NACK -> {}
                 StompCommand.BEGIN -> {}
@@ -55,10 +62,16 @@ class UserChannelInterceptor @Autowired constructor(
                     userCount()
                 }
 
-                StompCommand.RECEIPT -> {}
+                StompCommand.RECEIPT -> {
+                    val userId = user?.name ?: ""
+                    DarcyLogger.info("用户$userId 接收了 RECEIPT 确认帧 $receiptId")
+                }
                 StompCommand.MESSAGE -> {}
-                StompCommand.ERROR -> {}
-                null -> {}
+                StompCommand.ERROR -> {
+                    val userId = user?.name ?: ""
+                    DarcyLogger.info("用户$userId 接收到错误帧 $sessionId")
+                }
+                else -> {}
             }
         }
         return message
@@ -74,7 +87,7 @@ class UserChannelInterceptor @Autowired constructor(
             DarcyLogger.error("用户未登录")
         }
         if (verifyUserId(userId)) {
-            accessor.user = MyPrincipal(userId)
+            accessor.user = UserNamePrincipal(userId)
         }
     }
 
