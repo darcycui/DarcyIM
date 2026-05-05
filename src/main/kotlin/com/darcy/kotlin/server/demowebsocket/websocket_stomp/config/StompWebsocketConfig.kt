@@ -1,11 +1,15 @@
 package com.darcy.kotlin.server.demowebsocket.websocket_stomp.config
 
-import com.darcy.kotlin.server.demowebsocket.websocket_stomp.interceptor.UserChannelInterceptor
+import com.darcy.kotlin.server.demowebsocket.websocket_stomp.interceptor.StompHandshakeInterceptor
+import com.darcy.kotlin.server.demowebsocket.websocket_stomp.interceptor.StompInReceiptInterceptor
+import com.darcy.kotlin.server.demowebsocket.websocket_stomp.interceptor.StompInUserInterceptor
+import com.darcy.kotlin.server.demowebsocket.websocket_stomp.interceptor.StompOutInterceptor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Configuration
 import org.springframework.messaging.converter.MessageConverter
 import org.springframework.messaging.simp.config.ChannelRegistration
 import org.springframework.messaging.simp.config.MessageBrokerRegistry
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer
@@ -14,11 +18,15 @@ import org.springframework.web.socket.config.annotation.WebSocketTransportRegist
 @Configuration
 @EnableWebSocketMessageBroker
 class StompWebsocketConfig @Autowired constructor(
-    val userChannelInterceptor: UserChannelInterceptor
+    val stompInUserInterceptor: StompInUserInterceptor,
+    val stompInReceiptInterceptor: StompInReceiptInterceptor,
+    val stompHandshakeInterceptor: StompHandshakeInterceptor,
+    val stompOutInterceptor: StompOutInterceptor
 ) : WebSocketMessageBrokerConfigurer {
     // todo 如何开启确认帧 Receipt
     companion object {
         private const val WEBSOCKET_PATH = "/stomp-ws"
+        private const val WEBSOCKET_PATH_JS = "/stomp-sockjs"
         private const val HEARTBEAT_PERIOD = 10_000L
 
         private const val SUBSCRIBE_GROUP_MESSAGE_PREFIX = "/topic"
@@ -45,22 +53,41 @@ class StompWebsocketConfig @Autowired constructor(
             // 添加原生 STOMP 端点
             addEndpoint(WEBSOCKET_PATH)
                 .setAllowedOriginPatterns("*", "null")
+//                .addInterceptors(stompHandshakeInterceptor)
 
             // 添加 STOMP 端点，并开启 SockJS 支持
-            addEndpoint(WEBSOCKET_PATH)
+            addEndpoint(WEBSOCKET_PATH_JS)
                 .setAllowedOriginPatterns("*", "null")
+//                .addInterceptors(stompHandshakeInterceptor)
                 .withSockJS()
                 .setHeartbeatTime(HEARTBEAT_PERIOD)
         }
     }
 
+    /**
+     * 收到消息的拦截器
+     */
     override fun configureClientInboundChannel(registration: ChannelRegistration) {
         super.configureClientInboundChannel(registration)
-        registration.interceptors(userChannelInterceptor)
+        // 配置 TaskScheduler 以启用 receipt 确认帧
+        registration.taskExecutor(ThreadPoolTaskExecutor().apply {
+            corePoolSize = 4
+            maxPoolSize = 4
+            queueCapacity = 10_000
+        })
+        registration.interceptors(stompInUserInterceptor, stompInReceiptInterceptor)
     }
 
+    /**
+     * 发送消息的拦截器
+     */
     override fun configureClientOutboundChannel(registration: ChannelRegistration) {
-        super.configureClientOutboundChannel(registration)
+        registration.taskExecutor(ThreadPoolTaskExecutor().apply {
+            corePoolSize = 4
+            maxPoolSize = 4
+            queueCapacity = 10_000
+        })
+        registration.interceptors(stompOutInterceptor)
     }
 
     override fun configureMessageConverters(messageConverters: MutableList<MessageConverter>): Boolean {
@@ -68,6 +95,11 @@ class StompWebsocketConfig @Autowired constructor(
     }
 
     override fun configureWebSocketTransport(registry: WebSocketTransportRegistration) {
+        registry.apply {
+            setMessageSizeLimit(128 * 1024)
+            setSendBufferSizeLimit(512 * 1024)
+            setSendTimeLimit(10 * 1000)
+        }
         super.configureWebSocketTransport(registry)
     }
 }
