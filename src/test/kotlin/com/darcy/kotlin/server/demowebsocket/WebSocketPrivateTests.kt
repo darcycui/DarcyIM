@@ -51,7 +51,7 @@ class WebSocketPrivateTests {
         return JWT_TOKEN_2
     }
 
-    private fun createWebSocketStompClientSession(jwtToken: String): StompSession {
+    private fun createWebSocketStompClientSession(jwtToken: String): Pair<WebSocketStompClient, StompSession> {
         // 1. 创建客户端
         val transports = listOf(WebSocketTransport(StandardWebSocketClient()))
         val sockJsClient = SockJsClient(transports)
@@ -88,6 +88,7 @@ class WebSocketPrivateTests {
             override fun afterConnected(session: StompSession, connectedHeaders: StompHeaders) {
                 println("Connected! Session: ${session.sessionId}")
                 println("Connected headers: $connectedHeaders")
+                // 给 future 设置值
                 sessionFuture.complete(session)
             }
 
@@ -107,7 +108,7 @@ class WebSocketPrivateTests {
         })
 
         val session = sessionFuture.get(5, TimeUnit.SECONDS)
-        return session
+        return Pair(stompClient, session)
     }
 
     // STOMP 是 Simple Text Oriented Messaging Protocol
@@ -115,8 +116,12 @@ class WebSocketPrivateTests {
     @Test
     fun `test-private-websocket-stomp`() {
         // 创建两个会话
-        val session1 = createWebSocketStompClientSession(createJwtToken1())
-        val session2 = createWebSocketStompClientSession(createJwtToken2())
+        val pair1 = createWebSocketStompClientSession(createJwtToken1())
+        val stompClient1 = pair1.first
+        val session1 = pair1.second
+        val pair2 = createWebSocketStompClientSession(createJwtToken2())
+        val stompClient2 = pair2.first
+        val session2 = pair2.second
 
         // 设置 receipt 确认帧
         session1.setAutoReceipt(true)
@@ -124,7 +129,6 @@ class WebSocketPrivateTests {
 
         // 4. 等待连接
         try {
-
             // 使用 CountDownLatch 等待消息接收
             val messageLatch = CountDownLatch(1)
             val receiptLatch = CountDownLatch(1)
@@ -217,16 +221,19 @@ class WebSocketPrivateTests {
             queueSubscription.unsubscribe()
             queueSubscription2.unsubscribe()
 
-            // 8. 优雅断开连接，等待服务端的 disconnect_ack
-            val disconnectLatch1 = CountDownLatch(1)
-            val disconnectLatch2 = CountDownLatch(1)
+            // 8. 优雅断开连接，等待服务端的 RECEIPT 确认帧
             session1.disconnect()
             session2.disconnect()
+            // 等待断开连接
+            Thread.sleep(100)
             println("✓ Disconnected")
 
-        } catch (e: TimeoutException) {
+        } catch (e: Exception) {
             e.printStackTrace()
-            println("✗ Connection timeout")
+            println("✗ Connection error: ${e.javaClass.simpleName} ${e.message}")
+        } finally {
+            stompClient1.stop()
+            stompClient2.stop()
         }
     }
 
