@@ -1,10 +1,8 @@
 package com.darcy.kotlin.server.demowebsocket.http.service
 
 import com.darcy.kotlin.server.demowebsocket.domain.table.Friendship
-import com.darcy.kotlin.server.demowebsocket.domain.table.User
-import com.darcy.kotlin.server.demowebsocket.exception.user.UserException
 import com.darcy.kotlin.server.demowebsocket.http.repository.FriendshipRepository
-import jakarta.transaction.Transactional
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -15,8 +13,8 @@ class FriendshipService @Autowired constructor(
 ) {
     @Transactional
     fun createFriendship(userId: Long, friendId: Long): List<Friendship> {
-        val user = userService.getUserById(userId)
-        val friend = userService.getUserById(friendId)
+        val user = userService.queryUserById(userId)
+        val friend = userService.queryUserById(friendId)
         val result1 = friendshipRepository.save(Friendship(user, friend))
         val result2 = friendshipRepository.save(Friendship(friend, user))
         return listOf(result1, result2)

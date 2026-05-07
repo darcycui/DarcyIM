@@ -34,19 +34,19 @@ class UserService @Autowired constructor(
         return userRepository.save(realUser)
     }
 
-    fun getUserById(id: Long): User {
+    fun queryUserById(id: Long): User {
         val user = userRepository.findById(id)
-        if (user.isEmpty){
+        if (user.isEmpty) {
             throw UserException.USER_NOT_EXIST
         }
         return user.get()
     }
 
-    fun getUserByPhone(phone: String): User {
+    fun queryUserByPhone(phone: String): User {
         return userRepository.findByPhone(phone) ?: throw UserException.USER_NOT_EXIST
     }
 
-    fun getUserByEmail(email: String): User {
+    fun queryUserByEmail(email: String): User {
         return userRepository.findByEmail(email) ?: throw UserException.USER_NOT_EXIST
     }
 
@@ -59,7 +59,11 @@ class UserService @Autowired constructor(
         userRepository.delete(user)
     }
 
-    fun getAllUsers(): List<User> {
+    fun queryAllUsers(): List<User> {
         return userRepository.findAll()
+    }
+
+    fun queryJwtTokenVersionByUsername(username: String): Int {
+        return userRepository.readTokenVersionByUsername(username) ?: 0
     }
 }

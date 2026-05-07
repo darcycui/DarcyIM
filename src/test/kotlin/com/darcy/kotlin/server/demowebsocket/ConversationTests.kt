@@ -1,5 +1,7 @@
 package com.darcy.kotlin.server.demowebsocket
 
+import com.darcy.kotlin.server.demowebsocket.config.JwtToken.HEADER_AUTHORIZATION
+import com.darcy.kotlin.server.demowebsocket.config.JwtToken.JWT_TOKEN
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -21,7 +23,6 @@ class ConversationTests {
     // 模拟MVC
     @Autowired
     private lateinit var mockMvc: MockMvc
-
     @Test
     fun `test-create-conversation`() {
         val result = mockMvc.perform(
@@ -46,6 +47,7 @@ class ConversationTests {
     fun `test-query-conversations`() {
         val result = mockMvc.perform(
             post("http://localhost:$port/api/conversations/query/all")
+                .header(HEADER_AUTHORIZATION, JWT_TOKEN)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("userId", "15")
         )

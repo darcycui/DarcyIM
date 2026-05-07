@@ -1,5 +1,7 @@
 package com.darcy.kotlin.server.demowebsocket
 
+import com.darcy.kotlin.server.demowebsocket.config.JwtToken.HEADER_AUTHORIZATION
+import com.darcy.kotlin.server.demowebsocket.config.JwtToken.JWT_TOKEN
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -26,6 +28,7 @@ class FriendshipTests {
     fun `test-query-friendships-all`() {
         val result = mockMvc.perform(
             post("http://localhost:$port/api/friendships/query/all")
+                .header(HEADER_AUTHORIZATION, JWT_TOKEN)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("userId", "15")
         ).andExpect(status().isOk)

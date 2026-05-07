@@ -1,3 +1,6 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 plugins {
     val kotlinVersion = "1.9.25"
     kotlin("jvm") version kotlinVersion
@@ -39,18 +42,14 @@ repositories {
 }
 // Mockito Agent 注入
 // https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+val mockitoVersion = "5.23.0"
 val mockitoAgent = configurations.create("mockitoAgent")
 
-tasks {
-    test {
-        jvmArgs?.add("-javaagent:${mockitoAgent.asPath}")
-    }
-}
-
 dependencies {
-    val mockitoVersion = "5.23.0"
     testImplementation("org.mockito:mockito-core:$mockitoVersion")
-    mockitoAgent("org.mockito:mockito-core:$mockitoVersion") { isTransitive = false }
+    mockitoAgent("org.mockito:mockito-core:$mockitoVersion") {
+        isTransitive = false
+    }
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
@@ -58,7 +57,7 @@ dependencies {
     // WebSocket 客户端测试依赖
     testImplementation("org.springframework.boot:spring-boot-starter-websocket")
 //    testImplementation("org.java-websocket:Java-WebSocket:1.5.4")
-    testImplementation ("org.springframework:spring-messaging")
+    testImplementation("org.springframework:spring-messaging")
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -68,11 +67,11 @@ dependencies {
     implementation("javax.websocket:javax.websocket-api:1.1")
     // database
     // java persistence api ORM框架-JPA(Hibernate实现)
-    implementation ("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     // mysql
-    implementation ("com.mysql:mysql-connector-j:9.4.0")
+    implementation("com.mysql:mysql-connector-j:9.4.0")
     // json
-    implementation ("com.alibaba.fastjson2:fastjson2:2.0.61")
+    implementation("com.alibaba.fastjson2:fastjson2:2.0.61")
     // 添加 Spring Security 依赖(包含 BCryptPasswordEncoder)
     implementation("org.springframework.boot:spring-boot-starter-security")
     // 添加 JWT 依赖
@@ -94,5 +93,16 @@ kotlin {
 }
 
 tasks.withType<Test> {
+    // 确保 Mockito Agent 正确加载
+    doFirst {
+        val agentPath = mockitoAgent.asPath
+        println("Loading Mockito Agent from: $agentPath")
+        if (!file(agentPath).exists()) {
+            throw GradleException("Mockito Agent not found at: $agentPath")
+        }
+    }
+
+    // 添加 Java Agent
+    jvmArgs = listOf("-javaagent:${mockitoAgent.asPath}")
     useJUnitPlatform()
 }

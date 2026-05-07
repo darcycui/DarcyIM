@@ -41,7 +41,8 @@ class SecurityConfig {
                     "/ui/**",
                     "/api/users/create",
                     "/api/login",
-                    "/api/**",
+                    "/api/register",
+//                    "/api/**",
                     "/stomp-ws/**",
                     "/js/**",
                 ).permitAll()

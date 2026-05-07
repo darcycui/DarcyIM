@@ -10,9 +10,7 @@ import com.darcy.kotlin.server.demowebsocket.http.service.PrivateMessageService
 import com.darcy.kotlin.server.demowebsocket.http.service.UserService
 import com.darcy.kotlin.server.demowebsocket.log.DarcyLogger
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.Lazy
 import org.springframework.messaging.simp.SimpMessagingTemplate
-import org.springframework.messaging.simp.user.SimpUserRegistry
 import org.springframework.stereotype.Service
 
 @Service
@@ -31,8 +29,8 @@ class STOMPService @Autowired constructor(
             DarcyLogger.warn("单发消息 -->$recipient")
             // Spring STOMP 单播 Unicast
             websocket.convertAndSendToUser(recipient, "/queue/message", privateMessage)
-            val sendUser = userService.getUserById(privateMessage.senderId)
-            val receiveUser = userService.getUserById(privateMessage.receiverId)
+            val sendUser = userService.queryUserById(privateMessage.senderId)
+            val receiveUser = userService.queryUserById(privateMessage.receiverId)
             privateMessageService.sendMessage(privateMessage.toEntity(sendUser, receiveUser))
         }.onSuccess {
             DarcyLogger.info("send private message SUCCESS")
@@ -64,7 +62,7 @@ class STOMPService @Autowired constructor(
             DarcyLogger.warn("群发消息All -->/topic/message")
             // Spring STOMP 广播 Broadcast - 广播给所有订阅者
             websocket.convertAndSend("/topic/message", groupMessage)
-            val sender = userService.getUserById(groupMessage.senderId)
+            val sender = userService.queryUserById(groupMessage.senderId)
             val group = groupService.queryGroupById(groupMessage.groupId)
             groupMessageService.sendMessage(groupMessage.toEntity(sender, group))
         }.onSuccess {
@@ -82,7 +80,7 @@ class STOMPService @Autowired constructor(
             DarcyLogger.warn("群发消息 -->/topic/group/$groupId")
             // Spring STOMP 广播 Broadcast - 只发送给指定群组的订阅者
             websocket.convertAndSend("/topic/group/$groupId", groupMessage)
-            val sender = userService.getUserById(groupMessage.senderId)
+            val sender = userService.queryUserById(groupMessage.senderId)
             val group = groupService.queryGroupById(groupMessage.groupId)
             groupMessageService.sendMessage(groupMessage.toEntity(sender, group))
         }.onSuccess {

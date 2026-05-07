@@ -7,7 +7,7 @@ import com.darcy.kotlin.server.demowebsocket.exception.GroupException
 import com.darcy.kotlin.server.demowebsocket.exception.user.UserException
 import com.darcy.kotlin.server.demowebsocket.http.repository.GroupRepository
 import com.darcy.kotlin.server.demowebsocket.utils.IdGenerator
-import jakarta.transaction.Transactional
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
@@ -26,7 +26,7 @@ class GroupService @Autowired constructor(
     @Transactional
     fun createGroup(params: Map<String, String>): Group {
         val ownerId = params["ownerId"]?.toLongOrNull() ?: throw UserException.USER_NOT_EXIST
-        val owner = userService.getUserById(ownerId)
+        val owner = userService.queryUserById(ownerId)
         val group = Group(
             // 群ID 唯一
             groupId = idGenerator.nextGroupId(),
@@ -85,8 +85,8 @@ class GroupService @Autowired constructor(
     @Transactional
     fun inviteToGroup(inviterId: Long, inviteeId: Long, groupId: Long): GroupMember {
         val group = queryGroupById(groupId)
-        val inviter = userService.getUserById(inviterId)
-        val invitee = userService.getUserById(inviteeId)
+        val inviter = userService.queryUserById(inviterId)
+        val invitee = userService.queryUserById(inviteeId)
         // 邀请记录
         groupInviteService.createGroupInvite(inviterId, inviteeId, groupId)
         val member = GroupMember(

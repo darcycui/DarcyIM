@@ -1,7 +1,6 @@
 package  com.darcy.kotlin.server.demowebsocket.http.service
 
 import com.darcy.kotlin.server.demowebsocket.domain.table.Conversation
-import com.darcy.kotlin.server.demowebsocket.domain.table.User
 import com.darcy.kotlin.server.demowebsocket.domain.table.message.PrivateMessage
 import com.darcy.kotlin.server.demowebsocket.exception.ConversationException
 import com.darcy.kotlin.server.demowebsocket.exception.user.UserException
@@ -10,7 +9,6 @@ import com.darcy.kotlin.server.demowebsocket.utils.IdGenerator
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
@@ -28,8 +26,8 @@ class PrivateMessageService @Autowired constructor(
         conversationId: Long,
         content: String,
     ): PrivateMessage {
-        val sender = userService.getUserById(senderId)
-        val receiver = userService.getUserById(receiverId)
+        val sender = userService.queryUserById(senderId)
+        val receiver = userService.queryUserById(receiverId)
         validateFriendship(senderId, receiverId)
         validateConversation(conversationId, senderId, receiverId)
         val message = PrivateMessage(

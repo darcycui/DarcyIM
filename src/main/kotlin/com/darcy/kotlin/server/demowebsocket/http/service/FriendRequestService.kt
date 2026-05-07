@@ -1,10 +1,9 @@
 package com.darcy.kotlin.server.demowebsocket.http.service
 
 import com.darcy.kotlin.server.demowebsocket.domain.table.FriendRequest
-import com.darcy.kotlin.server.demowebsocket.domain.table.Friendship
 import com.darcy.kotlin.server.demowebsocket.exception.user.UserException
 import com.darcy.kotlin.server.demowebsocket.http.repository.FriendRequestRepository
-import jakarta.transaction.Transactional
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -18,8 +17,8 @@ class FriendRequestService @Autowired constructor(
 
     @Transactional
     fun createFriendRequest(fromUserId: Long, toUserId: Long, params: Map<String, Any>): FriendRequest {
-        val fromUser = userService.getUserById(fromUserId)
-        val toUser = userService.getUserById(toUserId)
+        val fromUser = userService.queryUserById(fromUserId)
+        val toUser = userService.queryUserById(toUserId)
         val friendRequest = FriendRequest(
             fromUser = fromUser,
             toUser = toUser,

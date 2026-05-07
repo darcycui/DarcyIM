@@ -4,7 +4,7 @@ import com.darcy.kotlin.server.demowebsocket.domain.table.media.UploadFile
 import com.darcy.kotlin.server.demowebsocket.http.repository.FileRepository
 import com.darcy.kotlin.server.demowebsocket.http.repository.UploadFileRepository
 import com.darcy.kotlin.server.demowebsocket.log.DarcyLogger
-import jakarta.transaction.Transactional
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.Resource

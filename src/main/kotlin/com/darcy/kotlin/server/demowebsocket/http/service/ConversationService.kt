@@ -2,7 +2,6 @@ package com.darcy.kotlin.server.demowebsocket.http.service
 
 import com.darcy.kotlin.server.demowebsocket.domain.table.Conversation
 import com.darcy.kotlin.server.demowebsocket.exception.ConversationException
-import com.darcy.kotlin.server.demowebsocket.exception.GroupException
 import com.darcy.kotlin.server.demowebsocket.exception.user.UserException
 import com.darcy.kotlin.server.demowebsocket.http.repository.ConversationRepository
 import com.darcy.kotlin.server.demowebsocket.utils.IdGenerator
@@ -23,7 +22,7 @@ class ConversationService @Autowired constructor(
         targetId: Long
     ): Conversation {
         // 业务参数校验
-        val user = userService.getUserById(userId)
+        val user = userService.queryUserById(userId)
         validateTarget(userId, conversationType, targetId)
         // 检查会话是否存在
         val existingConversation = conversationRepository.findByUserIdAndConversationTypeAndTargetId(
@@ -47,7 +46,7 @@ class ConversationService @Autowired constructor(
     private fun validateTarget(userId: Long, conversationType: Conversation.ConversationType, targetId: Long) {
         when (conversationType) {
             Conversation.ConversationType.PRIVATE -> {
-                val targetUser = userService.getUserById(targetId)
+                val targetUser = userService.queryUserById(targetId)
                 val isFriend = friendshipService.isFriend(userId, targetId)
                 if (!isFriend) {
                     throw UserException.FRIENDSHIP_NOT_EXIST

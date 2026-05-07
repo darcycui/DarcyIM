@@ -1,6 +1,7 @@
 package com.darcy.kotlin.server.demowebsocket.config.jwt
 
 import com.darcy.kotlin.server.demowebsocket.http.service.CustomUserDetailsService
+import com.darcy.kotlin.server.demowebsocket.http.service.UserService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -18,6 +19,9 @@ class JwtAuthenticationFilter : OncePerRequestFilter() {
     private lateinit var tokenProvider: JwtTokenProvider
 
     @Autowired
+    private lateinit var userService: UserService
+
+    @Autowired
     private lateinit var userDetailsService: CustomUserDetailsService
 
     // 拦截所有请求
@@ -27,9 +31,10 @@ class JwtAuthenticationFilter : OncePerRequestFilter() {
         filterChain: FilterChain
     ) {
         val jwt = getJwtFromRequest(request)
+        val username = tokenProvider.getUsernameFromJWT(jwt)
+        val currentVersion = userService.queryJwtTokenVersionByUsername(username)
         // 验证 token
-        if (jwt != null && tokenProvider.validateToken(jwt)) {
-            val username: String = tokenProvider.getUsernameFromJWT(jwt)
+        if (tokenProvider.validateToken(jwt, currentVersion)) {
             // 获取 web-security 用户信息 UserDetails
             val userDetails: UserDetails = userDetailsService.loadUserByUsername(username)
             val authentication = UsernamePasswordAuthenticationToken(
@@ -43,11 +48,11 @@ class JwtAuthenticationFilter : OncePerRequestFilter() {
         filterChain.doFilter(request, response)
     }
 
-    private fun getJwtFromRequest(request: HttpServletRequest): String? {
+    private fun getJwtFromRequest(request: HttpServletRequest): String {
         val bearerToken = request.getHeader("Authorization")
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7)
         }
-        return null
+        return ""
     }
 }

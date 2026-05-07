@@ -18,8 +18,8 @@ class GroupInviteService @Autowired constructor(
     private val idGenerator: IdGenerator
 ) {
     fun createGroupInvite(inviterId: Long, inviteeId: Long, id: Long): GroupInvite {
-        val invitor = userService.getUserById(inviterId)
-        val invitee = userService.getUserById(inviteeId)
+        val invitor = userService.queryUserById(inviterId)
+        val invitee = userService.queryUserById(inviteeId)
         val isFriend = friendshipService.isFriend(inviterId, inviteeId)
         if (!isFriend) {
             throw UserException.FRIENDSHIP_NOT_EXIST

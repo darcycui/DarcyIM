@@ -27,7 +27,7 @@ class GroupMessageService @Autowired constructor(
         conversationId: Long,
         content: String
     ): GroupMessage {
-        val sender = userService.getUserById(senderId)
+        val sender = userService.queryUserById(senderId)
         val group = groupService.queryGroupById(groupId)
         validateConversation(conversationId, senderId, groupId)
         validateGroupMember(senderId, groupId)

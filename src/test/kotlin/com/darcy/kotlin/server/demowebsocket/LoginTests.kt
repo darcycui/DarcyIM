@@ -28,6 +28,7 @@ class LoginTests {
             post("http://localhost:$port/api/login")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", "Tom")
+                .param("phone", "150999888777")
                 .param("password", "123456")
         ).andExpect(status().isOk)
             .andReturn()

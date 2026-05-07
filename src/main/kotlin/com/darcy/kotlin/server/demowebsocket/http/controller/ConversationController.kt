@@ -30,7 +30,7 @@ class ConversationController @Autowired constructor(
         )
         // 调用 Service 完成业务逻辑
         val result = conversationService.createConversation(userId, conversationType, targetId)
-        val targetUser = userService.getUserById(targetId)
+        val targetUser = userService.queryUserById(targetId)
         // 返回 json结果
         return ResultEntity.success(result.toDTO(targetUser.toDTO())).toJsonString()
     }
@@ -41,7 +41,7 @@ class ConversationController @Autowired constructor(
             throw ParamsException.ParamsNotValid(mapOf("userId" to "用户ID不能为空"))
         }
         val result = conversationService.queryConversations(userId)
-        val targetList = result.map { item -> userService.getUserById(item.targetId) }
+        val targetList = result.map { item -> userService.queryUserById(item.targetId) }
         return ResultEntity.success(result.toDTO(targetList)).toJsonString()
     }
 
@@ -51,7 +51,7 @@ class ConversationController @Autowired constructor(
             throw ParamsException.ParamsNotValid(mapOf("conversationId" to "会话ID不能为空"))
         }
         val result = conversationService.queryOneConversation(conversationId)
-        val targetUser = userService.getUserById(result.targetId)
+        val targetUser = userService.queryUserById(result.targetId)
         return ResultEntity.success(result.toDTO(targetUser.toDTO())).toJsonString()
     }
 

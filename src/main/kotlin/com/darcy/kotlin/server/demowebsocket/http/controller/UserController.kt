@@ -92,26 +92,26 @@ class UserController @Autowired constructor(val userService: UserService) : IUse
 
     override fun getUserById(params: Map<String, String>): String {
         val idLong = params["id"]?.toLong() ?: throw ParamsException.ParamsNotValid(mapOf("id" to "id不能为空"))
-        return ResultEntity.success(userService.getUserById(idLong).toDTO()).toJsonString()
+        return ResultEntity.success(userService.queryUserById(idLong).toDTO()).toJsonString()
     }
 
     override fun getUserByPhone(params: Map<String, String>): String {
         val phone = params["phone"] ?: throw ParamsException.ParamsNotValid(mapOf("phone" to "手机号不能为空"))
-        return ResultEntity.success(userService.getUserByPhone(phone).toDTO()).toJsonString()
+        return ResultEntity.success(userService.queryUserByPhone(phone).toDTO()).toJsonString()
     }
 
     override fun getUserByEmail(params: Map<String, String>): String {
         val email = params["email"] ?: throw ParamsException.ParamsNotValid(mapOf("email" to "邮箱不能为空"))
-        return ResultEntity.success(userService.getUserByEmail(email).toDTO()).toJsonString()
+        return ResultEntity.success(userService.queryUserByEmail(email).toDTO()).toJsonString()
     }
 
     private fun contains(userBean: User): Boolean {
-        val users = userService.getAllUsers()
+        val users = userService.queryAllUsers()
         return users.isNotEmpty() && users.contains(userBean)
     }
 
     override fun getAllUsers(): String {
-        val users = userService.getAllUsers()
+        val users = userService.queryAllUsers()
         return ResultEntity.success(users.toDTO()).toJsonString()
     }
 }

@@ -26,7 +26,7 @@ open class User(
     @Column(
         name = "username", nullable = false, length = 64, unique = true,
 
-    )
+        )
     open var username: String = "",
     @Column(name = "password_hash", nullable = false, length = 255)
     open var passwordHash: String = "",
@@ -68,7 +68,10 @@ open class User(
 
     open var roles: String = "",
     @Transient
-    open var token: String = ""
+    open var token: String = "",
+
+    @Column(name = "jwt_token_version", nullable = false)
+    open var jwtTokenVersion: Int = 0
 ) : BaseEntity() {
     companion object {
     }
