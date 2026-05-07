@@ -36,4 +36,19 @@ class LoginTests {
             .contentAsString
         println("result-->$result")
     }
+
+    @Test
+    fun `test-login-jerry`(){
+        val result = mockMvc.perform(
+            post("http://localhost:$port/api/login")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("name", "Jerry")
+                .param("phone", "138000111222")
+                .param("password", "123456")
+        ).andExpect(status().isOk)
+            .andReturn()
+            .response
+            .contentAsString
+        println("result-->$result")
+    }
 }

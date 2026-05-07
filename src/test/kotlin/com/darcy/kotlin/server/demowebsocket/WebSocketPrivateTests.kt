@@ -1,5 +1,6 @@
 package com.darcy.kotlin.server.demowebsocket
 
+import com.darcy.kotlin.server.demowebsocket.config.JwtToken.JWT_TOKEN
 import com.darcy.kotlin.server.demowebsocket.domain.dto.message.PrivateMessageDTO
 import com.darcy.kotlin.server.demowebsocket.utils.TimeUtil
 import org.junit.jupiter.api.Test
@@ -39,12 +40,15 @@ class WebSocketPrivateTests {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
+    private val JWT_TOKEN_2 =
+        "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJKZXJyeSIsInRva2VuVmVyc2lvbiI6MSwiaWF0IjoxNzc4MTM3MjAwLCJleHAiOjE3Nzg3NDIwMDB9.81L6M6jrAoX1YioEdJlaYgeQpeDSgGbZasDFwv1WXKJIYb9iZDVlrApd8iI3ylCquzncpYlhN4K4Z_-FMJKTPw"
+
     private fun createJwtToken1(): String {
-        return "test1"
+        return JWT_TOKEN
     }
 
     private fun createJwtToken2(): String {
-        return "test2"
+        return JWT_TOKEN_2
     }
 
     private fun createWebSocketStompClientSession(jwtToken: String): StompSession {
@@ -72,7 +76,7 @@ class WebSocketPrivateTests {
         val stompHeaders = StompHeaders()
         // 可以设置 STOMP 特定的头部
         stompHeaders["Authorization"] = jwtToken
-        val url = "http://localhost:$port/stomp-ws"  // 注意 SockJS 用 http
+        val url = "http://localhost:$port/stomp-sockjs"  // 注意 SockJS 用 http
         val sessionFuture = CompletableFuture<StompSession>()
 
         // 3. 使用正确的 connectAsync 重载
@@ -170,10 +174,10 @@ class WebSocketPrivateTests {
             }
             val privateMessage = PrivateMessageDTO(
                 msgId = "",
-                senderId = 14,
-                senderName = "test1",
-                receiverId = 13,
-                receiverName = "test2",
+                senderId = 13,
+                senderName = "Tom",
+                receiverId = 14,
+                receiverName = "Jerry",
                 content = "测试消息1",
                 msgType = "TEXT",
                 sendTime = TimeUtil.getCurrentTimeString(),
@@ -212,6 +216,10 @@ class WebSocketPrivateTests {
             // 7. 清理
             queueSubscription.unsubscribe()
             queueSubscription2.unsubscribe()
+
+            // 8. 优雅断开连接，等待服务端的 disconnect_ack
+            val disconnectLatch1 = CountDownLatch(1)
+            val disconnectLatch2 = CountDownLatch(1)
             session1.disconnect()
             session2.disconnect()
             println("✓ Disconnected")

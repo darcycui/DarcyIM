@@ -33,10 +33,10 @@ class StompHandshakeInterceptor : HandshakeInterceptor {
             val sessionId = UUID.randomUUID().toString()
             if (authHeader.isBlank()) {
                 DarcyLogger.warn("WebSocket 握手缺少 Authorization header")
-                attributes["userId"] = "userId:$sessionId"
+                attributes["userName"] = "username:$sessionId"
             } else {
                 DarcyLogger.info("WebSocket 握手 Authorization: $authHeader")
-                attributes["userId"] = authHeader
+                attributes["userName"] = authHeader
             }
 
             attributes["sessionId"] = sessionId

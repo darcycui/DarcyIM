@@ -1,18 +1,19 @@
 package com.darcy.kotlin.server.demowebsocket.websocket_stomp.interceptor
 
 import com.darcy.kotlin.server.demowebsocket.log.DarcyLogger
-import com.darcy.kotlin.server.demowebsocket.websocket_stomp.interceptor.StompInUserInterceptor.Companion
+import com.darcy.kotlin.server.demowebsocket.websocket_stomp.exception.ExceptionChecker
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Lazy
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
+import org.springframework.messaging.MessagingException
 import org.springframework.messaging.simp.stomp.StompCommand
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor
 import org.springframework.messaging.simp.user.SimpUserRegistry
 import org.springframework.messaging.support.ChannelInterceptor
 import org.springframework.messaging.support.MessageHeaderAccessor
 import org.springframework.stereotype.Component
-import java.lang.Exception
+
 
 /**
  * Out拦截器 拦截服务端发出的消息
@@ -35,7 +36,9 @@ class StompOutInterceptor @Autowired constructor(
     }
 
     override fun afterSendCompletion(message: Message<*>, channel: MessageChannel, sent: Boolean, ex: Exception?) {
-
+        if (ex != null) {
+            handleSendError(ex, message);
+        }
 //        val accessor = StompHeaderAccessor.wrap(message)
         val accessor = MessageHeaderAccessor.getAccessor(
             message, StompHeaderAccessor::class.java
@@ -84,6 +87,16 @@ class StompOutInterceptor @Autowired constructor(
 
                 }
             }
+        }
+    }
+
+    private fun handleSendError(exception: Exception, message: Message<*>) {
+        DarcyLogger.error("$TAG 错误: ${message.headers} ${message.payload}", exception)
+        if (ExceptionChecker.isIgnorableException(exception)){
+            DarcyLogger.error("$TAG 发送消息异常 忽略连接已关闭的异常: ${exception::class.java.simpleName} ${exception.message}")
+            return
+        } else {
+            throw exception
         }
     }
 

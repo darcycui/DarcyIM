@@ -1,5 +1,6 @@
 package com.darcy.kotlin.server.demowebsocket.websocket_stomp.config
 
+import com.darcy.kotlin.server.demowebsocket.websocket_stomp.exception.WebSocketExceptionDecorator
 import com.darcy.kotlin.server.demowebsocket.websocket_stomp.interceptor.StompHandshakeInterceptor
 import com.darcy.kotlin.server.demowebsocket.websocket_stomp.interceptor.StompInReceiptInterceptor
 import com.darcy.kotlin.server.demowebsocket.websocket_stomp.interceptor.StompInUserInterceptor
@@ -21,7 +22,8 @@ class StompWebsocketConfig @Autowired constructor(
     val stompInUserInterceptor: StompInUserInterceptor,
     val stompInReceiptInterceptor: StompInReceiptInterceptor,
     val stompHandshakeInterceptor: StompHandshakeInterceptor,
-    val stompOutInterceptor: StompOutInterceptor
+    val stompOutInterceptor: StompOutInterceptor,
+    val webSocketExceptionDecorator: WebSocketExceptionDecorator
 ) : WebSocketMessageBrokerConfigurer {
     // todo 如何开启确认帧 Receipt
     companion object {
@@ -95,11 +97,13 @@ class StompWebsocketConfig @Autowired constructor(
     }
 
     override fun configureWebSocketTransport(registry: WebSocketTransportRegistration) {
+        super.configureWebSocketTransport(registry)
         registry.apply {
             setMessageSizeLimit(128 * 1024)
             setSendBufferSizeLimit(512 * 1024)
             setSendTimeLimit(10 * 1000)
+            // 添加异常处理
+            addDecoratorFactory(webSocketExceptionDecorator)
         }
-        super.configureWebSocketTransport(registry)
     }
 }

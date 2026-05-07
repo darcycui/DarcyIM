@@ -1,6 +1,8 @@
 package com.darcy.kotlin.server.demowebsocket.websocket_stomp.interceptor
 
+import com.darcy.kotlin.server.demowebsocket.config.jwt.JwtTokenProvider
 import com.darcy.kotlin.server.demowebsocket.log.DarcyLogger
+import com.darcy.kotlin.server.demowebsocket.utils.TokenUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationListener
 import org.springframework.context.annotation.Lazy
@@ -21,7 +23,8 @@ import java.lang.Exception
 @Component
 class StompInUserInterceptor @Autowired constructor(
     @Lazy
-    val simpUserRegistry: SimpUserRegistry
+    val simpUserRegistry: SimpUserRegistry,
+    val tokenProvider: JwtTokenProvider,
 ) : ChannelInterceptor, ApplicationListener<SessionConnectedEvent> {
     companion object {
         private const val TAG = "StompInUserInterceptor"
@@ -36,12 +39,12 @@ class StompInUserInterceptor @Autowired constructor(
             when (command) {
                 StompCommand.CONNECT -> {
                     // websocket connect 方式连接 注册用户名
-                    registerUserId(accessor)
+                    registerUserName(accessor)
                 }
 
                 StompCommand.STOMP -> {
                     // websocket STOMP 方式连接 注册用户名
-                    registerUserId(accessor)
+                    registerUserName(accessor)
                 }
 
                 StompCommand.SUBSCRIBE -> {
@@ -98,20 +101,24 @@ class StompInUserInterceptor @Autowired constructor(
         }
     }
 
-    private fun registerUserId(accessor: StompHeaderAccessor) {
+    /**
+     * 从 header 获取用户名
+     */
+    private fun registerUserName(accessor: StompHeaderAccessor) {
         // 1. 先从 STOMP 头中获取 Authorization
-        var userId = accessor.getFirstNativeHeader("Authorization") ?: ""
-        DarcyLogger.info("$TAG 从STOMP头获取 userId: $userId")
+        val token1 = accessor.getFirstNativeHeader("Authorization") ?: ""
+        var userName = tokenProvider.getUsernameFromJWT(TokenUtil.cutOnlyToken(token1))
+        DarcyLogger.info("$TAG 从STOMP头获取 userName: $userName")
 
-        // 2. 如果 STOMP 头中没有，则从 WebSocket 握手阶段的 sessionAttributes 中获取
-        val sessionAttributes = accessor.sessionAttributes ?: emptyMap()
-        val userId2 = sessionAttributes["userId"]?.toString() ?: ""
-        DarcyLogger.info("$TAG 从握手属性获取 userId2: $userId2")
-        if (userId.isBlank()) {
-            userId = userId2
-        }
-        setupUserNameForSTOMP(accessor, userId)
-        DarcyLogger.info("$TAG 用户$userId 上线了")
+//        // 2. 如果 STOMP 头中没有，则从 WebSocket 握手阶段的 sessionAttributes 中获取
+//        val sessionAttributes = accessor.sessionAttributes ?: emptyMap()
+//        val token2 = sessionAttributes["userName"]?.toString() ?: ""
+//        DarcyLogger.info("$TAG 从握手属性获取 userName2: $token2")
+//        if (userName.isBlank()) {
+//            userName = token2
+//        }
+        setupUserNameForSTOMP(accessor, userName)
+        DarcyLogger.info("$TAG 用户$userName 上线了")
     }
 
     private fun userCount() {
@@ -119,20 +126,20 @@ class StompInUserInterceptor @Autowired constructor(
         DarcyLogger.info("$TAG 当前在线人数为：$usersCount")
     }
 
-    private fun setupUserNameForSTOMP(accessor: StompHeaderAccessor, userId: String) {
-        if (userId.isEmpty() or userId.isBlank()) {
+    private fun setupUserNameForSTOMP(accessor: StompHeaderAccessor, userName: String) {
+        if (userName.isEmpty() or userName.isBlank()) {
             DarcyLogger.error("$TAG 用户未登录")
         }
-        if (verifyUserId(userId).not()) {
-            DarcyLogger.error("$TAG 用户userId：$userId 不合法")
+        if (verifyUserId(userName).not()) {
+            DarcyLogger.error("$TAG 用户 userName：$userName 不合法")
         }
-        accessor.user = UserNamePrincipal(userId)
+        accessor.user = UserNamePrincipal(userName)
     }
 
-    private fun verifyUserId(userId: String): Boolean {
+    private fun verifyUserId(userName: String): Boolean {
         // TODO: 验证用户是否合法 token JWT 验证
-        return userId.isNotEmpty()
-//        return userId.startsWith("test")
+        return userName.isNotEmpty()
+//        return userName.startsWith("test")
     }
 
     override fun onApplicationEvent(event: SessionConnectedEvent) {

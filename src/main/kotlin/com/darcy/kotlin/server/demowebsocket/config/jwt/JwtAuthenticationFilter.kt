@@ -2,6 +2,7 @@ package com.darcy.kotlin.server.demowebsocket.config.jwt
 
 import com.darcy.kotlin.server.demowebsocket.http.service.CustomUserDetailsService
 import com.darcy.kotlin.server.demowebsocket.http.service.UserService
+import com.darcy.kotlin.server.demowebsocket.utils.TokenUtil
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -49,10 +50,7 @@ class JwtAuthenticationFilter : OncePerRequestFilter() {
     }
 
     private fun getJwtFromRequest(request: HttpServletRequest): String {
-        val bearerToken = request.getHeader("Authorization")
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7)
-        }
-        return ""
+        val bearerToken = request.getHeader("Authorization") ?: ""
+        return TokenUtil.cutOnlyToken(bearerToken)
     }
 }
