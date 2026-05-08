@@ -4,12 +4,16 @@ import java.security.MessageDigest
 
 object HashUtil {
     fun sha256Str(original: String): String {
-        val digest = sha256(original.toByteArray())
-        return digest.joinToString("") { "%02x".format(it).lowercase() }
+        val digest = sha256ByteArray(original.toByteArray())
+//        return digest.joinToString("") { "%02x".format(it).lowercase() }
+        return HexUtil.bytesToHexStr(digest)
     }
 
-    fun sha256(byteArray: ByteArray): ByteArray {
-        val md = MessageDigest.getInstance("SHA-256")
-        return md.digest(byteArray)
+    fun sha256ByteArray(byteArray: ByteArray): ByteArray {
+        println("original bytearray: ${byteArray.contentToString()}")
+        if (byteArray.isEmpty()) return ByteArray(0)
+        val hash = MessageDigest.getInstance("SHA-256")
+        hash.update(byteArray)
+        return hash.digest()
     }
 }

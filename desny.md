@@ -8,7 +8,9 @@ Scrooge McDuck
 Huey
 Dewey
 Louie
-Snow White
+Snow White   152000111222
+Happy        153000111222
+Doc          154000111222
 Cinderella   151000111222
 Aurora
 Ariel

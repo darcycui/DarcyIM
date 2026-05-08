@@ -19,6 +19,14 @@ class FriendRequestService @Autowired constructor(
     fun createFriendRequest(fromUserId: Long, toUserId: Long, params: Map<String, Any>): FriendRequest {
         val fromUser = userService.queryUserById(fromUserId)
         val toUser = userService.queryUserById(toUserId)
+        if (friendshipService.isFriend(fromUserId, toUserId)) {
+            throw UserException.FRIENDSHIP_ALREADY_EXIST
+        }
+        if (friendRequestRepository.findByFromUserId(fromUserId).any {
+                it.toUser.id == toUserId && it.status.noNeedRequestFriendAgain()
+            }) {
+            throw UserException.FRIEND_REQUEST_ALREADY_EXIST
+        }
         val friendRequest = FriendRequest(
             fromUser = fromUser,
             toUser = toUser,
@@ -29,7 +37,8 @@ class FriendRequestService @Autowired constructor(
             createdAt = LocalDateTime.now()
             updatedAt = LocalDateTime.now()
         }
-        return friendRequestRepository.save(friendRequest)
+        val result = friendRequestRepository.save(friendRequest)
+        return result
     }
 
     fun findFriendRequestById(id: Long): FriendRequest {

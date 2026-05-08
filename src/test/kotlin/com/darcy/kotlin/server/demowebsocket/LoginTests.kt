@@ -1,5 +1,6 @@
 package com.darcy.kotlin.server.demowebsocket
 
+import com.darcy.kotlin.server.demowebsocket.utils.HashUtil
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -27,9 +28,10 @@ class LoginTests {
         val result = mockMvc.perform(
             post("http://localhost:$port/api/login")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("name", "Tom")
-                .param("phone", "150999888777")
-                .param("password", "123456")
+                .param("name", "Snow White") // id:20 及以后的用户密码需要hash后传递
+                .param("phone", "152000111222")
+                .param("password", HashUtil.sha256Str("123456"))
+//                .param("password", "123456")
         ).andExpect(status().isOk)
             .andReturn()
             .response

@@ -1,11 +1,25 @@
 package com.darcy.kotlin.server.demowebsocket.utils
 
 object HexUtil {
-    fun bytes2Hex(bytes: ByteArray): String {
-        return bytes.joinToString("") { "%02x".format(it) }
+    @OptIn(ExperimentalStdlibApi::class)
+    fun bytesToHexStr(bytes: ByteArray, uppercase: Boolean = false): String {
+        if (bytes.isEmpty()) return ""
+        return runCatching {
+            val str = bytes.toHexString()
+            if (uppercase) str.uppercase() else str.lowercase()
+        }.onFailure {
+            it.printStackTrace()
+        }.getOrElse { "" }
+
     }
 
-    fun hex2Bytes(hex: String): ByteArray {
-        return hex.chunked(2).map { it.toInt(16).toByte() }.toByteArray()
+    @OptIn(ExperimentalStdlibApi::class)
+    fun hexStrToBytes(hex: String): ByteArray {
+        if (hex.isEmpty()) return ByteArray(0)
+        return runCatching {
+            hex.hexToByteArray()
+        }.onFailure {
+            it.printStackTrace()
+        }.getOrElse { ByteArray(0) }
     }
 }

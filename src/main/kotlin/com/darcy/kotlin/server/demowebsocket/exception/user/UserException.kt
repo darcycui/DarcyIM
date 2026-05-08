@@ -23,8 +23,10 @@ class UserException(
 
         val FRIEND_REQUEST_NOT_EXIST = UserException(111, "好友请求不存在")
         val FRIEND_REQUEST_ACCEPT_FAILED = UserException(112, "接受好友请求失败")
+        val FRIEND_REQUEST_ALREADY_EXIST = UserException(113, "好友请求已经存在")
 
         val FRIENDSHIP_NOT_EXIST = UserException(121, "不存在好友关系")
+        val FRIENDSHIP_ALREADY_EXIST = UserException(122, "已经是好友关系")
     }
 
 }

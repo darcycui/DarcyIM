@@ -63,5 +63,13 @@ open class FriendRequest(
             return code
         }
 
+        fun noNeedRequestFriendAgain(): Boolean {
+            return when (this) {
+                PENDING, ACCEPTED -> true
+                REJECTED, IGNORED, EXPIRED -> false
+                else -> false
+            }
+        }
+
     }
 }

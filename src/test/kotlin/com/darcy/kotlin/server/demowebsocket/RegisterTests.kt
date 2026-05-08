@@ -2,6 +2,7 @@ package com.darcy.kotlin.server.demowebsocket
 
 import com.darcy.kotlin.server.demowebsocket.domain.table.User
 import com.darcy.kotlin.server.demowebsocket.domain.table.User.UserStatus
+import com.darcy.kotlin.server.demowebsocket.utils.HashUtil
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -42,14 +43,14 @@ class RegisterTests {
      * u/66685688
      */
     private val user1 = User(
-        username = "Butch",
+        username = "Snow White",
         passwordHash = "123456",
-        nickname = "ButchButch",
-        avatar = "https://avatars.githubusercontent.com/u/3814078?v=4",
-        phone = "151999888777",
-        email = "Butch@gmail.com",
-        gender = "male",
-        signature = "I'm a black cat",
+        nickname = "SnowSnow",
+        avatar = "https://c-ssl.dtstatic.com/uploads/blog/202012/04/20201204130014_e1b21.thumb.200_0.png",
+        phone = "152000111222",
+        email = "SnowWhite@gmail.com",
+        gender = "female",
+        signature = "I'm a princess",
         status = UserStatus.NORMAL,
         lastActiveTime = null,
         deletedAt = null,
@@ -72,7 +73,7 @@ class RegisterTests {
             post("http://localhost:$port/api/register")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("username", user.username)
-                .param("password", user.passwordHash)
+                .param("password", HashUtil.sha256Str(user.passwordHash))
                 .param("nickname", user.nickname)
                 .param("avatar", user.avatar)
                 .param("phone", user.phone)
