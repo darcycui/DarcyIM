@@ -1,6 +1,6 @@
 package com.darcy.kotlin.server.demowebsocket.domain.dto.message
 
-import com.darcy.kotlin.server.demowebsocket.domain.table.Conversation
+import com.darcy.kotlin.server.demowebsocket.domain.table.conversation.Conversation
 import com.darcy.kotlin.server.demowebsocket.domain.table.User
 import com.darcy.kotlin.server.demowebsocket.domain.table.message.MessageReadStatus
 import com.darcy.kotlin.server.demowebsocket.utils.TimeUtil

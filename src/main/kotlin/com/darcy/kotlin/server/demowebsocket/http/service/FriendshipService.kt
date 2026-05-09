@@ -1,6 +1,6 @@
 package com.darcy.kotlin.server.demowebsocket.http.service
 
-import com.darcy.kotlin.server.demowebsocket.domain.table.Friendship
+import com.darcy.kotlin.server.demowebsocket.domain.table.friend.Friendship
 import com.darcy.kotlin.server.demowebsocket.http.repository.FriendshipRepository
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.beans.factory.annotation.Autowired

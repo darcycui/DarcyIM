@@ -1,6 +1,6 @@
 package com.darcy.kotlin.server.demowebsocket.http.repository
 
-import com.darcy.kotlin.server.demowebsocket.domain.table.Friendship
+import com.darcy.kotlin.server.demowebsocket.domain.table.friend.Friendship
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface FriendshipRepository : JpaRepository<Friendship, Long> {

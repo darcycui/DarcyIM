@@ -26,7 +26,7 @@ class STOMPService @Autowired constructor(
     fun sendPrivate(privateMessage: PrivateMessageDTO) {
         val recipient = privateMessage.receiverName
         kotlin.runCatching {
-            DarcyLogger.warn("单发消息 -->$recipient")
+            DarcyLogger.warn("单发消息 -->$recipient $privateMessage")
             // Spring STOMP 单播 Unicast
             websocket.convertAndSendToUser(recipient, "/queue/message", privateMessage)
             val sendUser = userService.queryUserById(privateMessage.senderId)
@@ -59,7 +59,7 @@ class STOMPService @Autowired constructor(
 
     fun sendAllGroup(groupMessage: GroupMessageDTO) {
         kotlin.runCatching {
-            DarcyLogger.warn("群发消息All -->/topic/message")
+            DarcyLogger.warn("群发消息All -->/topic/message $groupMessage")
             // Spring STOMP 广播 Broadcast - 广播给所有订阅者
             websocket.convertAndSend("/topic/message", groupMessage)
             val sender = userService.queryUserById(groupMessage.senderId)
@@ -77,7 +77,7 @@ class STOMPService @Autowired constructor(
     fun sendTargetGroup(groupMessage: GroupMessageDTO) {
         kotlin.runCatching {
             val groupId = groupMessage.groupId
-            DarcyLogger.warn("群发消息 -->/topic/group/$groupId")
+            DarcyLogger.warn("群发消息 -->/topic/group/$groupId $groupMessage")
             // Spring STOMP 广播 Broadcast - 只发送给指定群组的订阅者
             websocket.convertAndSend("/topic/group/$groupId", groupMessage)
             val sender = userService.queryUserById(groupMessage.senderId)

@@ -1,6 +1,6 @@
 package com.darcy.kotlin.server.demowebsocket.domain.dto
 
-import com.darcy.kotlin.server.demowebsocket.domain.table.Friendship
+import com.darcy.kotlin.server.demowebsocket.domain.table.friend.Friendship
 import com.darcy.kotlin.server.demowebsocket.domain.table.User
 import com.darcy.kotlin.server.demowebsocket.utils.TimeUtil
 import org.springframework.data.domain.Page

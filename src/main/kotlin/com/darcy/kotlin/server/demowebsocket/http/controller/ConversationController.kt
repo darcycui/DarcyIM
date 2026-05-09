@@ -3,7 +3,7 @@ package com.darcy.kotlin.server.demowebsocket.http.controller
 import com.darcy.kotlin.server.demowebsocket.api.IConversationApi
 import com.darcy.kotlin.server.demowebsocket.domain.ResultEntity
 import com.darcy.kotlin.server.demowebsocket.domain.dto.toDTO
-import com.darcy.kotlin.server.demowebsocket.domain.table.Conversation
+import com.darcy.kotlin.server.demowebsocket.domain.table.conversation.Conversation
 import com.darcy.kotlin.server.demowebsocket.exception.ParamsException
 import com.darcy.kotlin.server.demowebsocket.http.service.ConversationService
 import com.darcy.kotlin.server.demowebsocket.http.service.UserService

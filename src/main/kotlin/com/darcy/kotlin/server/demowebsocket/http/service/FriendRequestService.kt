@@ -1,6 +1,6 @@
 package com.darcy.kotlin.server.demowebsocket.http.service
 
-import com.darcy.kotlin.server.demowebsocket.domain.table.FriendRequest
+import com.darcy.kotlin.server.demowebsocket.domain.table.friend.FriendRequest
 import com.darcy.kotlin.server.demowebsocket.exception.user.UserException
 import com.darcy.kotlin.server.demowebsocket.http.repository.FriendRequestRepository
 import org.springframework.transaction.annotation.Transactional

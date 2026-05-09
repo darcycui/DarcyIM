@@ -1,6 +1,6 @@
 package com.darcy.kotlin.server.demowebsocket.http.service
 
-import com.darcy.kotlin.server.demowebsocket.domain.table.Conversation
+import com.darcy.kotlin.server.demowebsocket.domain.table.conversation.Conversation
 import com.darcy.kotlin.server.demowebsocket.domain.table.group.Group
 import com.darcy.kotlin.server.demowebsocket.domain.table.group.GroupMember
 import com.darcy.kotlin.server.demowebsocket.exception.GroupException
