@@ -15,7 +15,7 @@ import java.time.LocalDateTime
 @Table(
     name = "key_identity_keys",
     indexes = [
-        Index(name = "idx_user_device", columnList = "user_id, device_id"),
+        Index(name = "idx_user_device", columnList = "user_id"),
         Index(name = "idx_fingerprint", columnList = "key_fingerprint"),
         Index(name = "idx_created", columnList = "created_at"),
         Index(name = "idx_expires", columnList = "expires_at"),
@@ -23,7 +23,7 @@ import java.time.LocalDateTime
     ],
     uniqueConstraints = [
         UniqueConstraint(name = "uk_public_key", columnNames = ["public_key"]),
-        UniqueConstraint(name = "uk_current_per_device", columnNames = ["user_id", "device_id", "is_current"])
+        UniqueConstraint(name = "uk_current_per_device", columnNames = ["user_id", "is_current"])
     ]
 )
 @DynamicInsert
@@ -32,10 +32,6 @@ open class IdentityKey(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, foreignKey = ForeignKey(name = "fk_key_identity_user"))
     open var user: User,
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "device_id", nullable = false, foreignKey = ForeignKey(name = "fk_key_identity_device"))
-    open var device: Device? = null,
 
     @Column(name = "public_key", nullable = false, length = 256)
     open var publicKey: String = "",
@@ -75,7 +71,7 @@ open class IdentityKey(
 ) : BaseEntity() {
 
     override fun toString(): String {
-        return "KeyIdentity(id=$id, userId=${user.id}, deviceId=${device?.id},  " +
+        return "KeyIdentity(id=$id, userId=${user.id}, " +
                 "isCurrent=$isCurrent, isRevoked=$isRevoked, keyFingerprint=$keyFingerprint)"
     }
 }

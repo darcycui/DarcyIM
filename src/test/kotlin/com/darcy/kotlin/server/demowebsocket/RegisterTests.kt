@@ -2,6 +2,9 @@ package com.darcy.kotlin.server.demowebsocket
 
 import com.darcy.kotlin.server.demowebsocket.domain.table.User
 import com.darcy.kotlin.server.demowebsocket.domain.table.User.UserStatus
+import com.darcy.kotlin.server.demowebsocket.http.x3dh.encrypt.keyToString
+import com.darcy.kotlin.server.demowebsocket.http.x3dh.encrypt.keysToString
+import com.darcy.kotlin.server.demowebsocket.http.x3dh.user.Alice
 import com.darcy.kotlin.server.demowebsocket.utils.HashUtil
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Test
@@ -30,6 +33,8 @@ class RegisterTests {
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
+    private val userCount = 1
+
     /**
      * u/1020407 (你原本使用的)
      * u/1
@@ -43,14 +48,14 @@ class RegisterTests {
      * u/66685688
      */
     private val user1 = User(
-        username = "Snow White",
+        username = "Alice$userCount",
         passwordHash = "123456",
-        nickname = "SnowSnow",
+        nickname = "Alice$userCount",
         avatar = "https://c-ssl.dtstatic.com/uploads/blog/202012/04/20201204130014_e1b21.thumb.200_0.png",
-        phone = "152000111222",
-        email = "SnowWhite@gmail.com",
+        phone = "${189000111222 + userCount}",
+        email = "Alice$userCount@gmail.com",
         gender = "female",
-        signature = "I'm a princess",
+        signature = "I'm the test user",
         status = UserStatus.NORMAL,
         lastActiveTime = null,
         deletedAt = null,
@@ -58,6 +63,8 @@ class RegisterTests {
         roles = "admin",
         token = "",
     )
+
+    private val alice = Alice()
 
     @Test
     fun `test-register`() {
@@ -88,6 +95,9 @@ class RegisterTests {
                 .param("token", user.token)
                 .param("createdAt", user.createdAt.toString())
                 .param("updatedAt", user.updatedAt.toString())
+                .param("identityKey", alice.getIdentityPublicKey().keyToString())
+                .param("preSignedKey", alice.getSignedPreKeyPublicKey().keyToString())
+                .param("oneTimePreKeys", alice.getOneTimePreKeyList().keysToString())
         )
             .andExpect(status().isOk)
             .andReturn()

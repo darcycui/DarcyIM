@@ -24,11 +24,16 @@ class OneTimePreKeyService @Autowired constructor(
         }
         return oneTimePreKeyRepository.saveAll(oneTimePreKeys)
     }
+
     fun queryByUserId(userId: Long): List<OneTimePreKey> {
         return oneTimePreKeyRepository.findByUserId(userId)
     }
 
+    fun queryByKeyId(keyId: Long): OneTimePreKey? {
+        return oneTimePreKeyRepository.findById(keyId).orElse(null)
+    }
+
     fun queryFirstEnabledOneTimePreKey(userId: Long): OneTimePreKey? {
-        return oneTimePreKeyRepository.findFirstByUserIdAndIsUsedFalse(userId)
+        return oneTimePreKeyRepository.findFirstEnabled(userId)
     }
 }

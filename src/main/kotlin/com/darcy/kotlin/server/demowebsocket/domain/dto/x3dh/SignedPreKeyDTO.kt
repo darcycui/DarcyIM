@@ -11,7 +11,6 @@ import java.time.LocalDateTime
 data class SignedPreKeyDTO(
     val id: Long = 0,
     val userId: Long = 0,
-    val deviceId: Long = 0,
     val publicKey: String = "",
     val signature: String = "",
     val isCurrent: Boolean = true,
@@ -32,7 +31,6 @@ fun SignedPreKey.toDTO(): SignedPreKeyDTO {
     return SignedPreKeyDTO(
         id = this.id,
         userId = this.user.id,
-        deviceId = this.device.id,
         publicKey = this.publicKey,
         signature = this.signature,
         isCurrent = this.isCurrent,
@@ -55,7 +53,6 @@ fun SignedPreKey.toDTO(): SignedPreKeyDTO {
 fun SignedPreKeyDTO.toEntity(user: User, device: Device): SignedPreKey {
     return SignedPreKey(
         user = user,
-        device = device,
         publicKey = this.publicKey,
         signature = this.signature,
         isCurrent = this.isCurrent,

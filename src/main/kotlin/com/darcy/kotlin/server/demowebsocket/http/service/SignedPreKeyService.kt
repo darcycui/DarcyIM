@@ -18,10 +18,8 @@ class SignedPreKeyService @Autowired constructor(
 ) {
     fun createSignedPreKey(userId: Long, publicKey: String): SignedPreKey {
         val user = userService.queryUserById(userId)
-        val device = null
         val signedPreKey = SignedPreKey(
             user = user,
-            device = device,
             publicKey = publicKey,
         )
         return signedPreKeyRepository.save(signedPreKey)

@@ -15,14 +15,14 @@ import java.time.LocalDateTime
 @Table(
     name = "key_one_time_prekeys",
     indexes = [
-        Index(name = "idx_user_device_unused", columnList = "user_id, device_id, is_used, is_expired"),
-        Index(name = "idx_available", columnList = "user_id, device_id, is_used, is_expired, created_at"),
+        Index(name = "idx_user_device_unused", columnList = "user_id, is_used, is_expired"),
+        Index(name = "idx_available", columnList = "user_id, is_used, is_expired, created_at"),
         Index(name = "idx_used_info", columnList = "used_by_user, used_at"),
         Index(name = "idx_expires", columnList = "expires_at"),
         Index(name = "idx_created", columnList = "created_at")
     ],
     uniqueConstraints = [
-        UniqueConstraint(name = "uk_user_device_key", columnNames = ["user_id", "device_id", "key_id"])
+        UniqueConstraint(name = "uk_user_device_key", columnNames = ["user_id", "key_id"])
     ]
 )
 @DynamicInsert
@@ -31,10 +31,6 @@ open class OneTimePreKey(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, foreignKey = ForeignKey(name = "fk_onetime_prekey_user"))
     open var user: User,
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "device_id", nullable = false, foreignKey = ForeignKey(name = "fk_onetime_prekey_device"))
-    open var device: Device? = null,
 
     @Column(name = "public_key", nullable = false, length = 256)
     open var publicKey: String = "",
@@ -62,7 +58,7 @@ open class OneTimePreKey(
 ) : BaseEntity() {
 
     override fun toString(): String {
-        return "KeyOneTimePrekeys(id=$id, userId=${user.id}, deviceId=${device?.id}, " +
+        return "KeyOneTimePrekeys(id=$id, userId=${user.id}, " +
                 "isUsed=$isUsed, isExpired=$isExpired)"
     }
 }

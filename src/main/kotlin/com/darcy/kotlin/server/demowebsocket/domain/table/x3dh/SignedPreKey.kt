@@ -15,14 +15,14 @@ import java.time.LocalDateTime
 @Table(
     name = "key_signed_prekeys",
     indexes = [
-        Index(name = "idx_user_device", columnList = "user_id, device_id"),
+        Index(name = "idx_user_device", columnList = "user_id"),
         Index(name = "idx_expired", columnList = "is_expired, expires_at"),
         Index(name = "idx_current", columnList = "is_current"),
         Index(name = "idx_created", columnList = "created_at")
     ],
     uniqueConstraints = [
-        UniqueConstraint(name = "uk_user_device_key", columnNames = ["user_id", "device_id", "key_id"]),
-        UniqueConstraint(name = "uk_current_per_device", columnNames = ["user_id", "device_id", "is_current"])
+        UniqueConstraint(name = "uk_user_device_key", columnNames = ["user_id", "key_id"]),
+        UniqueConstraint(name = "uk_current_per_device", columnNames = ["user_id", "is_current"])
     ]
 )
 @DynamicInsert
@@ -31,18 +31,6 @@ open class SignedPreKey(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, foreignKey = ForeignKey(name = "fk_signed_prekey_user"))
     open var user: User,
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "device_id", nullable = false, foreignKey = ForeignKey(name = "fk_signed_prekey_device"))
-    open var device: Device? = null,
-
-//    @ManyToOne
-//    @JoinColumn(
-//        name = "identity_key_id",
-//        nullable = false,
-//        foreignKey = ForeignKey(name = "fk_signed_prekey_key_identity_key")
-//    )
-//    open var identityKey: IdentityKey,
 
     @Column(name = "key_fingerprint", length = 64, insertable = false, updatable = false)
     open var keyFingerprint: String = "",
@@ -76,7 +64,7 @@ open class SignedPreKey(
 ) : BaseEntity() {
 
     override fun toString(): String {
-        return "KeySignedPrekeys(id=$id, userId=${user.id}, deviceId=${device?.id}, " +
+        return "KeySignedPrekeys(id=$id, userId=${user.id}, " +
                 "isCurrent=$isCurrent, isExpired=$isExpired, useCount=$useCount)"
     }
 }

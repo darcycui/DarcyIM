@@ -10,7 +10,11 @@ class DeviceService @Autowired constructor(
     private val deviceRepository: DeviceRepository,
     private val userService: UserService
 ) {
-    fun createDevice(userId: Long, deviceName: String): Device {
+    fun createDeviceIfNeeded(userId: Long, deviceName: String): Device {
+        val existDevice = queryByUserIdAndDeviceName(userId, deviceName)
+        if (existDevice != null) {
+            return existDevice
+        }
         val user = userService.queryUserById(userId)
         val device = Device(
             user = user,
@@ -20,7 +24,7 @@ class DeviceService @Autowired constructor(
     }
 
     fun queryByUserIdAndDeviceName(userId: Long, deviceName: String): Device? {
-        val device = deviceRepository.findByUserIdAndDevicename(userId, deviceName)
+        val device = deviceRepository.findByUserIdAndName(userId, deviceName)
         return device
     }
 }

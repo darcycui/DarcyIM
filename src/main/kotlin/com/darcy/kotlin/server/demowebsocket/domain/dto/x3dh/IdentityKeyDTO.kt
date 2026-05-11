@@ -11,9 +11,7 @@ import java.time.LocalDateTime
 data class IdentityKeyDTO(
     val id: Long = 0,
     val userId: Long = 0,
-    val deviceId: Long = 0,
     val publicKey: String = "",
-    val keyType: IdentityKey.KeyType = IdentityKey.KeyType.CURVE25519,
     val keySize: Int = 32,
     val keyFingerprint: String = "",
     val isCurrent: Boolean = true,
@@ -37,10 +35,7 @@ fun IdentityKey.toDTO(): IdentityKeyDTO {
     return IdentityKeyDTO(
         id = this.id,
         userId = this.user.id,
-        deviceId = this.device.id,
         publicKey = this.publicKey,
-        keyType = this.keyType,
-        keySize = this.keySize,
         keyFingerprint = this.keyFingerprint,
         isCurrent = this.isCurrent,
         isRevoked = this.isRevoked,
@@ -65,10 +60,7 @@ fun IdentityKey.toDTO(): IdentityKeyDTO {
 fun IdentityKeyDTO.toEntity(user: User, device: Device): IdentityKey {
     return IdentityKey(
         user = user,
-        device = device,
         publicKey = this.publicKey,
-        keyType = this.keyType,
-        keySize = this.keySize,
         keyFingerprint = this.keyFingerprint,
         isCurrent = this.isCurrent,
         isRevoked = this.isRevoked,

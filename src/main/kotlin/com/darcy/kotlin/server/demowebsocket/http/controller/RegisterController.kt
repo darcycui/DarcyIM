@@ -73,19 +73,18 @@ class RegisterController @Autowired constructor(
             params["identityKey"] ?: throw ParamsException.ParamsNotValid(mapOf("identityKey" to "身份密钥不能为空"))
         val preSignedKey = params["preSignedKey"]
             ?: throw ParamsException.ParamsNotValid(mapOf("preSignedKey" to "预签名密钥不能为空"))
-        val oneTimePreKey = params["oneTimePreKey"]
-            ?: throw ParamsException.ParamsNotValid(mapOf("oneTimePreKey" to "一次性预钥不能为空"))
+        val oneTimePreKey = params["oneTimePreKeys"]
+            ?: throw ParamsException.ParamsNotValid(mapOf("oneTimePreKeys" to "一次性预钥不能为空"))
 
         // String 解析为 List
         val oneTimePreKeyList = try {
-            JSON.parseArray(params["oneTimePreKeyList"], String::class.java)
+            JSON.parseArray(params["oneTimePreKeys"], String::class.java)
         } catch (e: Exception) {
-            DarcyLogger.error("解析 oneTimePreKeyList 失败: ${e.message}", e)
+            DarcyLogger.error("解析 oneTimePreKeys 失败: ${e.message}", e)
             emptyList()
         }
         identityKeyService.createIdentityKey(
             userId = user.id,
-            deviceName = "", // todo 先不考虑多设备
             publicKey = identityKey
         )
         signedPreKeyService.createSignedPreKey(

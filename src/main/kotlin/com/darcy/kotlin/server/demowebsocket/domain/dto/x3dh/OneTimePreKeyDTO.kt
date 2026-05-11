@@ -11,7 +11,6 @@ import java.time.LocalDateTime
 data class OneTimePreKeyDTO(
     val id: Long = 0,
     val userId: Long = 0,
-    val deviceId: Long = 0,
     val publicKey: String = "",
     val isUsed: Boolean = false,
     val isExpired: Boolean = false,
@@ -30,7 +29,6 @@ fun OneTimePreKey.toDTO(): OneTimePreKeyDTO {
     return OneTimePreKeyDTO(
         id = this.id,
         userId = this.user.id,
-        deviceId = this.device.id,
         publicKey = this.publicKey,
         isUsed = this.isUsed,
         isExpired = this.isExpired,
@@ -51,7 +49,6 @@ fun OneTimePreKey.toDTO(): OneTimePreKeyDTO {
 fun OneTimePreKeyDTO.toEntity(user: User, device: Device): OneTimePreKey {
     return OneTimePreKey(
         user = user,
-        device = device,
         publicKey = this.publicKey,
         isUsed = this.isUsed,
         isExpired = this.isExpired,
