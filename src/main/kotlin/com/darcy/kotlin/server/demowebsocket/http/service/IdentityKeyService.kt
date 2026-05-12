@@ -1,6 +1,7 @@
 package com.darcy.kotlin.server.demowebsocket.http.service
 
 import com.darcy.kotlin.server.demowebsocket.domain.table.x3dh.IdentityKey
+import com.darcy.kotlin.server.demowebsocket.exception.code1000.X3DHException
 import com.darcy.kotlin.server.demowebsocket.http.repository.IdentityKeyRepository
 import com.darcy.kotlin.server.demowebsocket.http.repository.OneTimePreKeyRepository
 import com.darcy.kotlin.server.demowebsocket.http.repository.SignedPreKeyRepository
@@ -27,7 +28,7 @@ class IdentityKeyService @Autowired constructor(
         return identityKeyRepository.save(identityKey)
     }
 
-    fun queryByUserId(userId: Long): IdentityKey? {
-        return identityKeyRepository.findByUserId(userId)
+    fun queryByUserId(userId: Long): IdentityKey {
+        return identityKeyRepository.findByUserId(userId) ?: throw X3DHException.IDENTITY_KEY_NOT_EXIST
     }
 }

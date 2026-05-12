@@ -2,8 +2,8 @@ package com.darcy.kotlin.server.demowebsocket.http.service
 
 import com.darcy.kotlin.server.demowebsocket.domain.table.conversation.Conversation
 import com.darcy.kotlin.server.demowebsocket.domain.table.message.GroupMessage
-import com.darcy.kotlin.server.demowebsocket.exception.ConversationException
-import com.darcy.kotlin.server.demowebsocket.exception.GroupException
+import com.darcy.kotlin.server.demowebsocket.exception.code700.ConversationException
+import com.darcy.kotlin.server.demowebsocket.exception.code900.GroupException
 import com.darcy.kotlin.server.demowebsocket.http.repository.GroupMessageRepository
 import com.darcy.kotlin.server.demowebsocket.utils.IdGenerator
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,7 +21,7 @@ class GroupMessageService @Autowired constructor(
     private val conversationService: ConversationService,
     private val idGenerator: IdGenerator,
 ) {
-    fun sendMessage(
+    fun createMessage(
         senderId: Long,
         groupId: Long,
         conversationId: Long,
@@ -39,10 +39,10 @@ class GroupMessageService @Autowired constructor(
             content = content,
             sendTime = LocalDateTime.now()
         )
-        return sendMessage(message)
+        return createMessage(message)
     }
 
-    fun sendMessage(groupMessage: GroupMessage): GroupMessage {
+    fun createMessage(groupMessage: GroupMessage): GroupMessage {
         return groupMessageRepository.save(groupMessage)
     }
 

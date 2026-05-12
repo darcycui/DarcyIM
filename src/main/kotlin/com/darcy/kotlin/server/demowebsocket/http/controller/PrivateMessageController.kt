@@ -3,7 +3,7 @@ package com.darcy.kotlin.server.demowebsocket.http.controller
 import com.darcy.kotlin.server.demowebsocket.api.IPrivateMessageApi
 import com.darcy.kotlin.server.demowebsocket.domain.ResultEntity
 import com.darcy.kotlin.server.demowebsocket.domain.dto.message.toDTO
-import com.darcy.kotlin.server.demowebsocket.exception.ParamsException
+import com.darcy.kotlin.server.demowebsocket.exception.code600.ParamsException
 import com.darcy.kotlin.server.demowebsocket.http.service.PrivateMessageService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.RestController
@@ -22,7 +22,7 @@ class PrivateMessageController @Autowired constructor(
         )
         val content = params["content"]
             ?: throw ParamsException.ParamsNotValid(mapOf("content" to "消息内容不能为空"))
-        val result = privateMessageService.sendMessage(senderId, receiverId, conversationId, content)
+        val result = privateMessageService.createMessage(senderId, receiverId, conversationId, content)
         return ResultEntity.success(result.toDTO()).toJsonString()
     }
 

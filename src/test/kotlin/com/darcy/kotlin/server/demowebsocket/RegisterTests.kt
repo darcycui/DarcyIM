@@ -114,7 +114,7 @@ class RegisterTests {
                 .param("updatedAt", user.updatedAt.toString())
                 .param("identityKey", alice.getIdentityPublicKey().keyToString())
                 .param("preSignedKey", alice.getSignedPreKeyPublicKey().keyToString())
-                .param("oneTimePreKeys", alice.getOneTimePreKeyList().keysToString())
+                .param("oneTimePreKeys", alice.getOneTimePreKeyPublicKeyList().keysToString())
         )
             .andExpect(status().isOk)
             .andReturn()

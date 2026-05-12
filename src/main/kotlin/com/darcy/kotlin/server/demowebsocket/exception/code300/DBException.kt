@@ -1,4 +1,6 @@
-package com.darcy.kotlin.server.demowebsocket.exception
+package com.darcy.kotlin.server.demowebsocket.exception.code300
+
+import com.darcy.kotlin.server.demowebsocket.exception.BaseException
 
 /**
  * 数据库相关异常

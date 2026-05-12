@@ -1,6 +1,7 @@
 package com.darcy.kotlin.server.demowebsocket.http.service
 
 import com.darcy.kotlin.server.demowebsocket.domain.table.x3dh.OneTimePreKey
+import com.darcy.kotlin.server.demowebsocket.exception.code1000.X3DHException
 import com.darcy.kotlin.server.demowebsocket.http.repository.IdentityKeyRepository
 import com.darcy.kotlin.server.demowebsocket.http.repository.OneTimePreKeyRepository
 import com.darcy.kotlin.server.demowebsocket.http.repository.SignedPreKeyRepository
@@ -33,7 +34,7 @@ class OneTimePreKeyService @Autowired constructor(
         return oneTimePreKeyRepository.findById(keyId).orElse(null)
     }
 
-    fun queryFirstEnabledOneTimePreKey(userId: Long): OneTimePreKey? {
-        return oneTimePreKeyRepository.findFirstEnabled(userId)
+    fun queryFirstEnabled(userId: Long): OneTimePreKey {
+        return oneTimePreKeyRepository.findFirstEnabled(userId) ?: throw X3DHException.ONE_TIME_PRE_KEY_NOT_EXIST
     }
 }

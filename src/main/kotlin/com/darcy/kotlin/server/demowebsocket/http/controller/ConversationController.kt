@@ -4,7 +4,7 @@ import com.darcy.kotlin.server.demowebsocket.api.IConversationApi
 import com.darcy.kotlin.server.demowebsocket.domain.ResultEntity
 import com.darcy.kotlin.server.demowebsocket.domain.dto.toDTO
 import com.darcy.kotlin.server.demowebsocket.domain.table.conversation.Conversation
-import com.darcy.kotlin.server.demowebsocket.exception.ParamsException
+import com.darcy.kotlin.server.demowebsocket.exception.code600.ParamsException
 import com.darcy.kotlin.server.demowebsocket.http.service.ConversationService
 import com.darcy.kotlin.server.demowebsocket.http.service.UserService
 import org.springframework.beans.factory.annotation.Autowired

@@ -3,7 +3,7 @@ package com.darcy.kotlin.server.demowebsocket.websocket_stomp.service
 import com.darcy.kotlin.server.demowebsocket.domain.dto.message.GroupMessageDTO
 import com.darcy.kotlin.server.demowebsocket.domain.dto.message.PrivateMessageDTO
 import com.darcy.kotlin.server.demowebsocket.domain.dto.message.toEntity
-import com.darcy.kotlin.server.demowebsocket.exception.websocket.STOMPException
+import com.darcy.kotlin.server.demowebsocket.exception.code800.STOMPException
 import com.darcy.kotlin.server.demowebsocket.http.service.GroupMessageService
 import com.darcy.kotlin.server.demowebsocket.http.service.GroupService
 import com.darcy.kotlin.server.demowebsocket.http.service.PrivateMessageService
@@ -23,7 +23,7 @@ class STOMPService @Autowired constructor(
 //    @Lazy
 //    private val simpUserRegistry: SimpUserRegistry
 ) {
-    fun sendPrivate(privateMessage: PrivateMessageDTO) {
+    fun sendPrivate(privateMessage: PrivateMessageDTO, dhPublicKey: String) {
         val recipient = privateMessage.receiverName
         kotlin.runCatching {
             DarcyLogger.warn("单发消息 -->$recipient $privateMessage")
@@ -31,7 +31,7 @@ class STOMPService @Autowired constructor(
             websocket.convertAndSendToUser(recipient, "/queue/message", privateMessage)
             val sendUser = userService.queryUserById(privateMessage.senderId)
             val receiveUser = userService.queryUserById(privateMessage.receiverId)
-            privateMessageService.sendMessage(privateMessage.toEntity(sendUser, receiveUser))
+            privateMessageService.createMessage(privateMessage.toEntity(sendUser, receiveUser))
         }.onSuccess {
             DarcyLogger.info("send private message SUCCESS")
         }.onFailure {
@@ -64,7 +64,7 @@ class STOMPService @Autowired constructor(
             websocket.convertAndSend("/topic/message", groupMessage)
             val sender = userService.queryUserById(groupMessage.senderId)
             val group = groupService.queryGroupById(groupMessage.groupId)
-            groupMessageService.sendMessage(groupMessage.toEntity(sender, group))
+            groupMessageService.createMessage(groupMessage.toEntity(sender, group))
         }.onSuccess {
             DarcyLogger.info("send all group message SUCCESS")
         }.onFailure {
@@ -82,7 +82,7 @@ class STOMPService @Autowired constructor(
             websocket.convertAndSend("/topic/group/$groupId", groupMessage)
             val sender = userService.queryUserById(groupMessage.senderId)
             val group = groupService.queryGroupById(groupMessage.groupId)
-            groupMessageService.sendMessage(groupMessage.toEntity(sender, group))
+            groupMessageService.createMessage(groupMessage.toEntity(sender, group))
         }.onSuccess {
             DarcyLogger.info("send target group message SUCCESS")
         }.onFailure {

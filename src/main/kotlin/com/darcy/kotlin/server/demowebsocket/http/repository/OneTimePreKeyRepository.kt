@@ -8,6 +8,6 @@ interface OneTimePreKeyRepository : JpaRepository<OneTimePreKey, Long> {
     fun findByUserId(userId: Long): List<OneTimePreKey>
 
     @Query("SELECT k FROM OneTimePreKey k WHERE k.user.id = :userId AND " +
-            "k.isUsed = FALSE ORDER BY k.id ASC")
+            "k.isUsed = FALSE ORDER BY k.id ASC LIMIT 1")
     fun findFirstEnabled(userId: Long): OneTimePreKey?
 }

@@ -3,8 +3,7 @@ package com.darcy.kotlin.server.demowebsocket.http.controller
 import com.darcy.kotlin.server.demowebsocket.api.IFriendRequestApi
 import com.darcy.kotlin.server.demowebsocket.domain.ResultEntity
 import com.darcy.kotlin.server.demowebsocket.domain.dto.toDTO
-import com.darcy.kotlin.server.demowebsocket.exception.ParamsException
-import com.darcy.kotlin.server.demowebsocket.exception.user.UserException
+import com.darcy.kotlin.server.demowebsocket.exception.code600.ParamsException
 import com.darcy.kotlin.server.demowebsocket.http.service.FriendRequestService
 import com.darcy.kotlin.server.demowebsocket.http.service.FriendshipService
 import org.springframework.beans.factory.annotation.Autowired

@@ -3,8 +3,8 @@ package com.darcy.kotlin.server.demowebsocket.http.service
 import com.darcy.kotlin.server.demowebsocket.domain.table.conversation.Conversation
 import com.darcy.kotlin.server.demowebsocket.domain.table.group.Group
 import com.darcy.kotlin.server.demowebsocket.domain.table.group.GroupMember
-import com.darcy.kotlin.server.demowebsocket.exception.GroupException
-import com.darcy.kotlin.server.demowebsocket.exception.user.UserException
+import com.darcy.kotlin.server.demowebsocket.exception.code900.GroupException
+import com.darcy.kotlin.server.demowebsocket.exception.code100.UserException
 import com.darcy.kotlin.server.demowebsocket.http.repository.GroupRepository
 import com.darcy.kotlin.server.demowebsocket.utils.IdGenerator
 import org.springframework.transaction.annotation.Transactional

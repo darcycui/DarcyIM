@@ -6,7 +6,7 @@ import javax.crypto.KeyAgreement
 
 object ECCExchangeHelper {
     // 初始化 指定使用 X25519 曲线
-    private const val ALGORITHM: String = "X25519"
+    const val ALGORITHM: String = "X25519"
 
     fun generateKeyPair(): KeyPair {
         try {

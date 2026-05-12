@@ -1,4 +1,4 @@
-package com.darcy.kotlin.server.demowebsocket.exception.websocket
+package com.darcy.kotlin.server.demowebsocket.exception.code800
 
 import com.darcy.kotlin.server.demowebsocket.exception.BaseException
 /**

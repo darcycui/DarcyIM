@@ -1,4 +1,6 @@
-package com.darcy.kotlin.server.demowebsocket.exception
+package com.darcy.kotlin.server.demowebsocket.exception.code700
+
+import com.darcy.kotlin.server.demowebsocket.exception.BaseException
 
 /**
  * 会话相关异常

@@ -1,4 +1,6 @@
-package com.darcy.kotlin.server.demowebsocket.exception
+package com.darcy.kotlin.server.demowebsocket.exception.code600
+
+import com.darcy.kotlin.server.demowebsocket.exception.BaseException
 
 /**
  * 参数相关异常

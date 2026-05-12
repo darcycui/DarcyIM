@@ -1,6 +1,6 @@
 package com.darcy.kotlin.server.demowebsocket.http.service
 
-import com.darcy.kotlin.server.demowebsocket.exception.user.UserException
+import com.darcy.kotlin.server.demowebsocket.exception.code100.UserException
 import com.darcy.kotlin.server.demowebsocket.http.repository.UserRepository
 import com.darcy.kotlin.server.demowebsocket.log.DarcyLogger
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,12 +22,12 @@ class CustomUserDetailsService @Autowired constructor(
     override fun loadUserByUsername(username: String?): UserDetails {
         if (username == null) {
             DarcyLogger.error("用户名不能为空")
-            throw Exception(UserException.USER_NAME_PASSWORD_EMPTY)
+            throw UserException.USER_NAME_PASSWORD_EMPTY
         }
         val user = userRepository.findByUsername(username)
         if (user == null) {
             DarcyLogger.error("用户不存在:${username}")
-            throw Exception(UserException.USER_NOT_EXIST)
+            throw UserException.USER_NOT_EXIST
         }
         DarcyLogger.info("用户存在: ${user.username}")
         user.roles = "USER"

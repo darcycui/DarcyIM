@@ -1,6 +1,7 @@
 package com.darcy.kotlin.server.demowebsocket.http.service
 
 import com.darcy.kotlin.server.demowebsocket.domain.table.x3dh.SignedPreKey
+import com.darcy.kotlin.server.demowebsocket.exception.code1000.X3DHException
 import com.darcy.kotlin.server.demowebsocket.http.repository.DeviceRepository
 import com.darcy.kotlin.server.demowebsocket.http.repository.IdentityKeyRepository
 import com.darcy.kotlin.server.demowebsocket.http.repository.OneTimePreKeyRepository
@@ -25,7 +26,7 @@ class SignedPreKeyService @Autowired constructor(
         return signedPreKeyRepository.save(signedPreKey)
     }
 
-    fun queryByUserId(userId: Long): SignedPreKey? {
-        return signedPreKeyRepository.findByUserId(userId)
+    fun queryByUserId(userId: Long): SignedPreKey {
+        return signedPreKeyRepository.findByUserId(userId) ?: throw X3DHException.SIGNED_PRE_KEY_NOT_EXIST
     }
 }

@@ -1,0 +1,7 @@
+package com.darcy.kotlin.server.demowebsocket.domain.dto.x3dh
+
+data class X3DHBobKeysDTO(
+    val identityKey: String = "",
+    val signedPreKey: String = "",
+    val oneTimePreKey: String = ""
+)

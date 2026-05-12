@@ -3,6 +3,7 @@ package com.darcy.kotlin.server.demowebsocket.websocket_stomp.controller
 import com.darcy.kotlin.server.demowebsocket.domain.dto.message.GroupMessageDTO
 import com.darcy.kotlin.server.demowebsocket.domain.dto.message.PrivateMessageDTO
 import com.darcy.kotlin.server.demowebsocket.domain.dto.message.toEntity
+import com.darcy.kotlin.server.demowebsocket.exception.code1000.X3DHException
 import com.darcy.kotlin.server.demowebsocket.http.service.PrivateMessageService
 import com.darcy.kotlin.server.demowebsocket.http.service.UserService
 import com.darcy.kotlin.server.demowebsocket.log.DarcyLogger
@@ -22,7 +23,8 @@ class StompController @Autowired constructor(
         DarcyLogger.info("private message=$privateMessage")
         val sender = sha.user?.name ?: ""
         DarcyLogger.info("private sender: $sender message=$privateMessage")
-        stompService.sendPrivate(privateMessage)
+        val dhPublicKey = sha.getFirstNativeHeader("dhPublicKey") ?: throw X3DHException.DH_KEY_NOT_EXIST
+        stompService.sendPrivate(privateMessage, dhPublicKey)
     }
 
     override fun sendAllGroup(sha: SimpMessageHeaderAccessor, @Payload groupMessage: GroupMessageDTO) {

@@ -2,8 +2,8 @@ package  com.darcy.kotlin.server.demowebsocket.http.service
 
 import com.darcy.kotlin.server.demowebsocket.domain.table.conversation.Conversation
 import com.darcy.kotlin.server.demowebsocket.domain.table.message.PrivateMessage
-import com.darcy.kotlin.server.demowebsocket.exception.ConversationException
-import com.darcy.kotlin.server.demowebsocket.exception.user.UserException
+import com.darcy.kotlin.server.demowebsocket.exception.code700.ConversationException
+import com.darcy.kotlin.server.demowebsocket.exception.code100.UserException
 import com.darcy.kotlin.server.demowebsocket.http.repository.PrivateMessageRepository
 import com.darcy.kotlin.server.demowebsocket.utils.IdGenerator
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,7 +20,7 @@ class PrivateMessageService @Autowired constructor(
     private val userService: UserService,
     private val idGenerator: IdGenerator
 ) {
-    fun sendMessage(
+    fun createMessage(
         senderId: Long,
         receiverId: Long,
         conversationId: Long,
@@ -38,10 +38,10 @@ class PrivateMessageService @Autowired constructor(
             content = content,
             sendTime = LocalDateTime.now()
         )
-        return sendMessage(message)
+        return createMessage(message)
     }
 
-    fun sendMessage(message: PrivateMessage): PrivateMessage {
+    fun createMessage(message: PrivateMessage): PrivateMessage {
         return privateMessageRepository.save(message)
     }
 

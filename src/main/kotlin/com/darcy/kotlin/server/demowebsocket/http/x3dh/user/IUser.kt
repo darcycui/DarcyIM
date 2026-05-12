@@ -22,5 +22,7 @@ interface IUser {
 
     fun getOneTimePreKeyPair(id: String): KeyPair
 
-    fun getOneTimePreKeyList(): List<PublicKey>
+    fun getOneTimePreKeyPublicKeyList(): List<PublicKey>
+
+    fun getOneTimePreKeyPrivateKeyList(): List<PrivateKey>
 }

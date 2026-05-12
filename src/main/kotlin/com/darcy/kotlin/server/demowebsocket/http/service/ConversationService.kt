@@ -1,8 +1,8 @@
 package com.darcy.kotlin.server.demowebsocket.http.service
 
 import com.darcy.kotlin.server.demowebsocket.domain.table.conversation.Conversation
-import com.darcy.kotlin.server.demowebsocket.exception.ConversationException
-import com.darcy.kotlin.server.demowebsocket.exception.user.UserException
+import com.darcy.kotlin.server.demowebsocket.exception.code700.ConversationException
+import com.darcy.kotlin.server.demowebsocket.exception.code100.UserException
 import com.darcy.kotlin.server.demowebsocket.http.repository.ConversationRepository
 import com.darcy.kotlin.server.demowebsocket.utils.IdGenerator
 import org.springframework.beans.factory.annotation.Autowired

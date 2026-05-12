@@ -4,7 +4,7 @@ import com.darcy.kotlin.server.demowebsocket.api.IGroupApi
 import com.darcy.kotlin.server.demowebsocket.domain.ResultEntity
 import com.darcy.kotlin.server.demowebsocket.domain.dto.group.toDTO
 import com.darcy.kotlin.server.demowebsocket.domain.dto.string.toDTO
-import com.darcy.kotlin.server.demowebsocket.exception.ParamsException
+import com.darcy.kotlin.server.demowebsocket.exception.code600.ParamsException
 import com.darcy.kotlin.server.demowebsocket.http.service.GroupMemberService
 import com.darcy.kotlin.server.demowebsocket.http.service.GroupService
 import org.springframework.beans.factory.annotation.Autowired

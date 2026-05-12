@@ -2,8 +2,8 @@ package com.darcy.kotlin.server.demowebsocket.utils
 
 object HexUtil {
     @OptIn(ExperimentalStdlibApi::class)
-    fun bytesToHexStr(bytes: ByteArray, uppercase: Boolean = false): String {
-        if (bytes.isEmpty()) return ""
+    fun bytesToHexStr(bytes: ByteArray?, uppercase: Boolean = false): String {
+        if (bytes == null || bytes.isEmpty()) return ""
         return runCatching {
             val str = bytes.toHexString()
             if (uppercase) str.uppercase() else str.lowercase()
@@ -14,12 +14,20 @@ object HexUtil {
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    fun hexStrToBytes(hex: String): ByteArray {
-        if (hex.isEmpty()) return ByteArray(0)
+    fun hexStrToBytes(hex: String?): ByteArray {
+        if (hex.isNullOrEmpty()) return ByteArray(0)
         return runCatching {
             hex.hexToByteArray()
         }.onFailure {
             it.printStackTrace()
         }.getOrElse { ByteArray(0) }
     }
+}
+
+fun String.hexStrToBytes(): ByteArray {
+    return HexUtil.hexStrToBytes(this)
+}
+
+fun ByteArray.bytesToHexStr(uppercase: Boolean = false): String {
+    return HexUtil.bytesToHexStr(this, uppercase)
 }

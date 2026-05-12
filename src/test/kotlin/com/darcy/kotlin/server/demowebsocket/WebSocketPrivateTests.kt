@@ -127,16 +127,17 @@ class WebSocketPrivateTests {
         session1.setAutoReceipt(true)
         session2.setAutoReceipt(true)
 
-        // 4. 等待连接
+        // 等待连接
         try {
             // 使用 CountDownLatch 等待消息接收
             val messageLatch = CountDownLatch(1)
             val receiptLatch = CountDownLatch(1)
 
-            // 5. 订阅主题
+            // 订阅主题
             val queueSubscription = session1.subscribe("/user/queue/message", object : StompSessionHandlerAdapter() {
                 override fun handleFrame(headers: StompHeaders, payload: Any?) {
-                    println("1--Received Queue message-->: $payload")
+                    println("1--Received Queue headers-->: ${headers.entries}")
+                    println("1--Received Queue message-->: $payload ")
                 }
 
                 override fun getPayloadType(headers: StompHeaders): Type {
@@ -153,6 +154,7 @@ class WebSocketPrivateTests {
 
             val queueSubscription2 = session2.subscribe("/user/queue/message", object : StompSessionHandlerAdapter() {
                 override fun handleFrame(headers: StompHeaders, payload: Any?) {
+                    println("2--Received Queue headers-->: ${headers.entries}")
                     println("2--Received Queue message-->: $payload")
                     // 收到消息后 调用 messageLatch 的 countDown
                     messageLatch.countDown()
@@ -170,11 +172,16 @@ class WebSocketPrivateTests {
             }
             Thread.sleep(500) // 等待订阅确认日志
 
-            // 6. 发送消息
+            // Alice发送消息
+            val aliceIdentityPublicKey = "302a300506032b656e0321003d4fa7151d41dd6242145c651e3b26f2c8c2b285e28f6843bffd82d6232d832a"
+            val aliceEphemeralPublicKey = "302a300506032b656e032100a0b9b7d397986c7c2c492d6b03039eeccba10c32ad86538546a46fb2b0b07226"
             val sendHeaders = StompHeaders().apply {
                 destination = "/app/sendPrivateMessage"
-                receipt = "receipt-1${System.currentTimeMillis()}"
+                receipt = "receipt-1-${System.currentTimeMillis()}"
 //                receiptId = "receipt-1${System.currentTimeMillis()}"
+                set("identityPublicKey", aliceIdentityPublicKey) // 仅第一条消息发送
+                set("oneTimePublicKeyId", "1") // 仅第一条消息发送
+                set("dhPublicKey", aliceEphemeralPublicKey) // 每一条消息都发送
             }
             val privateMessage = PrivateMessageDTO(
                 msgId = "",
@@ -199,7 +206,7 @@ class WebSocketPrivateTests {
                 println("❌ [RECEIPT FAILURE] 发送操作失败! Receipt ID: ${sendReceipt.receiptId}")
             }
 
-            // 3. 等待消息接收与确认帧结果
+            // 等待消息接收与确认帧结果
             // 等待消息接收（最多等待 5 秒）
             val received = messageLatch.await(5, TimeUnit.SECONDS)
             if (received) {
@@ -217,11 +224,11 @@ class WebSocketPrivateTests {
             }
             assertEquals(true, receiptReceived, "未在超时时间内收到确认帧，但消息已成功投递")
 
-            // 7. 清理
+            // 清理
             queueSubscription.unsubscribe()
             queueSubscription2.unsubscribe()
 
-            // 8. 优雅断开连接，等待服务端的 RECEIPT 确认帧
+            // 优雅断开连接，等待服务端的 RECEIPT 确认帧
             session1.disconnect()
             session2.disconnect()
             // 等待断开连接

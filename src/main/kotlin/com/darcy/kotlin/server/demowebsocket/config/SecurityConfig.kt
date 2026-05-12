@@ -42,7 +42,7 @@ class SecurityConfig {
                     "/api/users/create",
                     "/api/login",
                     "/api/register",
-//                    "/api/**",
+                    "/api/**",
 //                    "/stomp-ws/**",
 //                    "/stomp-sockjs/**",
                     "/js/**",

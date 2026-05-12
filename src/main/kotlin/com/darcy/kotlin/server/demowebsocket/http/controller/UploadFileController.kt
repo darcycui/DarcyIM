@@ -6,8 +6,8 @@ import com.darcy.kotlin.server.demowebsocket.domain.dto.media.toDTO
 import com.darcy.kotlin.server.demowebsocket.domain.table.media.UploadFile
 import com.darcy.kotlin.server.demowebsocket.domain.table.media.toFileType
 import com.darcy.kotlin.server.demowebsocket.exception.BaseException
-import com.darcy.kotlin.server.demowebsocket.exception.DBException
-import com.darcy.kotlin.server.demowebsocket.exception.FileException
+import com.darcy.kotlin.server.demowebsocket.exception.code300.DBException
+import com.darcy.kotlin.server.demowebsocket.exception.code200.FileException
 import com.darcy.kotlin.server.demowebsocket.exception.toJsonString
 import com.darcy.kotlin.server.demowebsocket.http.service.UploadFileService
 import org.springframework.beans.factory.annotation.Autowired

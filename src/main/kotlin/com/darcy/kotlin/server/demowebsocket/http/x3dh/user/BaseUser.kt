@@ -48,7 +48,11 @@ abstract class BaseUser() : IUser {
         return innerOneTimePreKeyPairMap[id]!!
     }
 
-    override fun getOneTimePreKeyList(): List<PublicKey> {
+    override fun getOneTimePreKeyPublicKeyList(): List<PublicKey> {
         return innerOneTimePreKeyPairMap.values.toList().map { it.public }
+    }
+
+    override fun getOneTimePreKeyPrivateKeyList(): List<PrivateKey> {
+        return innerOneTimePreKeyPairMap.values.toList().map { it.private }
     }
 }
