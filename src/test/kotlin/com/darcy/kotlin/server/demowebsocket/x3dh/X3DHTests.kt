@@ -58,8 +58,8 @@ class X3DHTests {
         assertContentEquals(K1, K2, "共享密钥交换失败")
     }
 
-    val aliceIdentityPrivateKey = "302e020100300506032b656e042204208c4aae7a93367905f9f8a68491173059bfd53aa6ccb9906ba59d247f650b1231"
-    val aliceEphemeralPrivateKey = "302e020100300506032b656e04220420f1b760d87917b117017d2328792fb28b95e652bd71d7c4db44c18b1e3dc79337"
+    val aliceIdentityPrivateKey = "8c4aae7a93367905f9f8a68491173059bfd53aa6ccb9906ba59d247f650b1231"
+    val aliceEphemeralPrivateKey = "f1b760d87917b117017d2328792fb28b95e652bd71d7c4db44c18b1e3dc79337"
 
     fun aliceCalculateKey(bobKeys: X3DHBobKeysDTO): ByteArray {
         val aliceIdentityPrivate = aliceIdentityPrivateKey.hexStrToBytes().toPrivateKey()
@@ -77,12 +77,12 @@ class X3DHTests {
         return HKDF.deriveSecrets(sharedSecret, ByteArray(32), "Info".toByteArray(), 64)
     }
 
-    val aliceIdentityPublicKey = "302a300506032b656e0321003d4fa7151d41dd6242145c651e3b26f2c8c2b285e28f6843bffd82d6232d832a"
-    val aliceEphemeralPublicKey = "302a300506032b656e032100a0b9b7d397986c7c2c492d6b03039eeccba10c32ad86538546a46fb2b0b07226"
+    val aliceIdentityPublicKey = "3d4fa7151d41dd6242145c651e3b26f2c8c2b285e28f6843bffd82d6232d832a"
+    val aliceEphemeralPublicKey = "a0b9b7d397986c7c2c492d6b03039eeccba10c32ad86538546a46fb2b0b07226"
 
-    val bobIdentityPrivate = "302e020100300506032b656e04220420286e814b3eb5bcee87f41fa35e68b73d24be78b46adb789c65dd0f917cb8239c"
-    val bobSignedPreKeyPrivate = "302e020100300506032b656e0422042051bbbd6b05dc99556ed59688154f8895d44d70897fa567e933d121d33b7f9a96"
-    val bobOneTimePreKeyPrivate = "302e020100300506032b656e0422042055f2e93e1f74ce86dfbf8772264a216c6cb3e69979fd50771fb5c7c7841f53a0"
+    val bobIdentityPrivate = "286e814b3eb5bcee87f41fa35e68b73d24be78b46adb789c65dd0f917cb8239c"
+    val bobSignedPreKeyPrivate = "51bbbd6b05dc99556ed59688154f8895d44d70897fa567e933d121d33b7f9a96"
+    val bobOneTimePreKeyPrivate = "55f2e93e1f74ce86dfbf8772264a216c6cb3e69979fd50771fb5c7c7841f53a0"
 
     fun bobCalculateKey(): ByteArray {
         val bobIdentityPrivate = bobIdentityPrivate.hexStrToBytes().toPrivateKey()

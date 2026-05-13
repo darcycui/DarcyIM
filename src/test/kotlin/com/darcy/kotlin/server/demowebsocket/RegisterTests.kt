@@ -2,10 +2,10 @@ package com.darcy.kotlin.server.demowebsocket
 
 import com.darcy.kotlin.server.demowebsocket.domain.table.User
 import com.darcy.kotlin.server.demowebsocket.domain.table.User.UserStatus
-import com.darcy.kotlin.server.demowebsocket.http.x3dh.encrypt.keyToString
-import com.darcy.kotlin.server.demowebsocket.http.x3dh.encrypt.keysToString
 import com.darcy.kotlin.server.demowebsocket.http.x3dh.user.Alice
 import com.darcy.kotlin.server.demowebsocket.utils.HashUtil
+import com.darcy.kotlin.server.demowebsocket.utils.keyToString
+import com.darcy.kotlin.server.demowebsocket.utils.keysToString
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

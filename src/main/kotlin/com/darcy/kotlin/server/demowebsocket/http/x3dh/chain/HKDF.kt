@@ -47,13 +47,13 @@ object HKDF {
             var mixin: ByteArray? = ByteArray(0)
             val results: ByteArrayOutputStream = ByteArrayOutputStream()
             var remainingBytes = outputSize
-            for (i in getIterationStartOffset() until iterations + getIterationStartOffset()) {
-                val mac = Mac.getInstance("HmacSHA256")
-                mac.init(SecretKeySpec(prk, "HmacSHA256"))
+            val offset = getIterationStartOffset()
+            val mac = Mac.getInstance("HmacSHA256")
+            mac.init(SecretKeySpec(prk, "HmacSHA256"))
+            for (i in offset until iterations + offset) {
+                mac.reset()
                 mac.update(mixin)
-                if (info != null) {
-                    mac.update(info)
-                }
+                info?.let { mac.update(it) }
                 mac.update(i.toByte())
                 val stepResult = mac.doFinal()
                 val stepSize = min(remainingBytes.toDouble(), stepResult.size.toDouble()).toInt()

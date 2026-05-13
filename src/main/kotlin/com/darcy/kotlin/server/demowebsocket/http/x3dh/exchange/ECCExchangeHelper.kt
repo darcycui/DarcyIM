@@ -5,12 +5,13 @@ import javax.crypto.KeyAgreement
 
 
 object ECCExchangeHelper {
-    // 初始化 指定使用 X25519 曲线
+    // 初始化 指定使用 X25519 曲线 （密钥长度固定为 256 位）
     const val ALGORITHM: String = "X25519"
 
     fun generateKeyPair(): KeyPair {
         try {
             val keyPairGenerator = KeyPairGenerator.getInstance(ALGORITHM)
+            // keyPairGenerator.initialize(256) // 不支持手动设置密钥长度
             return keyPairGenerator.generateKeyPair()
         } catch (e: NoSuchAlgorithmException) {
             throw RuntimeException(e)

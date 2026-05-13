@@ -55,3 +55,7 @@ object EncryptUtil {
         return String(bytes!!, StandardCharsets.UTF_8)
     }
 }
+
+fun ByteArray.toNormalString(): String {
+    return String(this, StandardCharsets.UTF_8)
+}
