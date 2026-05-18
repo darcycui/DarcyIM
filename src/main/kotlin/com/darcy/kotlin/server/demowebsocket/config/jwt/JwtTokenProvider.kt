@@ -27,13 +27,15 @@ class JwtTokenProvider {
         return kotlin.runCatching {
             val now: Date = Date()
             val expiryDate: Date = Date(now.time + expiration)
-            Jwts.builder()
+            val token = Jwts.builder()
                 .subject(username)
                 .claim(TOKEN_VERSION_CLAIM, tokenVersion)
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .signWith(key, Jwts.SIG.HS512)
                 .compact()
+            "Bearer $token"
+
         }.onFailure {
             it.printStackTrace()
         }.getOrElse { "" }
@@ -67,7 +69,7 @@ class JwtTokenProvider {
      * 从 JWT token 获取用户名
      */
     fun getUsernameFromJWT(token: String): String {
-        if (token.isEmpty()) {
+        if (token.isEmpty() || token.isBlank()) {
             return ""
         }
         return kotlin.runCatching {

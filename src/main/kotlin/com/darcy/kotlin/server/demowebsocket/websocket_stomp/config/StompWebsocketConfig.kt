@@ -55,12 +55,12 @@ class StompWebsocketConfig @Autowired constructor(
             // 添加原生 STOMP 端点
             addEndpoint(WEBSOCKET_PATH)
                 .setAllowedOriginPatterns("*", "null")
-//                .addInterceptors(stompHandshakeInterceptor)
+                .addInterceptors(stompHandshakeInterceptor)
 
             // 添加 STOMP 端点，并开启 SockJS 支持
             addEndpoint(WEBSOCKET_PATH_JS)
                 .setAllowedOriginPatterns("*", "null")
-//                .addInterceptors(stompHandshakeInterceptor)
+                .addInterceptors(stompHandshakeInterceptor)
                 .withSockJS()
                 .setHeartbeatTime(HEARTBEAT_PERIOD)
         }

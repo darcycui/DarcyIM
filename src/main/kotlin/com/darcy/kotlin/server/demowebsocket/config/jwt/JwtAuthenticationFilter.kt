@@ -50,7 +50,7 @@ class JwtAuthenticationFilter : OncePerRequestFilter() {
     }
 
     private fun getJwtFromRequest(request: HttpServletRequest): String {
-        val bearerToken = request.getHeader("Authorization") ?: ""
+        val bearerToken = request.getHeader(TokenUtil.TOKEN_HEADER) ?: ""
         return TokenUtil.cutOnlyToken(bearerToken)
     }
 }

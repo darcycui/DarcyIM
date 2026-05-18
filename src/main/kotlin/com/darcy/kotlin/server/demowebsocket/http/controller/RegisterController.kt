@@ -16,11 +16,6 @@ import java.time.LocalDateTime
 @RestController
 class RegisterController @Autowired constructor(
     private val registerService: RegisterService,
-    private val userService: UserService,
-    private val identityKeyService: IdentityKeyService,
-    private val signedPreKeyService: SignedPreKeyService,
-    private val oneTimePreKeyService: OneTimePreKeyService,
-    private val deviceService: DeviceService
 ) : IRegisterApi {
     override fun register(params: Map<String, String>): String {
         // String 解析为 Map
@@ -64,36 +59,6 @@ class RegisterController @Autowired constructor(
         userEntity.createdAt = createdAt
         userEntity.updatedAt = updatedAt
         val user = registerService.register(userEntity)
-        dealX3DHKeys(params, user)
         return ResultEntity.success(user.toDTO()).toJsonString()
-    }
-
-    private fun dealX3DHKeys(params: Map<String, String>, user: User) {
-        val identityKey =
-            params["identityKey"] ?: throw ParamsException.ParamsNotValid(mapOf("identityKey" to "身份密钥不能为空"))
-        val preSignedKey = params["preSignedKey"]
-            ?: throw ParamsException.ParamsNotValid(mapOf("preSignedKey" to "预签名密钥不能为空"))
-        val oneTimePreKey = params["oneTimePreKeys"]
-            ?: throw ParamsException.ParamsNotValid(mapOf("oneTimePreKeys" to "一次性预钥不能为空"))
-
-        // String 解析为 List
-        val oneTimePreKeyList = try {
-            JSON.parseArray(params["oneTimePreKeys"], String::class.java)
-        } catch (e: Exception) {
-            DarcyLogger.error("解析 oneTimePreKeys 失败: ${e.message}", e)
-            emptyList()
-        }
-        identityKeyService.createIdentityKey(
-            userId = user.id,
-            publicKey = identityKey
-        )
-        signedPreKeyService.createSignedPreKey(
-            userId = user.id,
-            publicKey = preSignedKey
-        )
-        oneTimePreKeyService.createOneTimePreKeys(
-            userId = user.id,
-            publicKeys = oneTimePreKeyList
-        )
     }
 }

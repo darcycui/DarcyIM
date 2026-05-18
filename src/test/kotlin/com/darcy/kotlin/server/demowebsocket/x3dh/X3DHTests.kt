@@ -1,10 +1,9 @@
 package com.darcy.kotlin.server.demowebsocket.x3dh
 
 import com.alibaba.fastjson2.JSON
-import com.darcy.kotlin.server.demowebsocket.domain.dto.x3dh.X3DHBobKeysDTO
+import com.darcy.kotlin.server.demowebsocket.domain.dto.x3dh.X3DHKeysPullDTO
 import com.darcy.kotlin.server.demowebsocket.http.x3dh.exchange.ECCExchangeHelper
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertNotNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -33,7 +32,7 @@ class X3DHTests {
      */
     @Test
     fun `test-x3dh-pull-bob-keys`() {
-        val url = "http://localhost:$port/api/x3dh/pull/bob/keys"
+        val url = "http://localhost:$port/api/x3dh/pull/keys"
         val result = mockMvc.perform(
             MockMvcRequestBuilders.post(url)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -47,7 +46,7 @@ class X3DHTests {
         val resultEntity = JSON.parseObject(result)
         val x3dhBobKeys = JSON.parseObject(
             resultEntity.getString("result"),
-            X3DHBobKeysDTO::class.java
+            X3DHKeysPullDTO::class.java
         )
         println("x3dhBobKeys-->$x3dhBobKeys")
         val K1 = aliceCalculateKey(x3dhBobKeys)
@@ -61,7 +60,7 @@ class X3DHTests {
     val aliceIdentityPrivateKey = "8c4aae7a93367905f9f8a68491173059bfd53aa6ccb9906ba59d247f650b1231"
     val aliceEphemeralPrivateKey = "f1b760d87917b117017d2328792fb28b95e652bd71d7c4db44c18b1e3dc79337"
 
-    fun aliceCalculateKey(bobKeys: X3DHBobKeysDTO): ByteArray {
+    fun aliceCalculateKey(bobKeys: X3DHKeysPullDTO): ByteArray {
         val aliceIdentityPrivate = aliceIdentityPrivateKey.hexStrToBytes().toPrivateKey()
         val aliceEphemeralPrivate = aliceEphemeralPrivateKey.hexStrToBytes().toPrivateKey()
 

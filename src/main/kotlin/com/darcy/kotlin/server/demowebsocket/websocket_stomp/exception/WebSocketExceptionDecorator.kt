@@ -2,6 +2,7 @@ package com.darcy.kotlin.server.demowebsocket.websocket_stomp.exception
 
 import com.darcy.kotlin.server.demowebsocket.log.DarcyLogger
 import org.springframework.context.annotation.Configuration
+import org.springframework.messaging.MessagingException
 import org.springframework.web.socket.CloseStatus
 import org.springframework.web.socket.WebSocketHandler
 import org.springframework.web.socket.WebSocketMessage
@@ -9,7 +10,6 @@ import org.springframework.web.socket.WebSocketSession
 import org.springframework.web.socket.config.annotation.EnableWebSocket
 import org.springframework.web.socket.handler.WebSocketHandlerDecorator
 import org.springframework.web.socket.handler.WebSocketHandlerDecoratorFactory
-import java.io.IOException
 
 /**
  * websocket 异常处理
@@ -17,12 +17,23 @@ import java.io.IOException
 @Configuration
 @EnableWebSocket
 class WebSocketExceptionDecorator : WebSocketHandlerDecoratorFactory {
+    companion object {
+        private val TAG = WebSocketExceptionDecorator::class.java.simpleName
+    }
+
     override fun decorate(handler: WebSocketHandler): WebSocketHandler {
         return object : WebSocketHandlerDecorator(handler) {
             override fun afterConnectionEstablished(session: WebSocketSession) {
                 super.afterConnectionEstablished(session)
                 try {
                     DarcyLogger.info("websocket 连接已建立: ${session.id}")
+                    // 二次检查认证信息，如果userName为空 则关闭连接
+                    val userName = session.attributes["userName"] as? String
+                    if (userName.isNullOrBlank()) {
+                        DarcyLogger.error("$TAG 用户 userName 为空，拒绝连接并关闭会话 sessionId=${session.id}")
+                        session.close(CloseStatus.NOT_ACCEPTABLE.withReason("Authentication required"))
+                        throw MessagingException("$TAG Authentication 认证失败2: userName 为空")
+                    }
                 } catch (e: Exception) {
                     DarcyLogger.error("websocket 创建连接异常: ${session.id}", e)
                     e.printStackTrace()

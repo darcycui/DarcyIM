@@ -1,6 +1,7 @@
 package com.darcy.kotlin.server.demowebsocket.websocket_stomp.interceptor
 
 import com.darcy.kotlin.server.demowebsocket.log.DarcyLogger
+import com.darcy.kotlin.server.demowebsocket.utils.TokenUtil
 import org.springframework.http.server.ServerHttpRequest
 import org.springframework.http.server.ServerHttpResponse
 import org.springframework.stereotype.Component
@@ -26,7 +27,7 @@ class StompHandshakeInterceptor : HandshakeInterceptor {
 
             val headers = request.headers
 
-            val authHeader = headers.getFirst("Authorization")
+            val authHeader = headers.getFirst(TokenUtil.TOKEN_HEADER)
                 ?: headers.getFirst("Sec-WebSocket-Protocol")
                 ?: ""
 

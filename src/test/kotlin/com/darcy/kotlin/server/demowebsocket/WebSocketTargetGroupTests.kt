@@ -2,6 +2,7 @@ package com.darcy.kotlin.server.demowebsocket
 
 import com.darcy.kotlin.server.demowebsocket.domain.dto.message.GroupMessageDTO
 import com.darcy.kotlin.server.demowebsocket.domain.dto.message.PrivateMessageDTO
+import com.darcy.kotlin.server.demowebsocket.utils.TokenUtil
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -56,10 +57,10 @@ class WebSocketTargetGroupTests {
 
         // 2. 准备头部
         val webSocketHeaders = WebSocketHttpHeaders()
-        webSocketHeaders["Authorization"] = createJwtToken()
+        webSocketHeaders[TokenUtil.TOKEN_HEADER] = createJwtToken()
         val stompHeaders = StompHeaders()
         // 可以设置 STOMP 特定的头部
-        stompHeaders["Authorization"] = createJwtToken()
+        stompHeaders[TokenUtil.TOKEN_HEADER] = createJwtToken()
         val url = "http://localhost:$port/stomp-ws"  // 注意 SockJS 用 http
         val sessionFuture = CompletableFuture<StompSession>()
 

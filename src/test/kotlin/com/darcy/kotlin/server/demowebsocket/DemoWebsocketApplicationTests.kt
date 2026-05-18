@@ -1,5 +1,6 @@
 package com.darcy.kotlin.server.demowebsocket
 
+import com.darcy.kotlin.server.demowebsocket.utils.TokenUtil
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
@@ -55,7 +56,7 @@ class DemoWebsocketApplicationTests {
         println("URL-->$connectUrl")
         val connectHeaders = StompHeaders().apply {
             // 添加认证
-            set("Authorization", "test3")
+            set(TokenUtil.TOKEN_HEADER, "test3")
             // 添加 Origin 头
             set("Origin", "http://localhost:$port")
         }

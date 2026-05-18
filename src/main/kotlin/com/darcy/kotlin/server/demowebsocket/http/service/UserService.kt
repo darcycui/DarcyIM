@@ -42,6 +42,14 @@ class UserService @Autowired constructor(
         return user.get()
     }
 
+    fun isUserExistByName(username: String): Boolean {
+        return userRepository.existsByUsername(username)
+    }
+
+    fun isUserExistById(userId: Long): Boolean {
+        return userRepository.existsById(userId)
+    }
+
     fun queryUserByPhone(phone: String): User {
         return userRepository.findByPhone(phone) ?: throw UserException.USER_NOT_EXIST
     }

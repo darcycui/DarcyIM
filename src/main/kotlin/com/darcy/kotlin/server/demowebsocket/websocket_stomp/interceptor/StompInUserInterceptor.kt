@@ -1,6 +1,7 @@
 package com.darcy.kotlin.server.demowebsocket.websocket_stomp.interceptor
 
 import com.darcy.kotlin.server.demowebsocket.config.jwt.JwtTokenProvider
+import com.darcy.kotlin.server.demowebsocket.http.service.UserService
 import com.darcy.kotlin.server.demowebsocket.log.DarcyLogger
 import com.darcy.kotlin.server.demowebsocket.utils.TokenUtil
 import org.springframework.beans.factory.annotation.Autowired
@@ -8,6 +9,7 @@ import org.springframework.context.ApplicationListener
 import org.springframework.context.annotation.Lazy
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
+import org.springframework.messaging.MessagingException
 import org.springframework.messaging.simp.stomp.StompCommand
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor
 import org.springframework.messaging.simp.user.SimpUserRegistry
@@ -25,6 +27,7 @@ class StompInUserInterceptor @Autowired constructor(
     @Lazy
     val simpUserRegistry: SimpUserRegistry,
     val tokenProvider: JwtTokenProvider,
+    private val userService: UserService,
 ) : ChannelInterceptor, ApplicationListener<SessionConnectedEvent> {
     companion object {
         private const val TAG = "StompInUserInterceptor"
@@ -106,19 +109,29 @@ class StompInUserInterceptor @Autowired constructor(
      */
     private fun registerUserName(accessor: StompHeaderAccessor) {
         // 1. 先从 STOMP 头中获取 Authorization
-        val token1 = accessor.getFirstNativeHeader("Authorization") ?: ""
+        val token1 = accessor.getFirstNativeHeader(TokenUtil.TOKEN_HEADER) ?: ""
         var userName = tokenProvider.getUsernameFromJWT(TokenUtil.cutOnlyToken(token1))
         DarcyLogger.info("$TAG 从STOMP头获取 userName: $userName")
 
-//        // 2. 如果 STOMP 头中没有，则从 WebSocket 握手阶段的 sessionAttributes 中获取
-//        val sessionAttributes = accessor.sessionAttributes ?: emptyMap()
-//        val token2 = sessionAttributes["userName"]?.toString() ?: ""
-//        DarcyLogger.info("$TAG 从握手属性获取 userName2: $token2")
-//        if (userName.isBlank()) {
-//            userName = token2
-//        }
+        // 2. 如果 STOMP 头中没有，则从 WebSocket 握手阶段的 sessionAttributes 中获取
+        if (userName.isBlank()) {
+            val sessionAttributes = accessor.sessionAttributes ?: emptyMap()
+            val token2 = sessionAttributes["userName"]?.toString() ?: ""
+            val userName2 = tokenProvider.getUsernameFromJWT(TokenUtil.cutOnlyToken(token2))
+            DarcyLogger.info("$TAG 从握手属性获取 userName2: $userName2")
+            userName = userName2
+        }
+        if (userName.isBlank()) {
+            DarcyLogger.error("$TAG 用户 userName 为空，拒绝连接并关闭会话 sessionId=${accessor.sessionId}")
+            throw MessagingException("$TAG Authentication 认证失败: userName 为空")
+        }
+        val userExist = userService.isUserExistByName(userName)
+        if (userExist.not()) {
+            DarcyLogger.error("$TAG 用户 $userName 不存在，拒绝连接并关闭会话 sessionId=${accessor.sessionId}")
+            throw MessagingException("Authentication 认证失败1: userName 不存在")
+        }
         setupUserNameForSTOMP(accessor, userName)
-        DarcyLogger.info("$TAG 用户$userName 上线了")
+        DarcyLogger.info("$TAG 用户 $userName 上线了")
     }
 
     private fun userCount() {

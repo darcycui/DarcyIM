@@ -6,6 +6,15 @@ import org.springframework.web.bind.annotation.RequestParam
 
 @RequestMapping("/api/x3dh")
 interface IX3DHApi {
-    @PostMapping("/pull/bob/keys")
-    fun pullBobKeys(@RequestParam params: Map<String, String>): String
+    @PostMapping("/push/keys")
+    fun pushKeys(@RequestParam params: Map<String, String>): String
+
+    @PostMapping("/pull/keys")
+    fun pullKeys(@RequestParam params: Map<String, String>): String
+
+    @PostMapping("/push/alice/hello")
+    fun pushHelloMessage(@RequestParam params: Map<String, String>): String
+
+    @PostMapping("/pull/alice/hello")
+    fun pullAliceHello(@RequestParam params: Map<String, String>): String
 }
